@@ -1,0 +1,57 @@
+Curl and libcurl 7.15.5
+
+ Public curl release number:               95
+ Releases counted from the very beginning: 122
+ Available command line options:           114
+ Available curl_easy_setopt() options:     133
+ Number of public functions in libcurl:    54
+ Amount of public web site mirrors:        33
+ Number of known libcurl bindings:         32
+ Number of contributors:                   506
+
+This release includes the following changes:
+
+ o added --ftp-ssl-reqd
+ o modified the prototype for the socket callback set with
+   CURLMOPT_SOCKETFUNCTION
+ o added curl_multi_assign()
+ o added CURLOPT_FTP_ALTERNATIVE_TO_USER and --ftp-alternative-to-user
+ o added a vcproj file for building libcurl
+ o added curl_formget()
+ o added CURLOPT_MAX_SEND_SPEED_LARGE and CURLOPT_MAX_RECV_SPEED_LARGE
+ o added configure --enable-hidden-symbols
+ o Made -K on a file that couldn't be read cause a warning to be displayed
+
+This release includes the following bugfixes:
+
+ o chunked encoding when custom header "Transfer-Encoding: chunked" is set
+ o Curl_strerror() crash on unknown errors
+ o changing Content-Type when doing formposts
+ o added CURL_EXTERN to a few recent multi functions that lacked them
+ o splay-tree related problems for internal expire time handling
+ o FTP ASCII CRLF counter reset
+ o cookie parser now compares paths case sensitive
+ o an easy handle with shared DNS cache added to a multi handle caused a crash
+ o couldn't override the Proxy-Connection: header for non-CONNECT requests
+ o curl_multi_fdset() could wrongly return -1 as max_fd value
+
+Other curl-related news:
+
+ o yassl 1.3.7 can now be used with libcurl as an optional TLS library for
+   HTTPS/FTPS support: http://www.yassl.com/
+ o cURLpp 0.6.0 was released: http://rrette.com/curlpp.html
+ o pycurl-7.15.4 was released: http://pycurl.sf.net
+
+New curl mirrors:
+
+ o 
+
+This release would not have looked like this without help, code, reports and
+advice from friends like these:
+
+ Dan Fandrich, Peter Silva, Arve Knudsen, Michael Wallner, Toshiyuki Maezawa,
+ Ingmar Runge, Ates Goral, David McCreedy, Jari Sundell, Georg Horn,
+ Gisle Vanem, Yang Tse, Michael Jerris, Dan Nelson, Yves Lejeune,
+ Maciej Karpiuk, Mark Lentczner
+
+        Thanks! (and sorry if I forgot to mention someone)
