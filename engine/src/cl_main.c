@@ -3221,9 +3221,9 @@ void CL_InitRef(void)
 	cl_renderer = Cvar_Get("cl_renderer", "GL", CVAR_ARCHIVE | CVAR_LATCH);
 
 #ifdef _WIN32
-	Q_snprintf(dllName, sizeof(dllName), "renderer%s" DLL_EXT, cl_renderer->string);
+	Q_snprintf(dllName, sizeof(dllName), "renderer" DLL_EXT);
 #else
-	Q_snprintf(dllName, sizeof(dllName), "renderer%s" ARCH_STRING DLL_EXT, cl_renderer->string);
+	Q_snprintf(dllName, sizeof(dllName), "renderer" DLL_EXT);
 #endif
 
 	Com_Printf("Loading \"%s\"...", dllName);

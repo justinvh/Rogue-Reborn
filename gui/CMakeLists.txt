@@ -118,6 +118,8 @@ source_group("Source Files" FILES ${GUI_SRC_LIST})
 # Setup the library 
 add_library(gui SHARED ${GUI_SRC_ALL_LIST})
 
+set_target_properties(gui PROPERTIES PREFIX "")
+
 if(WIN32)
 set_target_properties(gui PROPERTIES LINK_FLAGS
 	"/BASE:0x40000000 /DYNAMICBASE:NO"

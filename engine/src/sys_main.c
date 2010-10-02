@@ -474,7 +474,10 @@ void           *Sys_LoadDll(const char *name, char *fqpath,
 
 	assert(name);
 
-	Q_snprintf(fname, sizeof(fname), "%s" ARCH_STRING DLL_EXT, name);
+	/* We want a more straightforward approach to the DLLs; in the generic
+	 * case, we don't care about the architecture. 
+	 */
+	Q_snprintf(fname, sizeof(fname), "%s" DLL_EXT, name);
 
 	// TODO: use fs_searchpaths from files.c
 	pwdpath = Sys_Cwd();

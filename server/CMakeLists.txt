@@ -115,6 +115,8 @@ source_group("Source Files" FILES ${SERVER_SRC_LIST})
 add_library(server SHARED ${SERVER_SRC_ALL_LIST})
 add_definitions(-DGLOBALRANK)
 
+set_target_properties(server PROPERTIES PREFIX "")
+
 if(WIN32)
 set_target_properties(server PROPERTIES LINK_FLAGS
 	"/BASE:0x20000000 /DYNAMICBASE:NO"

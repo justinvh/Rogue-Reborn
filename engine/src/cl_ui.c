@@ -1233,7 +1233,7 @@ void CL_InitUI(void)
 		interpret = Cvar_VariableValue("vm_ui");
 	}
 #endif
-	uivm = VM_Create("ui", CL_UISystemCalls, interpret);
+	uivm = VM_Create("gui", CL_UISystemCalls, interpret);
 	if(!uivm)
 	{
 		Com_Error(ERR_FATAL, "VM_Create on UI failed");

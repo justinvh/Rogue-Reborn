@@ -103,7 +103,18 @@ There are a few options to the build system:
 INSTALLATION
 ============
 Rogue Reborn requires its content which is separately maintained.
-Stay tuned.
+
+Windows:
+The dependency structure should look like this:
+	+ Rogue Reborn/
+		- libcurl.dll
+		- renderer.dll
+		- SDL.dll
+		- zlib1.dll
+		+ base/
+			- server.dll
+			- client.dll
+			- gui.dll
 
 
 

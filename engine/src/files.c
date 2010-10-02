@@ -1197,15 +1197,15 @@ int FS_FOpenFileRead(const char *filename, fileHandle_t * file, qboolean uniqueF
 					}
 
 #ifdef USE_LLVM
-					if(!(pak->referenced & FS_QAGAME_REF) && strstr(filename, "qagamellvm.bc"))
+					if(!(pak->referenced & FS_QAGAME_REF) && strstr(filename, "serverllvm.bc"))
 					{
 						pak->referenced |= FS_QAGAME_REF;
 					}
-					if(!(pak->referenced & FS_CGAME_REF) && strstr(filename, "cgamellvm.bc"))
+					if(!(pak->referenced & FS_CGAME_REF) && strstr(filename, "clientllvm.bc"))
 					{
 						pak->referenced |= FS_CGAME_REF;
 					}
-					if(!(pak->referenced & FS_UI_REF) && strstr(filename, "uillvm.bc"))
+					if(!(pak->referenced & FS_UI_REF) && strstr(filename, "guillvm.bc"))
 					{
 						pak->referenced |= FS_UI_REF;
 					}

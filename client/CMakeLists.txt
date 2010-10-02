@@ -104,6 +104,8 @@ source_group("Source Files" FILES ${CLIENT_SRC_LIST})
 # Setup the library 
 add_library(client SHARED ${CLIENT_SRC_ALL_LIST})
 
+set_target_properties(client PROPERTIES PREFIX "")
+
 if(WIN32)
 set_target_properties(client PROPERTIES LINK_FLAGS
 	"/BASE:0x30000000 /DYNAMICBASE:NO"

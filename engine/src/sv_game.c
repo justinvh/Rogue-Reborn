@@ -611,10 +611,10 @@ void SV_InitGameProgs(void)
 {
 #if defined(USE_LLVM)
 	// load the dll or bytecode
-	gvm = VM_Create("qagame", SV_GameSystemCalls, Cvar_VariableValue("vm_game"));
+	gvm = VM_Create("server", SV_GameSystemCalls, Cvar_VariableValue("vm_game"));
 #else
 	// load the dll
-	gvm = VM_Create("qagame", SV_GameSystemCalls, VMI_NATIVE);
+	gvm = VM_Create("server", SV_GameSystemCalls, VMI_NATIVE);
 #endif
 	if(!gvm)
 	{

@@ -856,7 +856,7 @@ void CL_InitCGame(void)
 		interpret = Cvar_VariableValue("vm_cgame");
 	}
 #endif
-	cgvm = VM_Create("cgame", CL_CgameSystemCalls, interpret);
+	cgvm = VM_Create("client", CL_CgameSystemCalls, interpret);
 	if(!cgvm)
 	{
 		Com_Error(ERR_DROP, "VM_Create on cgame failed");

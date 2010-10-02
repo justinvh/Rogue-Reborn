@@ -320,6 +320,8 @@ add_definitions(
 	-DFT2_BUILD_LIBRARY
 )
 
+set_target_properties(renderer PROPERTIES PREFIX "")
+
 if(WIN32)
 set_target_properties(renderer PROPERTIES LINK_FLAGS
 	"/DYNAMICBASE:NO"

@@ -375,7 +375,7 @@ typedef enum
 void            VM_Init(void);
 vm_t           *VM_Create(const char *module, intptr_t(*systemCalls) (intptr_t *), vmInterpret_t interpret);
 
-// module should be bare: "cgame", not "cgame.dll" or "vm/cgame.qvm"
+// module should be bare: "client", not "client.dll" or "vm/client.qvm"
 
 void            VM_Free(vm_t * vm);
 void            VM_Clear(void);
