@@ -404,6 +404,7 @@ include_directories(
 	"${ENGINE_DEP_OGG_INCLUDE_DIR}"
 	"${SDL_INCLUDE_DIR}"
 	"${CURL_INCLUDE_DIR}"
+	"${OPENAL_INCLUDE_DIR}"
 )
 
 # Group the source code
