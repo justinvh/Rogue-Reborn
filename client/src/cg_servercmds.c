@@ -25,8 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // these are processed at snapshot transition time, so there will definately
 // be a valid snapshot this frame
 
-#include "cg_local.h"
-#include "../ui/menudef.h"		// bk001205 - for Q3_ui as well
+#include <hat/client/cg_local.h>
+#include <hat/gui/menudef.h>	// bk001205 - for Q3_ui as well
 
 typedef struct
 {

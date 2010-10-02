@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // cg_effects.c -- these functions generate localentities, usually as a result
 // of event processing
 
-#include "cg_local.h"
+#include <hat/client/cg_local.h>
 
 vec3_t          zeroVector = { 0, 0, 0 };
 

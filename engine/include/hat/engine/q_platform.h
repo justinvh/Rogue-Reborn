@@ -23,15 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef __Q_PLATFORM_H
 #define __Q_PLATFORM_H
 
-// various feature defines
-#ifndef CG_LUA
-#define CG_LUA 1
-#endif
-
-#ifndef G_LUA
-#define G_LUA 1
-#endif
-
 // this is for determining if we have an asm version of a C function
 #ifdef Q3_VM
 

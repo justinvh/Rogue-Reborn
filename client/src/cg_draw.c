@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // cg_draw.c -- draw all of the graphical elements during
 // active (after loading) gameplay
 
-#include "cg_local.h"
+#include <hat/client/cg_local.h>
 
 vec4_t          redTeamColor = { 0.9f, 0.0f, 0.2f, 0.80f };
 vec4_t          blueTeamColor = { 0.2f, 0.0f, 0.9f, 0.80f };

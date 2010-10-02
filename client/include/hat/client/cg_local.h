@@ -22,10 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 // cg_local.h
-#include "../../../code/qcommon/q_shared.h"
-#include "../../../code/renderer/tr_types.h"
-#include "../game/bg_public.h"
-#include "cg_public.h"
+#include <hat/engine/q_shared.h>
+#include <hat/renderer/tr_types.h>
+#include <hat/server/bg_public.h>
+#include <hat/client/cg_public.h>
 
 // The entire cgame module is unloaded and reloaded on each level change,
 // so there is NO persistant data between levels on the client side.

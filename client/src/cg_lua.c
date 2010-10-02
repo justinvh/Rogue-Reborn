@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 // cg_lua.c
 
-#include "cg_local.h"
+#include <hat/client/cg_local.h>
 
 #ifdef CG_LUA
 

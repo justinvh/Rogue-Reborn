@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // interpolating between snapshots from the server or locally predicting
 // ahead the client's movement.
 // It also handles local physics interaction, like fragments bouncing off walls
-#include "cg_local.h"
+#include <hat/client/cg_local.h>
 
 static pmove_t  cg_pmove;
 

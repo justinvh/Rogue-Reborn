@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 // cg_info.c -- display information while data is being loading
-#include "cg_local.h"
+#include <hat/client/cg_local.h>
 
 vec4_t          colorLines = { 0.6f, 0.6f, 0.8f, 0.15f };	// lines color
 vec4_t          colorText = { 0.9f, 0.9f, 1.0f, 0.75f };	// text color

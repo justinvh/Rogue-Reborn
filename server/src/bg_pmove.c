@@ -26,9 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // bg_pmove.c -- both games player movement code
 // takes a playerstate and a usercmd as input and returns a modifed playerstate
 
-#include "../../../code/qcommon/q_shared.h"
-#include "bg_public.h"
-#include "bg_local.h"
+#include <hat/engine/q_shared.h>
+#include <hat/server/bg_public.h>
+#include <hat/server/bg_local.h>
 
 #if 0
 const vec3_t    playerMins = { -15, -15, -24 };

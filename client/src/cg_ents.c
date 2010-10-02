@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 // cg_ents.c -- present snapshot entities, happens every single frame
 
-#include "cg_local.h"
+#include <hat/client/cg_local.h>
 
 
 /*
