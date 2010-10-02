@@ -30,7 +30,7 @@ START SERVER MENU *****
 */
 
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 
 #define GAMESERVER_BACK0		"menu/art/back_0"

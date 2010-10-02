@@ -444,3 +444,10 @@ add_definitions(
 	-DUSE_ALLOCA
 	-DFLOATING_POINT
 )
+
+if(WIN32)
+set_target_properties(engine PROPERTIES LINK_FLAGS
+	"/FIXED:NO /DYNAMICBASE:NO"
+)
+endif()
+

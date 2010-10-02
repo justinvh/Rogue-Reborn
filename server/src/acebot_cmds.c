@@ -24,8 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // acebot_cmds.c - Main internal command processor
 
 
-#include "g_local.h"
-#include "acebot.h"
+#include <hat/server/g_local.h>
+#include <hat/server/acebot.h>
 
 #if defined(ACEBOT)
 

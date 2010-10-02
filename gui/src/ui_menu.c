@@ -30,7 +30,7 @@ MAIN MENU
 */
 
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 
 #define ID_SINGLEPLAYER			10

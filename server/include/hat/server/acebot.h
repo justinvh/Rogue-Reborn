@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef _ACEBOT_H
 #define _ACEBOT_H
 
-//#include "g_local.h"
+//#include <hat/server/g_local.h>
 #if defined(ACEBOT)
 
 

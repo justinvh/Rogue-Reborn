@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 //
 
-#include "g_local.h"
+#include <hat/server/g_local.h>
 
 qboolean G_SpawnString(const char *key, const char *defaultString, char **out)
 {

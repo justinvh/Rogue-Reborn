@@ -30,7 +30,7 @@ FIXME: otty: this is never called, remove ?
 =======================================================================
 */
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 
 #define ART_FRAME					"menu/art/cut_frame"

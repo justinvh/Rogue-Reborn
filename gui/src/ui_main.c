@@ -30,7 +30,7 @@ USER INTERFACE MAIN
 */
 
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 
 /*

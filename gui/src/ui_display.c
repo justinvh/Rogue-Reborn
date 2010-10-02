@@ -31,7 +31,7 @@ otty: display options are merged with the video options now.
 =======================================================================
 */
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 
 #define ART_FRAMEL			"menu/art/frame2_l"

@@ -22,8 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 // g_rankings.c -- reports for global rankings system
 
-#include "g_local.h"
-#include "g_rankings.h"
+#include <hat/server/g_local.h>
+#include <hat/server/g_rankings.h>
 
 /*
 ================

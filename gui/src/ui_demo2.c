@@ -30,7 +30,7 @@ DEMOS MENU
 */
 
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 
 #define ART_ARROWS			"ui/arrows_horz_0"

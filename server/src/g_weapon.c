@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // g_weapon.c
 // perform the server side effects of a weapon firing
 
-#include "g_local.h"
+#include <hat/server/g_local.h>
 
 static float    s_quadFactor;
 static vec3_t   forward, right, up;

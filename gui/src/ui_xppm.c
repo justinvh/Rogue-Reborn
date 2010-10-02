@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 //
 // ui_xppm.c -- handle md5 model stuff ( instead of ui_players.c )
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 static int      dp_realtime;
 

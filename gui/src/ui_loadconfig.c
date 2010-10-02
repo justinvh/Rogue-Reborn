@@ -29,7 +29,7 @@ LOAD CONFIG MENU
 =============================================================================
 */
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 
 #define ART_FIGHT0			"menu/art/load_0"

@@ -30,7 +30,7 @@ INGAME MENU
 */
 
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 
 //#define INGAME_FRAME                  "menu/art/addbotframe"

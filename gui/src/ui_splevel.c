@@ -29,7 +29,7 @@ SINGLE PLAYER LEVEL SELECT MENU
 =============================================================================
 */
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 
 

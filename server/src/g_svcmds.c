@@ -22,10 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 // g_svcmds.c - this file holds commands that can be executed by the server console, but not remote clients
-#include "g_local.h"
+#include <hat/server/g_local.h>
 
 #if defined(ACEBOT)
-#include "acebot.h"
+#include <hat/server/acebot.h>
 #endif
 
 

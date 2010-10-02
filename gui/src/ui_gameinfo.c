@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // gameinfo.c
 //
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 
 //

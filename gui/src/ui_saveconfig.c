@@ -29,7 +29,7 @@ SAVE CONFIG MENU
 =============================================================================
 */
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 
 #define ART_SAVE0			"menu/art/save_0"

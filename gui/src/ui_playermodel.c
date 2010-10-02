@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 //
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 #define MODEL_SELECT		"ui/opp_select"
 #define MODEL_SELECTED		"ui/opp_selected"

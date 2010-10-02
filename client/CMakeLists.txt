@@ -55,7 +55,7 @@ set(CLIENT_SRC_LIST
 	"${ENGINE_SRC_DIR}/q_math.c"
 	"${ENGINE_SRC_DIR}/q_shared.c"
 	# Client specific code
-	"${CLIENT_INCLUDE_CLIENT_DIR}/cgame.def"
+	"${CLIENT_INCLUDE_CLIENT_DIR}/client.def"
 	"${CLIENT_SRC_DIR}/cg_animation.c"
 	"${CLIENT_SRC_DIR}/cg_consolecmds.c"
 	"${CLIENT_SRC_DIR}/cg_draw.c"
@@ -65,7 +65,6 @@ set(CLIENT_SRC_LIST
 	"${CLIENT_SRC_DIR}/cg_event.c"
 	"${CLIENT_SRC_DIR}/cg_info.c"
 	"${CLIENT_SRC_DIR}/cg_localents.c"
-	"${CLIENT_SRC_DIR}/cg_lua.c"
 	"${CLIENT_SRC_DIR}/cg_main.c"
 	"${CLIENT_SRC_DIR}/cg_marks.c"
 	"${CLIENT_SRC_DIR}/cg_osd.c"
@@ -85,7 +84,6 @@ set(CLIENT_SRC_LIST
 set(CLIENT_SRC_ALL_LIST
 	${CLIENT_SRC_SERVER_SHARED_LIST}
 	${CLIENT_SRC_CLIENT_SHARED_LIST}
-	${CLIENT_SRC_GUI_SHARED_LIST}
 	${CLIENT_SRC_HEADER_LIST}
 	${CLIENT_SRC_LIST}
 )
@@ -100,8 +98,15 @@ include_directories(
 )
 
 # Group the source code
-source_group("Header Files" FILES ${ENGINE_SRC_HEADER_LIST})
-source_group("Source Files" FILES ${ENGINE_SRC_SERVER_SHARED_LIST} ${ENGINE_SRC_CLIENT_SHARED_LIST} ${ENGINE_SRC_GUI_SHARED_LIST} ${ENGINE_SRC_LIST})
+source_group("Header Files" FILES ${CLIENT_SRC_SERVER_SHARED_LIST} ${CLIENT_SRC_HEADER_LIST} ${CLIENT_SRC_ENGINE_SHARED_LIST})
+source_group("Source Files" FILES ${CLIENT_SRC_LIST})
 
 # Setup the library 
 add_library(client SHARED ${CLIENT_SRC_ALL_LIST})
+
+if(WIN32)
+set_target_properties(client PROPERTIES LINK_FLAGS
+	"/BASE:0x30000000 /DYNAMICBASE:NO"
+)
+endif()
+

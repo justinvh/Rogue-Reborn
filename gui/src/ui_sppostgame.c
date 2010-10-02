@@ -29,7 +29,7 @@ SINGLE PLAYER POSTGAME MENU
 =============================================================================
 */
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 #define MAX_SCOREBOARD_CLIENTS		8
 

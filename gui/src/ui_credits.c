@@ -30,7 +30,7 @@ CREDITS
 =======================================================================
 */
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 #define SCROLLSPEED	3
 

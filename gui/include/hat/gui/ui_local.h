@@ -24,11 +24,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef __UI_LOCAL_H__
 #define __UI_LOCAL_H__
 
-#include "../../../code/qcommon/q_shared.h"
-#include "../../../code/renderer/tr_types.h"
-#include "ui_public.h"
-#include "../../../code/client/keycodes.h"
-#include "../game/bg_public.h"
+#include <hat/engine/q_shared.h>
+#include <hat/renderer/tr_types.h>
+#include <hat/gui/ui_public.h>
+#include <hat/engine/keycodes.h>
+#include <hat/server/bg_public.h>
 
 typedef void    (*voidfunc_f) (void);
 

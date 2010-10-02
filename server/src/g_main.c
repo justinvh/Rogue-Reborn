@@ -23,8 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 // g_main.c
 
-#include "g_local.h"
-#include "g_lua.h"
+#include <hat/server/g_local.h>
 
 level_locals_t  level;
 

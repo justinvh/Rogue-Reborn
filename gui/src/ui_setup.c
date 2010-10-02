@@ -30,7 +30,7 @@ SETUP MENU
 */
 
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 
 #define SETUP_MENU_VERTICAL_SPACING		42

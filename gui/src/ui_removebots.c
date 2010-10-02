@@ -30,7 +30,7 @@ REMOVE BOTS MENU
 */
 
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 
 

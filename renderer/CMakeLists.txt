@@ -84,7 +84,6 @@ find_package(SDL REQUIRED)
 set(RENDERER_SRC_HEADER_LIST
 	# Renderer headers
 	"${RENDERER_INCLUDE_RENDERER_DIR}/qgl.h"
-	"${RENDERER_INCLUDE_RENDERER_DIR}/rendererGL.def"
 	"${RENDERER_INCLUDE_RENDERER_DIR}/tr_local.h"
 	"${RENDERER_INCLUDE_RENDERER_DIR}/tr_public.h"
 	"${RENDERER_INCLUDE_RENDERER_DIR}/tr_types.h"
@@ -99,6 +98,7 @@ set(ENGINE_SRC_HEADER_LIST
 
 set(RENDERER_SRC_LIST
 	# Renderer sources
+	"${RENDERER_INCLUDE_RENDERER_DIR}/renderer.def"
 	"${RENDERER_SRC_DIR}/qgl.c"
 	"${RENDERER_SRC_DIR}/tr_animation.c"
 	"${RENDERER_SRC_DIR}/tr_backend.c"
@@ -319,3 +319,10 @@ add_definitions(
 	-DBUILD_FREETYPE
 	-DFT2_BUILD_LIBRARY
 )
+
+if(WIN32)
+set_target_properties(renderer PROPERTIES LINK_FLAGS
+	"/DYNAMICBASE:NO"
+)
+endif()
+

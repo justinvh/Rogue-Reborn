@@ -30,7 +30,7 @@ CONFIRMATION MENU
 */
 
 
-#include "ui_local.h"
+#include <hat/gui/ui_local.h>
 
 
 //#define ART_CONFIRM_FRAME "menu/art/cut_frame"
