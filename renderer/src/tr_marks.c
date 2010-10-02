@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 // tr_marks.c -- polygon projection on the world polygons
-#include "tr_local.h"
+#include <hat/renderer/tr_local.h>
 
 #define MAX_VERTS_ON_POLY		64
 

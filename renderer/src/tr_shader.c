@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 // tr_shader.c -- this file deals with the parsing and definition of shaders
-#include "tr_local.h"
+#include <hat/renderer/tr_local.h>
 
 #define MAX_GUIDETEXT_HASH		2048
 static char   **guideTextHashTable[MAX_GUIDETEXT_HASH];

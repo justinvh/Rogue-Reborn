@@ -66,7 +66,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 
-#include "tr_local.h"
+#include <hat/renderer/tr_local.h>
 #include <hat/engine/qcommon.h>
 
 #include "../png/png.h"

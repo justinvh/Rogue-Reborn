@@ -32,8 +32,8 @@ Rogue Reborn is an open-source cross-platform first-person-shooter.
 It is a port of the classic game by Red Storm Entertainment: "Rainbow
 Six: Rogue Spear". The original engine was id Tech 3, aka "The Quake 3
 Engine". It was later improved by the community, upon its open-source
-release, and became ioQuake3. A team of developers focused on the renderer
-took ioQuake3 and developed xReaL. The xReaL project was put on haitus
+release, and became ioQuake3. A team of developers, focused on the renderer,
+forked ioQuake3 and developed xReaL. The xReaL project was put on hiatus
 after ETCW was open-sourced. 
 
 Rogue Reborn's engine is called Hat and is derived from the team that
