@@ -342,7 +342,7 @@ elseif(WIN32)
 	set(WIN32_RESOURCE_LIST
 		"${ENGINE_INCLUDE_RESOURCE_DIR}/win_resource.h"
 		"${ENGINE_INCLUDE_RESOURCE_DIR}/win_resource.rc"
-		"${ENGINE_INCLUDE_RESOURCE_DIR}/xreal.ico"	
+		"${ENGINE_INCLUDE_RESOURCE_DIR}/rr.ico"	
 	)
 
 	set(WIN32_SRC_LIST
