@@ -209,6 +209,9 @@ vmCvar_t        pm_fastWeaponSwitches;
 vmCvar_t        pm_fixedPmove;
 vmCvar_t        pm_fixedPmoveFPS;
 
+vmCvar_t		pm_allowLeaning;
+vmCvar_t		pm_allowLeaningWithMovement;
+
 vmCvar_t        cg_gravity;
 
 vmCvar_t        cg_currentSelectedPlayer;
@@ -365,6 +368,8 @@ static cvarTable_t cvarTable[] = {	// bk001129
 	{&pm_fastWeaponSwitches, "pm_fastWeaponSwitches", "0", 0},
 	{&pm_fixedPmove, "pm_fixedPmove", "0", 0},
 	{&pm_fixedPmoveFPS, "pm_fixedPmoveFPS", "125", 0},
+	{&pm_allowLeaning, "sv_allowLean", "1", CVAR_SERVERINFO },
+	{&pm_allowLeaningWithMovement, "sv_allowLeanWithMovement", "0", CVAR_SERVERINFO },
 
 	{&cg_gravity, "g_gravity", "0", 0},	// communicated by systeminfo
 	{&cg_drawPlayerCollision, "cg_drawPlayerCollision", "0", CVAR_CHEAT},

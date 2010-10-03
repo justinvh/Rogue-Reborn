@@ -605,6 +605,22 @@ void CG_TestGib_f(void)
 
 //============================================================================
 
+/*
+=================
+CG_CheckLean
+
+Adjust the view if a lean is calculatable
+=================
+*/
+static void CG_CheckLean(void)
+{
+	if(cg.predictedPlayerState.lean_amount != 0) {
+		vec3_t right;
+		cg.refdefViewAngles[ROLL] += cg.predictedPlayerState.lean_amount / 2.0f;
+		AngleVectors(cg.refdefViewAngles, 0, right, 0);
+		VectorMA(cg.refdef.vieworg, cg.predictedPlayerState.lean_amount, right, cg.refdef.vieworg);
+	}
+}
 
 /*
 =================
@@ -751,6 +767,7 @@ static void CG_OffsetThirdPersonView(void)
 	}
 	cg.refdefViewAngles[PITCH] = -180 / M_PI * atan2(focusPoint[2], focusDist);
 	cg.refdefViewAngles[YAW] -= cg_thirdPersonAngle.value;
+	CG_CheckLean();
 }
 
 
@@ -957,6 +974,8 @@ static void CG_OffsetFirstPersonView(void)
 		VectorMA(cg.refdef.vieworg, NECK_LENGTH, up, cg.refdef.vieworg);
 	}
 #endif
+
+	CG_CheckLean();
 }
 
 //======================================================================

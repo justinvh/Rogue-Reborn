@@ -1366,6 +1366,8 @@ netField_t      playerStateFields[] = {
 	,
 	{PSF(viewangles[0]), 0}
 	,
+	{PSF(lean_amount), 0}
+	,
 	{PSF(weaponTime), -16}
 	,
 	{PSF(origin[2]), 0}

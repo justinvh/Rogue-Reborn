@@ -726,6 +726,9 @@ void CG_PredictPlayerState(void)
 		cg_pmove.fixedPmove = pm_fixedPmove.integer;
 		cg_pmove.fixedPmoveFPS = pm_fixedPmoveFPS.integer;
 
+		cg_pmove.allowLeaning = pm_allowLeaning.integer;
+		cg_pmove.allowLeaningWithMovement = pm_allowLeaningWithMovement.integer;
+
 		Pmove(&cg_pmove);
 
 		moved = qtrue;

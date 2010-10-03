@@ -925,6 +925,18 @@ void CalcMuzzlePoint(gentity_t * ent, vec3_t forward, vec3_t right, vec3_t up, v
 			break;
 	}
 
+	if(ent->client) {
+		/* offset the muzzle-point to support the player's lean */
+		vec3_t origin;
+		VectorCopy(ent->client->ps.origin, origin);
+		AngleVectors(ent->client->ps.viewangles, 0, right, 0);
+		VectorMA(origin, ent->client->ps.lean_amount, right, origin);
+		VectorSet(surfNormal, 0.0f, 0.0f, 1.0f);
+		VectorMA(origin, ent->client->ps.viewheight, surfNormal, muzzlePoint);
+	} else {
+		VectorCopy(ent->s.pos.trBase, muzzlePoint);
+	}
+
 	// HACK: correct forward vector for the projectile so it will fly towards the crosshair
 	VectorMA(muzzlePoint, 8192, forward, end);
 	VectorSubtract(end, muzzlePoint, forward);

@@ -1415,6 +1415,12 @@ void CL_InitInput(void)
 	Cmd_AddCommand("-button13", IN_Button13Up);
 	Cmd_AddCommand("+button14", IN_Button14Down);
 	Cmd_AddCommand("-button14", IN_Button14Up);
+
+	Cmd_AddCommand("+leanleft", IN_Button12Down);
+	Cmd_AddCommand("-leanleft", IN_Button12Up);
+	Cmd_AddCommand("+leanright", IN_Button13Down);
+	Cmd_AddCommand("-leanright", IN_Button13Up);
+
 	Cmd_AddCommand("+mlook", IN_MLookDown);
 	Cmd_AddCommand("-mlook", IN_MLookUp);
 

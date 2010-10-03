@@ -68,6 +68,11 @@ float           pm_airControlAmount = 150.0f;
 float           pm_strafeAccelerate = 70.0f;
 float           pm_wishSpeed = 30.0f;
 
+/* Rogue Reborn */
+const float pm_leanOutTime = 1500.0f;
+const float pm_leanInTime = 500.0f;
+const float pm_leanDistance = 32.0f;
+
 int             c_pmove = 0;
 
 
@@ -2828,6 +2833,115 @@ static void PM_DropTimers(void)
 	}
 }
 
+enum leanWantDirection_t
+{
+	LEAN_LEFT,
+	LEAN_RIGHT,
+	NO_LEAN,
+};
+
+/*
+================
+PM_CheckLean(playerState_t *ps, const usercmd_t *cmd)
+
+Checks if the player is holding either the lean left or lean right
+buttons. If they are then we can compute a factor of leaning and figure
+out what the camera position should be. This affects the player's actual
+position as well.
+=================
+*/
+void PM_CheckLean(playerState_t *ps, usercmd_t *cmd)
+{
+	float lean_amount = ps->lean_amount;
+	enum leanWantDirection_t want_direction = NO_LEAN;
+	enum leanWantDirection_t current_direction = NO_LEAN;
+	vec3_t initial, final, view_angles, right, tmins, tmaxs;
+	trace_t trace;
+
+	/* Figure out the direction that we want to lean in */
+	if (cmd->buttons & BUTTON_LEAN_LEFT) {
+		want_direction = LEAN_LEFT;
+	} else if (cmd->buttons & BUTTON_LEAN_RIGHT) {
+		want_direction = LEAN_RIGHT;
+	}
+
+	/* Determine if we are already leaning */
+	if (lean_amount > 0.0f) {
+		current_direction = LEAN_RIGHT;
+	} else if (lean_amount < 0.0f) {
+		current_direction = LEAN_LEFT;
+	}
+
+	/* Neither the lean left or lean right button is held and we
+	 * have no magnitude in our previous lean state.
+	 */
+	if (want_direction == NO_LEAN && current_direction == NO_LEAN) {
+		return;
+	}
+
+	/* In this condition we want to come out of a leaning state into an
+	 * idle state. To do this, we just subtract or add a factor of the
+	 * player's movement time and the time it takes to lean in.
+	 */
+	if (want_direction == NO_LEAN && current_direction == LEAN_RIGHT) {
+		lean_amount -= pml.msec / pm_leanInTime * pm_leanDistance;
+		lean_amount = lean_amount < 0.0f ? 0.0f : lean_amount;
+	} else if (want_direction == NO_LEAN && current_direction == LEAN_LEFT) {
+		lean_amount += pml.msec / pm_leanInTime * pm_leanDistance;
+		lean_amount = lean_amount > 0 ? 0 : lean_amount;
+	}
+
+	/* In this condition we are going into a lean. We are basically doing
+	 * the opposite of leaning in and just figuring out the offsets. We
+	 * cap the max lean distance with pm_leanDistance.
+	 */
+	if (want_direction == LEAN_RIGHT) {
+		if (lean_amount < pm_leanDistance) {
+			lean_amount += pml.msec / pm_leanOutTime * pm_leanDistance;
+		}
+		lean_amount = lean_amount > pm_leanDistance ? pm_leanDistance : lean_amount;
+	} else if (want_direction == LEAN_LEFT) {
+		if (lean_amount > -pm_leanDistance) {
+			lean_amount -= pml.msec / pm_leanOutTime * pm_leanDistance;
+		}
+ 		lean_amount = lean_amount < -pm_leanDistance ? -pm_leanDistance : lean_amount;
+	}
+
+	/* This is now our new magnitude of our lean */
+	ps->lean_amount = lean_amount;
+
+	/* We are now computing the view offset.
+	 * We take our initial position and add our view-height to give us a
+	 * representation of the player. We then take our view angles and
+	 * modify the roll to lean the current offset.
+	 * With the compute view angle, we can turn our new
+	 * computed view angle to right vector. The right vector will be
+	 * multipled against the initial position to give a right offset.
+	 *
+	 * The final thing we will do is make a trace to the nearest solid.
+	 * This will be used as scaling factor for when the view is finally
+	 * computed.
+	 */
+	VectorCopy(ps->origin, initial);
+	initial[2] += ps->viewheight;
+
+	VectorCopy(ps->viewangles, view_angles);
+	view_angles[ROLL] += lean_amount / 2.0f;
+	AngleVectors(view_angles, 0, right, 0);
+	VectorMA(initial, lean_amount, right, final);	
+
+	// Set our trace box mins and maxes
+	VectorSet(tmins, -8, -8, -7);
+	VectorSet(tmaxs, 8, 8, 4);
+
+	pm->trace(&trace, initial, tmins, tmaxs, final, ps->clientNum, MASK_PLAYERSOLID);
+	ps->lean_amount *= trace.fraction;
+
+	/* Prevent the player from moving when they lean */
+	if (ps->lean_amount && pm->allowLeaningWithMovement == 0)
+		cmd->rightmove = cmd->forwardmove = 0;
+}
+
 /*
 ================
 PM_UpdateViewAngles
@@ -2836,7 +2950,7 @@ This can be used as another entry point when only the viewangles
 are being updated instead of a full move
 ================
 */
-void PM_UpdateViewAngles(playerState_t * ps, const usercmd_t * cmd)
+void PM_UpdateViewAngles(playerState_t * ps, usercmd_t * cmd)
 {
 #if 0
 	short           temp;
@@ -2934,6 +3048,10 @@ void PM_UpdateViewAngles(playerState_t * ps, const usercmd_t * cmd)
 	// actually set the viewangles
 	for(i = 0; i < 3; i++)
 		ps->viewangles[i] = tempang[i];
+
+	if (pm->allowLeaning == 1) {
+		PM_CheckLean(ps, cmd);
+	}
 
 #endif
 }

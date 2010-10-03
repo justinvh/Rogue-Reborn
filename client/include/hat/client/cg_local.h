@@ -1539,6 +1539,9 @@ extern vmCvar_t pm_fastWeaponSwitches;
 extern vmCvar_t pm_fixedPmove;
 extern vmCvar_t pm_fixedPmoveFPS;
 
+extern vmCvar_t pm_allowLeaning;
+extern vmCvar_t pm_allowLeaningWithMovement;
+
 extern vmCvar_t cg_gravity;
 
 extern vmCvar_t cg_currentSelectedPlayer;

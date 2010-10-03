@@ -55,6 +55,8 @@ vmCvar_t        g_dedicated;
 vmCvar_t        g_speed;
 vmCvar_t        g_gravity;
 vmCvar_t        g_cheats;
+vmCvar_t		g_allowLean;
+vmCvar_t		g_allowLeanWithMovement;
 vmCvar_t        g_knockback;
 vmCvar_t        g_knockbackZ;
 vmCvar_t        g_quadfactor;
@@ -105,6 +107,9 @@ vmCvar_t        pm_airControl;
 vmCvar_t        pm_fastWeaponSwitches;
 vmCvar_t        pm_fixedPmove;
 vmCvar_t        pm_fixedPmoveFPS;
+
+vmCvar_t		pm_allowLeaning;
+vmCvar_t		pm_allowLeaningWithMovement;
 
 vmCvar_t        lua_modules;
 vmCvar_t        lua_allowedModules;
@@ -214,7 +219,8 @@ static cvarTable_t gameCvarTable[] = {
 	{&pm_fastWeaponSwitches, "pm_fastWeaponSwitches", "0", CVAR_SYSTEMINFO, 0, qfalse},
 	{&pm_fixedPmove, "pm_fixedPmove", "1", CVAR_SYSTEMINFO, 0, qfalse},
 	{&pm_fixedPmoveFPS, "pm_fixedPmoveFPS", "125", CVAR_SYSTEMINFO, 0, qfalse},
-
+	{&pm_allowLeaning, "sv_allowLean", "1",  CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0, qfalse},
+	{&pm_allowLeaningWithMovement, "sv_allowLeanWithMovement", "0", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0, qfalse},
 	{&lua_allowedModules, "lua_allowedModules", "", 0, 0, qfalse},
 	{&lua_modules, "lua_modules", "", 0, 0, qfalse},
 

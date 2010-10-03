@@ -41,6 +41,9 @@ cvar_t         *sv_privatePassword;	// password for the privateClient slots
 cvar_t         *sv_allowDownload;
 cvar_t         *sv_maxclients;
 
+cvar_t         *sv_allowLeanWithMovement;
+cvar_t         *sv_allowLean;
+
 cvar_t         *sv_privateClients;	// number of clients reserved for password
 cvar_t         *sv_hostname;
 cvar_t         *sv_master[MAX_MASTER_SERVERS];	// master server ip address

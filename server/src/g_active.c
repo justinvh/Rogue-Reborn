@@ -1261,6 +1261,9 @@ void ClientThink_real(gentity_t * ent)
 	pm.fixedPmove = pm_fixedPmove.integer;
 	pm.fixedPmoveFPS = pm_fixedPmoveFPS.integer;
 
+	pm.allowLeaning = pm_allowLeaning.integer;
+	pm.allowLeaningWithMovement = pm_allowLeaningWithMovement.integer;
+
 	VectorCopy(client->ps.origin, client->oldOrigin);
 
 #ifdef MISSIONPACK
