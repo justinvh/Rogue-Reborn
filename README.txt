@@ -47,16 +47,24 @@ Rogue Reborn dependencies are platform-specific.
 
 Windows:
 	OpenAL - http://goo.gl/0t2P
+	V8 - V8 is included for Windows, but you need 7zip (http://goo.gl/E4wo)
+	     to unpack the file. Unpack it from:
+	     ./engine/dep/v8/lib/v8.7z to ./engine/dep/v8/lib/v8.lib.
+	     "Why .7z? Because 7mb vs 2mb is a big difference in terms of
+	     a repository. Plus, the lzma is nice."
 	
 
 Linux:
 	SDL 1.2 - Use your local package manager
 	CURL >= 7.15.5 - Use your local package manager.
 	OpenAL - http://goo.gl/TWaz
+	V8 - Either use your local package manager or get the latest
+             stable branch by running svn:
+	     "svn checkout http://v8.googlecode.com/svn/trunk/ v8"
 
-Windows uses SDL and CURL as well, but they are pre-built binaries
-included with Rogue Reborn. These can be found in ./engine/dep/curl and
-./engine/dep/sdl.
+Windows uses SDL, CURL, and V8 as well, but they are pre-built binaries
+included with Rogue Reborn. These can be found in ./engine/dep/curl,
+./engine/dep/sdl, and ./engine/dep/v8.
 
 
 

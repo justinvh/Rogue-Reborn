@@ -673,8 +673,16 @@ void            UI_SPSkillMenu_Cache(void);
 void            trap_Print(const char *string);
 void            trap_Error(const char *string);
 int             trap_Milliseconds(void);
-void            trap_Cvar_Register(vmCvar_t * vmCvar, const char *varName, const char *defaultValue, int flags);
-void            trap_Cvar_Update(vmCvar_t * vmCvar);
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+void			trap_Cvar_Register(vmCvar_t * cvar, const char *var_name, const char *value, int flags);
+void			trap_Cvar_Update(vmCvar_t * cvar);
+#if defined(__cplusplus)
+} 
+#endif
+
 void            trap_Cvar_Set(const char *var_name, const char *value);
 float           trap_Cvar_VariableValue(const char *var_name);
 void            trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);

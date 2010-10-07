@@ -31,6 +31,18 @@ USER INTERFACE MAIN
 
 
 #include <hat/gui/ui_local.h>
+#include <hat/gui/element.hpp>
+#include <hat/gui/gui.hpp>
+#include <fstream>
+
+namespace hat {
+	struct Gui_state { bool good; Gui gui; };
+};
+
+namespace {
+	std::map<int, hat::Gui_state> available_guis;
+	hat::Gui* active_gui;
+};
 
 
 /*
@@ -49,38 +61,55 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
 		case UI_GETAPIVERSION:
 			return UI_API_VERSION;
 
-		case UI_INIT:
-			UI_Init();
+		case UI_INIT: {
+			hat::Gui menu_init("base/guis/init.js");
+			menu_init.shutdown();
 			return 0;
+		}
 
 		case UI_SHUTDOWN:
-			UI_Shutdown();
+			//UI_Shutdown();
 			return 0;
 
 		case UI_KEY_EVENT:
-			UI_KeyEvent(arg0, arg1);
+			//UI_KeyEvent(arg0, arg1);
 			return 0;
 
 		case UI_MOUSE_EVENT:
-			UI_MouseEvent(arg0, arg1);
+			//UI_MouseEvent(arg0, arg1);
 			return 0;
 
 		case UI_REFRESH:
-			UI_Refresh(arg0);
+			//UI_Refresh(arg0);
 			return 0;
 
 		case UI_IS_FULLSCREEN:
-			return UI_IsFullscreen();
-
-		case UI_SET_ACTIVE_MENU:
-			UI_SetActiveMenu(arg0);
 			return 0;
+			//return UI_IsFullscreen();
+
+		case UI_SET_ACTIVE_MENU: {
+			// We're in a "main" menu state
+			trap_Key_SetCatcher(KEYCATCH_UI);
+			const char* menu = hat::Gui::engine_menu_exists(arg0);
+
+			// The really bad case
+			if (!menu) {
+				Com_Error(ERR_FATAL, "The engine menu `%s` did not have a corresponding GUI.", hat::Gui::engine_menu_name(arg0));
+				return -1;
+			}
+
+			hat::Gui gui(menu);
+			if (gui.in_exception_state()) {
+				const hat::Gui_exception& e = gui.exception();
+				//Com_Error(ERR_FATAL, "<%s>:%d - %s", e.file(), e.line(), e.message());
+			}
+		}
 
 		case UI_CONSOLE_COMMAND:
-			return UI_ConsoleCommand(arg0);
+			//return UI_ConsoleCommand(arg0);
 
 		case UI_DRAW_CONNECT_SCREEN:
-			UI_DrawConnectScreen(arg0);
+			//UI_DrawConnectScreen(arg0);
 			return 0;
 	}
 

@@ -29,6 +29,8 @@ set(ENGINE_INCLUDE_TOPLEVEL_DIR "../engine/include")
 set(ENGINE_INCLUDE_ENGINE_DIR "${ENGINE_INCLUDE_TOPLEVEL_DIR}/hat/engine")
 set(ENGINE_SRC_DIR "../engine/src")
 
+find_package(V8 REQUIRED)
+
 # Source lists
 
 set(GUI_SRC_ENGINE_SHARED_LIST
@@ -41,6 +43,9 @@ set(GUI_SRC_HEADER_LIST
 	"${GUI_INCLUDE_GUI_DIR}/menudef.h"
 	"${GUI_INCLUDE_GUI_DIR}/ui_local.h"
 	"${GUI_INCLUDE_GUI_DIR}/ui_public.h"
+	"${GUI_INCLUDE_GUI_DIR}/element.hpp"
+	"${GUI_INCLUDE_GUI_DIR}/gui.hpp"
+	"${GUI_INCLUDE_GUI_DIR}/easy.hpp"
 )
 
 set(GUI_SRC_LIST
@@ -52,8 +57,17 @@ set(GUI_SRC_LIST
 	# Gui definitions
 	"${GUI_INCLUDE_GUI_DIR}/gui.def"
 	# Gui specific code
-	"${GUI_SRC_DIR}/ui_addbots.c"
+	"${GUI_SRC_DIR}/ui_main.cpp"
+	"${GUI_SRC_DIR}/ui_syscalls.c"
 	"${GUI_SRC_DIR}/ui_atoms.c"
+	# New gui
+	"${GUI_SRC_DIR}/element.cpp"
+	"${GUI_SRC_DIR}/gui.cpp"
+	"${GUI_SRC_DIR}/easy.cpp"
+)
+
+set(GUI_SRC_EXT_LIST
+	"${GUI_SRC_DIR}/ui_addbots.c"
 	"${GUI_SRC_DIR}/ui_cinematics.c"
 	"${GUI_SRC_DIR}/ui_confirm.c"
 	"${GUI_SRC_DIR}/ui_connect.c"
@@ -64,7 +78,6 @@ set(GUI_SRC_LIST
 	"${GUI_SRC_DIR}/ui_gameinfo.c"
 	"${GUI_SRC_DIR}/ui_ingame.c"
 	"${GUI_SRC_DIR}/ui_loadconfig.c"
-	"${GUI_SRC_DIR}/ui_main.c"
 	"${GUI_SRC_DIR}/ui_menu.c"
 	"${GUI_SRC_DIR}/ui_mfield.c"
 	"${GUI_SRC_DIR}/ui_mods.c"
@@ -88,7 +101,6 @@ set(GUI_SRC_LIST
 	"${GUI_SRC_DIR}/ui_spreset.c"
 	"${GUI_SRC_DIR}/ui_spskill.c"
 	"${GUI_SRC_DIR}/ui_startserver.c"
-	"${GUI_SRC_DIR}/ui_syscalls.c"
 	"${GUI_SRC_DIR}/ui_team.c"
 	"${GUI_SRC_DIR}/ui_teamorders.c"
 	"${GUI_SRC_DIR}/ui_video.c"
@@ -109,7 +121,12 @@ include_directories(
 	"${CLIENT_INCLUDE_TOPLEVEL_DIR}"
 	"${GUI_INCLUDE_TOPLEVEL_DIR}"
 	"${RENDERER_INCLUDE_TOPLEVEL_DIR}"
+	"${V8_INCLUDE_DIR}"
 )
+
+if(WIN32)
+	set(OS_SPECIFIC_LIBRARIES "winmm.lib" "ws2_32.lib")
+endif()
 
 # Group the source code
 source_group("Header Files" FILES ${GUI_SRC_HEADER_LIST} ${GUI_SRC_ENGINE_SHARED_LIST})
@@ -117,12 +134,12 @@ source_group("Source Files" FILES ${GUI_SRC_LIST})
 
 # Setup the library 
 add_library(gui SHARED ${GUI_SRC_ALL_LIST})
-
+target_link_libraries(gui ${V8_LIBRARY} ${OS_SPECIFIC_LIBRARIES})
 set_target_properties(gui PROPERTIES PREFIX "")
 
 if(WIN32)
-set_target_properties(gui PROPERTIES LINK_FLAGS
-	"/BASE:0x40000000 /DYNAMICBASE:NO"
-)
+	set_target_properties(gui PROPERTIES LINK_FLAGS
+		"/BASE:0x40000000 /DYNAMICBASE:NO"
+	)
 endif()
 
