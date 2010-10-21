@@ -66,7 +66,7 @@ struct Element_attributes
 	float background_color[3];
 	Border_attributes borders[4];
 	Element* parent;
-
+	v8::Handle<v8::Value> self;
 };
 
 /*
@@ -81,9 +81,14 @@ public:
 	virtual ~Element() { };	
 
 	/*
-	A think method is a method that is called 1 per frame.
+	A think method is a method that is called 60 per frame.
 	*/
 	virtual void think() = 0;
+
+	/*
+	A reference to `this` in JavaScript land.
+	*/
+	v8::Handle<v8::Value> self();
 
 	/*
 	This is an internal structure that is represented by a few macros
@@ -112,7 +117,7 @@ public:
 	is usable by JavaScript. The object can then be unwrapped at any time.
 	*/
 	static v8::Handle<v8::Object> wrap_tmpl(v8::Handle<v8::ObjectTemplate>* tmpl,
-		Element* e, Object_template_extension extension);
+		Element* e, const Extension_list& extension);
 protected:
 	Element_attributes element_attrs;
 };

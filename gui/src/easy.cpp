@@ -43,7 +43,8 @@ the internal pointer.
 */
 v8::Handle<v8::ObjectTemplate> generate_tmpl(
 	const JS_mapping* accessors, 
-	const JS_fun_mapping* funs)
+	const JS_fun_mapping* funs,
+	const Extension_list* extension_list)
 {
 	v8::Handle<v8::ObjectTemplate> element_public = v8::ObjectTemplate::New();
 	v8::Handle<v8::ObjectTemplate> element_internal = v8::ObjectTemplate::New();
@@ -52,6 +53,16 @@ v8::Handle<v8::ObjectTemplate> generate_tmpl(
 
 	add_accessors_and_fun_to_tmpl(accessors, funs, &element_public, false);
 	add_accessors_and_fun_to_tmpl(accessors, funs, &element_internal, true);
+
+	if (extension_list) {
+		for (auto ecit = extension_list->begin();
+			ecit != extension_list->end();
+			++ecit)
+		{
+			add_accessors_and_fun_to_tmpl(ecit->first, ecit->second, &element_public, false);
+			add_accessors_and_fun_to_tmpl(ecit->first, ecit->second, &element_internal, false);
+		}
+	}
 
 	element_public->Set("internal", element_internal);
 

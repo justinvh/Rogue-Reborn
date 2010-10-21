@@ -91,6 +91,13 @@ Engine_mapping engine_menus;
 
 }
 
+/*
+The constructor provides the mininum amount of work needed to
+instantiate an instance of the desired JavaScript source. It'll load
+the GUI namespace, compile, and run the JavaScript code. If there are
+any problems along the way, then an exception will occur that can be
+checked from in_exception_state() method.
+*/
 Gui::Gui(const char* js_file)
 	: js_filename(js_file)
 {
@@ -157,6 +164,11 @@ Gui::~Gui()
 	shutdown();
 }
 
+/*
+The think functions are the list of methods that are assigned to be called
+once per frame. The methods are passed to the gui.think() function. These
+act similar to jQuery's $.ready();
+*/
 void Gui::think_fun()
 {
 	if (!gui_think_funs.size()) return;
@@ -204,10 +216,13 @@ void Gui::think_fun()
 	}
 }
 
+/*
+The logic of this GUI. Everything from controlling what gets rendered to
+what runs and doesn't run. It's a powerful method.
+*/
 void Gui::think(const Gui_kbm& kbm_state)
 {
 	last_kbm_state = kbm_state;
-
 	think_fun();
 }
 
@@ -341,7 +356,7 @@ v8::Handle<v8::Object> Gui::wrap_tmpl(
 {
 	// We only need to create an "image" of the template once.
 	if (tmpl->IsEmpty()) {
-		v8::Handle<v8::ObjectTemplate> result = generate_tmpl(accessors, funs);
+		v8::Handle<v8::ObjectTemplate> result = generate_tmpl(accessors, funs, NULL);
 		result->SetInternalFieldCount(1);
 		if (extension != NULL) extension(&result);
 		*tmpl = v8::Persistent<v8::ObjectTemplate>::New(result);

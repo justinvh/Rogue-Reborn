@@ -26,6 +26,7 @@ THE SOFTWARE.
 #define HAT_GUI_EASY_HPP
 
 #include <v8.h>
+#include <vector>
 
 namespace hat {
 
@@ -186,12 +187,17 @@ struct JS_fun_mapping
 	bool is_internal;
 };
 
+
+typedef std::pair<JS_mapping*, JS_fun_mapping*> Mapping_pair;
+typedef std::vector<Mapping_pair> Extension_list;
+
 /*
 Create a new template of the wrapped getters and setters
 */
 v8::Handle<v8::ObjectTemplate> generate_tmpl(
 	const JS_mapping* accessors, 
-	const JS_fun_mapping* funs);
+	const JS_fun_mapping* funs,
+	const Extension_list* extension_list);
 
 /*
 Extend an existing template with the wrapped getters and setters.

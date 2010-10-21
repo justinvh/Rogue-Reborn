@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 
 #include <hat/gui/element.hpp>
+#include <hat/gui/gui.hpp>
 
 namespace hat {
 
@@ -146,6 +147,17 @@ JS_GETTER_CLASS(Element, active)
 	return v8::Boolean::New(e->element_attrs.active);
 }
 
+/*
+This allows an object to return itself as a JavaScript object so there
+can be a self reference, aka `this`. That way when the methods are being
+applied on the JavaScript object they are not in the global context, but
+rather in the execution scope/context that the object was created in.
+*/
+v8::Handle<v8::Value> Element::self()
+{
+	return element_attrs.self;
+}
+
 
 /*
 The only way to expose classes to JavaScript natively is to wrap the
@@ -156,21 +168,26 @@ is dictated by the container, which in this case is the active Gui.
 v8::Handle<v8::Object> Element::wrap_tmpl(
 	v8::Handle<v8::ObjectTemplate>* tmpl, 
 	Element* e, 
-	Object_template_extension extension)
+	const Extension_list& extension_list)
 {
-	// We only need to create an "image" of the template once.
+	v8::HandleScope handle_scope;
+
+	// We only need to create the template once.
 	if (tmpl->IsEmpty()) {
-		v8::Handle<v8::ObjectTemplate> result = generate_tmpl(accessors, funs);
+		v8::Handle<v8::ObjectTemplate> result = generate_tmpl(accessors, funs, &extension_list);
 		result->SetInternalFieldCount(1);
-		if (extension != NULL) extension(&result);
 		*tmpl = v8::Persistent<v8::ObjectTemplate>::New(result);
 	}
 
 	// The active Gui is all we care about
-
 	v8::Handle<v8::External> class_ptr = v8::External::New(e);
 	v8::Handle<v8::Object> result = (*tmpl)->NewInstance();
 	result->SetInternalField(0, class_ptr);
+	e->element_attrs.self = v8::Persistent<v8::Object>::New(handle_scope.Close(result));
+
+	// Now add it to the GUI that is in memory.
+	Gui* gui = unwrap_global_pointer<Gui>(0);
+	gui->add_element(e);
 	return result;
 }
 

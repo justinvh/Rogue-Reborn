@@ -143,6 +143,14 @@ public:
 	const Gui_exception& exception();
 
 	/*
+	Adds an element to the current GUI.
+	*/
+	void add_element(Element* element)
+	{
+		pending_elements.push_back(element);
+	}
+
+	/*
 	Returns the name of the menu if the menu exists.
 	*/
 	static void engine_menu_clear();
