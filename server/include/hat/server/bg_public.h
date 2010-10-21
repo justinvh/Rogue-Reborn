@@ -244,7 +244,7 @@ typedef struct
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles
-void            PM_UpdateViewAngles(playerState_t * ps, const usercmd_t * cmd);
+void            PM_UpdateViewAngles(playerState_t * ps, usercmd_t * cmd);
 void            Pmove(pmove_t * pmove);
 
 //===================================================================================
