@@ -193,11 +193,13 @@ typedef enum
 	UI_CONSOLE_COMMAND,
 //  qboolean UI_ConsoleCommand( int realTime );
 
-	UI_DRAW_CONNECT_SCREEN
+	UI_DRAW_CONNECT_SCREEN,
 //  void    UI_DrawConnectScreen( qboolean overlay );
 // if !overlay, the background will be drawn, otherwise it will be
 // overlayed over whatever the cgame has drawn.
 // a GetClientState syscall will be made to get the current strings
+
+    UI_RECOMPILE
 } uiExport_t;
 
 #endif

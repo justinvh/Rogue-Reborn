@@ -40,7 +40,7 @@ void QDECL Com_Error(int level, const char *error, ...)
 	Q_vsnprintf(text, sizeof(text), error, argptr);
 	va_end(argptr);
 
-	trap_Error(va("%s", text));
+	trap_Error(level, va("%s", text));
 }
 
 void QDECL Com_Printf(const char *msg, ...)

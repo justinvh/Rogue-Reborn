@@ -43,9 +43,9 @@ void trap_Print(const char *string)
 	syscall(UI_PRINT, string);
 }
 
-void trap_Error(const char *string)
+void trap_Error(int code, const char *string)
 {
-	syscall(UI_ERROR, string);
+	syscall(UI_ERROR, code, string);
 }
 
 int trap_Milliseconds(void)

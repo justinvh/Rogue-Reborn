@@ -36,12 +36,22 @@ USER INTERFACE MAIN
 #include <fstream>
 
 namespace hat {
-	struct Gui_state { bool good; Gui gui; };
+	struct Gui_state { 
+		Gui_state() : bad(false) { }
+		const char* js_file;
+		bool bad; 
+		Gui gui; 
+	};
 };
 
 namespace {
-	std::map<int, hat::Gui_state> available_guis;
+	typedef std::map<int, hat::Gui_state> Cached_gui;
+	Cached_gui available_guis;
 	hat::Gui* active_gui;
+	hat::Gui_kbm kbm_state;
+	const char* broken_menu;
+	int last_time = 0;
+	int active_index = -1;
 };
 
 
@@ -62,47 +72,122 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
 			return UI_API_VERSION;
 
 		case UI_INIT: {
+			trap_Key_SetCatcher(KEYCATCH_UI);
+			// There is a general initialization script that is run
+			// for the GUI subsystem. This basically makes sure that we
+			// have some correlation between the GUI and the rest of
+			// the engine.
 			hat::Gui menu_init("base/guis/init.js");
-			menu_init.shutdown();
+			kbm_state.reset_all();
 			return 0;
 		}
 
 		case UI_SHUTDOWN:
-			//UI_Shutdown();
+			active_gui =  NULL;
+			broken_menu = NULL;
+			kbm_state.reset_all();
+			available_guis.clear();
+			hat::Gui::engine_menu_clear();
 			return 0;
 
 		case UI_KEY_EVENT:
-			//UI_KeyEvent(arg0, arg1);
+			kbm_state.key = arg0;
+			kbm_state.down = (bool)arg1;
 			return 0;
 
 		case UI_MOUSE_EVENT:
-			//UI_MouseEvent(arg0, arg1);
+			kbm_state.mx += arg0;
+			kbm_state.my += arg1;
 			return 0;
 
 		case UI_REFRESH:
-			//UI_Refresh(arg0);
+			// Whenever a refresh() is called, then we just call think()
+			// on the GUI with the new KBM state. It's important to reset
+			// the keys after the think() so we can figure out a new key
+			// state after.
+			if (!active_gui || arg0 - last_time < 60) return -1;
+			active_gui->think(kbm_state);
+			kbm_state.reset_keys();
+			last_time = arg0;
+
+			// Make sure that we didn't enter a run-time exception.
+			// If this happens, then we need to set the state of the
+			// GUI to invalid and alert the developer.
+			if (active_gui->in_exception_state()) {
+				const hat::Gui_exception& e = active_gui->exception();
+				Com_Error(ERR_GUI, "<%s>:%d - %s", e.file.c_str(), e.line, e.message.c_str());
+				available_guis[active_index].bad = true;
+				broken_menu = active_gui->js_filename;
+				active_index = -1;
+				active_gui = NULL;
+			}
+		
 			return 0;
 
 		case UI_IS_FULLSCREEN:
 			return 0;
 			//return UI_IsFullscreen();
 
+		case UI_RECOMPILE:
 		case UI_SET_ACTIVE_MENU: {
-			// We're in a "main" menu state
-			trap_Key_SetCatcher(KEYCATCH_UI);
-			const char* menu = hat::Gui::engine_menu_exists(arg0);
+			auto ci = available_guis.find(arg0);
 
-			// The really bad case
-			if (!menu) {
-				Com_Error(ERR_FATAL, "The engine menu `%s` did not have a corresponding GUI.", hat::Gui::engine_menu_name(arg0));
+			// Reset the active states
+			active_index = -1;
+			active_gui = NULL;
+
+			// We can be in this state in two conditions. The first is that
+			// we are setting a new menu, switching menus, or verifying
+			// contexts. The second is that we are recompiling code
+			// as a developer.
+			if (ci == available_guis.end() || command == UI_RECOMPILE) {
+				const char* menu = broken_menu == NULL ? 
+					hat::Gui::engine_menu_exists(arg0) : broken_menu;
+
+				// If we get the case that a menu represented in the engine
+				// does not have a GUI representation, then we are in a
+				// whole lot of bad.
+				if (!menu) {
+					Com_Error(ERR_FATAL, "The engine menu `%s` did not have a corresponding GUI.", hat::Gui::engine_menu_name(arg0));
+					return -1;
+				}
+
+				// Create the GUI, check for exceptions, and do a few bits
+				// of reporting to ensure everything looks right. The GUI
+				// will be put into a state regardless of the success of
+				// the constructor.
+				hat::Gui gui(menu);
+				hat::Gui_state gui_state;
+				if (gui.in_exception_state()) {
+					const hat::Gui_exception& e = gui.exception();
+					gui_state.bad = true;
+					gui.shutdown();
+					Com_Error(ERR_GUI, "<%s>:%d - %s", e.file.c_str(), e.line, e.message.c_str());
+				}
+
+				// This is the actual setting of the state for the GUI
+				gui_state.js_file = menu;
+				gui_state.gui = gui;
+				available_guis[arg0] = gui_state;
+				active_gui = &available_guis[arg0].gui;
+				active_index = arg0;
+				return 0;
+			}
+
+			// The GUI is already in a bad state and the developer
+			// doesn't want to lend a hand, so we ignore this pass.
+			// Ensure that the active_gui is null so we don't start trying
+			// to activate it.
+			if (ci->second.bad) {
+				active_gui = NULL;
 				return -1;
 			}
 
-			hat::Gui gui(menu);
-			if (gui.in_exception_state()) {
-				const hat::Gui_exception& e = gui.exception();
-				//Com_Error(ERR_FATAL, "<%s>:%d - %s", e.file(), e.line(), e.message());
-			}
+			// Everything looks good, now we can just set the active_gui
+			// correctly so the refreshes and thinks work.
+			active_gui = &ci->second.gui;
+			active_index = arg0;
+			return 0;
 		}
 
 		case UI_CONSOLE_COMMAND:

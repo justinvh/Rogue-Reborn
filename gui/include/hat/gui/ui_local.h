@@ -30,6 +30,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <hat/engine/keycodes.h>
 #include <hat/server/bg_public.h>
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 typedef void    (*voidfunc_f) (void);
 
 extern vmCvar_t ui_ffa_fraglimit;
@@ -671,17 +675,12 @@ void            UI_SPSkillMenu_Cache(void);
 // ui_syscalls.c
 //
 void            trap_Print(const char *string);
-void            trap_Error(const char *string);
+void            trap_Error(int code, const char *string);
 int             trap_Milliseconds(void);
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+
 void			trap_Cvar_Register(vmCvar_t * cvar, const char *var_name, const char *value, int flags);
 void			trap_Cvar_Update(vmCvar_t * cvar);
-#if defined(__cplusplus)
-} 
-#endif
 
 void            trap_Cvar_Set(const char *var_name, const char *value);
 float           trap_Cvar_VariableValue(const char *var_name);
@@ -864,5 +863,9 @@ void            UI_SignupMenu(void);
 //
 void            RankStatus_Cache(void);
 void            UI_RankStatusMenu(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

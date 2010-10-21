@@ -821,7 +821,7 @@ intptr_t CL_UISystemCalls(intptr_t * args)
 	switch (args[0])
 	{
 		case UI_ERROR:
-			Com_Error(ERR_DROP, "%s", (const char *)VMA(1));
+			Com_Error(VMA(1), "%s", (const char *)VMA(2));
 			return 0;
 
 		case UI_PRINT:
@@ -1261,6 +1261,21 @@ void CL_InitUI(void)
 	// reset any CVAR_CHEAT cvars registered by ui
 	if(!clc.demoplaying && !cl_connectedToCheatServer)
 		Cvar_SetCheatState();
+}
+
+/*
+====================
+CL_RecompileUI(void)
+====================
+*/
+#define UI_OLD_API_VERSION	4
+
+void CL_RecompileUI(void)
+{
+	if(!uivm)
+		return;
+
+	VM_Call(uivm, UI_RECOMPILE);
 }
 
 /*

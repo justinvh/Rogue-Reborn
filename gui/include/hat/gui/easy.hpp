@@ -57,10 +57,7 @@ template <class T>
 T* unwrap_global_pointer(int index)
 {
 	void* p = v8::Context::GetCurrent()->Global()->GetPointerFromInternalField(index);
-	if (dynamic_cast<T*>(p)) {
-		return static_cast<T*>(p);
-	}
-	return NULL;
+	return reinterpret_cast<T*>(p);
 }
 
 /*
@@ -80,10 +77,10 @@ class and an accessor from JavaScript.
 		const v8::AccessorInfo& info)
 
 #define JS_GETTER_CALLER(klass, method) \
-	klass::##JS_INTERNAL(klass)::js_getter_##method
+	klass::JS_internal_##klass::js_getter_##method
 
 #define JS_GETTER_CLASS(klass, method) \
-	v8::Handle<v8::Value> JS_GETTER_CALLER(klass,method)##(v8::Local<v8::String> name, \
+	v8::Handle<v8::Value> JS_GETTER_CALLER(klass,method)(v8::Local<v8::String> name, \
 		const v8::AccessorInfo& info)
 
 /*
@@ -95,10 +92,10 @@ class and an accessor from JavaScript.
 		const v8::AccessorInfo& info)
 
 #define JS_SETTER_CALLER(klass, method) \
-	klass::##JS_INTERNAL(klass)::js_setter_##method
+	klass::JS_internal_##klass::js_setter_##method
 
 #define JS_SETTER_CLASS(klass, method) \
-	void JS_SETTER_CALLER(klass, method)##(v8::Local<v8::String> name, \
+	void JS_SETTER_CALLER(klass, method)(v8::Local<v8::String> name, \
 		v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 
 /*
@@ -136,13 +133,13 @@ JS_Mapping. See src/element.cpp for an example (accessors[])
 A wrapper around defining functions.
 */
 #define JS_FUN_CALLER(klass, method) \
-	klass::##JS_INTERNAL(klass)::js_fun_##method
+	klass::JS_internal_##klass::js_fun_##method
 
 #define JS_FUN(method) \
 	static v8::Handle<v8::Value> js_fun_##method(const v8::Arguments& args)
 
 #define JS_FUN_CLASS(klass, method) \
-	v8::Handle<v8::Value> JS_FUN_CALLER(klass, method)##(const v8::Arguments& args)
+	v8::Handle<v8::Value> JS_FUN_CALLER(klass, method)(const v8::Arguments& args)
 
 /*
 Map methods to define functions when constructing an intializer list for

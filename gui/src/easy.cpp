@@ -27,7 +27,7 @@ void add_accessors_and_fun_to_tmpl(
 	}
 
 	for (int i = 0; funs[i].name != NULL; i++) {
-		if (internal_methods && !funs[i].is_internal)
+		if (funs[i].is_internal && !internal_methods)
 			continue;
 		
 		(*tmpl)->Set(

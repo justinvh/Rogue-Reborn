@@ -27,6 +27,7 @@ THE SOFTWARE.
 
 #include <map>
 #include <vector>
+#include <string>
 #include <hat/gui/easy.hpp>
 
 namespace hat {
@@ -39,8 +40,20 @@ button states, that affect how different elements interact with the user.
 */
 struct Gui_kbm
 {
-	int mx, my, button;
+	int mx, my, key;
 	bool down, held;
+
+	void reset_keys()
+	{
+		key = 0;
+		down = held = false;
+	}
+
+	void reset_all()
+	{
+		mx = my = key = 0;
+		down = held = false;
+	}
 };
 
 /*
@@ -48,14 +61,14 @@ A Gui exception describing what happened and how.
 */
 struct Gui_exception
 {
-	Gui_exception() 
-		: exception_file(NULL), exception_message(NULL), exception_line(-1) { }
-	Gui_exception(const char* file, int line, const char* message)
-		: exception_file(file), exception_message(message), exception_line(line) { }
+	Gui_exception() : line(-1) { }
 
-	const char* exception_file;
-	const char* exception_message;
-	int exception_line;
+	Gui_exception(const std::string& file, int line, const std::string& message)
+		: file(file), line(line), message(message) { }
+
+	std::string file;
+	std::string message;
+	int line;
 };
 
 
@@ -84,6 +97,7 @@ public:
 			Loading the file goes bad. Unrecoverable.
 	*/
 	Gui(const char* js_file);
+	~Gui();
 
 	JS_INTERNAL_DEF(Gui)
 	{
@@ -91,6 +105,13 @@ public:
 		These are internal methods and are available via gui.internal.*
 		*/
 		JS_FUN(setup_menus);
+
+		/*
+		These are public methods and are available via gui.*
+		*/
+		JS_FUN(log);
+		JS_FUN(toString);
+		JS_FUN(think);
 	};
 
 	/*
@@ -124,6 +145,7 @@ public:
 	/*
 	Returns the name of the menu if the menu exists.
 	*/
+	static void engine_menu_clear();
 	static const char* engine_menu_exists(const int menu);
 	static const char* engine_menu_name(const int menu);
 private:
@@ -157,10 +179,16 @@ private:
 	v8::Handle<v8::ObjectTemplate> global_scope;
 	v8::Persistent<v8::ObjectTemplate> gui_tmpl;
 	v8::Handle<v8::Object> gui_ns;
-	v8::Persistent<v8::Function> gui_think_fun;
+
+	typedef std::vector<v8::Persistent<v8::Function> > Think_list;
+	Think_list gui_think_funs;
 	Gui_exception current_exception;
+	Gui_kbm last_kbm_state;
+private:
+	void think_fun();
 public:
 	v8::Persistent<v8::Context> global_context;
+	const char* js_filename;
 };
 
 }

@@ -454,6 +454,8 @@ void            CL_StartHunkUsers(qboolean rendererOnly);
 
 void            CL_Disconnect_f(void);
 void            CL_GetChallengePacket(void);
+void            CL_Gui_Restart_f(void);
+void            CL_Gui_Recompile_f(void);
 void            CL_Vid_Restart_f(void);
 void            CL_Snd_Restart_f(void);
 void            CL_StartDemoLoop(void);
@@ -652,6 +654,7 @@ int				Java_CG_LastAttacker();
 //
 void            CL_InitUI(void);
 void            CL_ShutdownUI(void);
+void            CL_RecompileUI(void);
 int             Key_GetCatcher(void);
 void            Key_SetCatcher(int catcher);
 void            LAN_LoadCachedServers(void);

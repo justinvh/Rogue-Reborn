@@ -1303,6 +1303,21 @@ void CL_KeyDownEvent(int key, unsigned time)
 	if(keys[key].repeats == 1)
 		anykeydown++;
 
+	if(keys[K_ALT].down && key == 'g')
+	{
+		Com_Printf("Restarting the GUI subsystem.\n");
+		CL_Gui_Restart_f();
+		return;
+	}
+
+	if (keys[K_CTRL].down && key == 'g')
+	{
+		Com_Printf("Issuing `recompile` command to GUI subsystem.\n");
+		CL_Gui_Recompile_f();
+		return;
+	}
+
+
 	if(keys[K_ALT].down && key == K_ENTER)
 	{
 		Cvar_SetValue("r_fullscreen", !Cvar_VariableIntegerValue("r_fullscreen"));

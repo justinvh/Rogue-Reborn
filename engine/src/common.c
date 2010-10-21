@@ -334,6 +334,12 @@ void QDECL Com_Error(int code, const char *fmt, ...)
 		com_errorEntered = qfalse;
 		longjmp(abortframe, -1);
 	}
+	else if (code == ERR_GUI)
+	{
+		Com_Printf(S_COLOR_RED "GUI ERROR: ^7%s\n^3Fix and reload GUI (alt+g).\n" S_COLOR_WHITE , com_errorMessage);
+		com_errorEntered = qfalse;
+		return;
+	}
 	else
 	{
 		CL_Shutdown(va(S_COLOR_RED "Client fatal crashed: %s" S_COLOR_WHITE, com_errorMessage));
