@@ -25,7 +25,7 @@ THE SOFTWARE.
 #include <hat/gui/image.hpp>
 
 namespace hat {
-
+   
 namespace {
 /*
 This is a list of accessors made available through the Image class.
@@ -34,8 +34,8 @@ They will be looped over and added to the accessor list when a template
 is constructed.
 */
 JS_mapping accessors[] = {
-	JS_MAP(Image, src),
-	{ NULL, NULL, NULL } // Signals the end of the accessor list
+    JS_MAP(Image, src),
+    { NULL, NULL, NULL } // Signals the end of the accessor list
 };
 
 /*
@@ -45,7 +45,7 @@ They will be looped over and added to the function list when a template
 is constructued.
 */
 JS_fun_mapping funs[] = {
-	{ NULL, NULL, NULL } // Signlas the end of the function list
+    { NULL, NULL, NULL } // Signlas the end of the function list
 };
 }
 
@@ -53,22 +53,22 @@ JS_fun_mapping funs[] = {
 */
 JS_SETTER_CLASS(Image, src)
 {
-	Image* i = unwrap<Image>(info.Holder());
-	//i->image_attributes.src = value->BooleanValue();
+    Image* i = unwrap<Image>(info.Holder());
+    //i->image_attributes.src = value->BooleanValue();
 }
 
 /*
 */
 JS_GETTER_CLASS(Image, src)
 {
-	Image* i = unwrap<Image>(info.Holder());
-	return v8::String::New(i->image_attributes.src);
+    Image* i = unwrap<Image>(info.Holder());
+    return v8::String::New(i->image_attributes.src);
 }
 
 /*
 */
 Image::Image(const Element_attributes& element_attributes,
-	const Image_attributes& image_attributes)
+    const Image_attributes& image_attributes)
 {
 }
 
@@ -81,9 +81,16 @@ void Image::think()
 
 /*
 */
+bool Image::build_attributes(const v8::Arguments& args, Image_attributes* ia)
+{
+    return true;
+}
+
+/*
+*/
 void Image::wrap_extension_list(Extension_list* list)
 {
-	list->push_back(std::make_pair(accessors, funs));
+    list->push_back(std::make_pair(accessors, funs));
 }
 
 /*
@@ -95,21 +102,30 @@ is dictated by the container, which in this case is the active Gui.
 
 v8::Handle<v8::Value> Image::create(const v8::Arguments& args)
 {
-	static v8::Persistent<v8::ObjectTemplate> image_tmpl;
-	static Extension_list extension_list;
+    static v8::Persistent<v8::ObjectTemplate> image_tmpl;
+    static Extension_list extension_list;
 
-	// We only need to build our extension list once
-	if (!extension_list.size()) extension_list.push_back(std::make_pair(accessors, funs));
+    // We only need to build our extension list once
+    if (!extension_list.size()) extension_list.push_back(std::make_pair(accessors, funs));
 
-	// Create a new instance of the image, build the attributes,
-	// and make sure there are no problems during the build.
-	Element_attributes element_attributes;
-	Image_attributes image_attributes;
-	Image* image = new Image(element_attributes, image_attributes);
+    // Create a new instance of the image, build the attributes,
+    // and make sure there are no problems during the build.
+    Element_attributes element_attributes;
+    Image_attributes image_attributes;
 
-	// Now wrap the rest of the image
-	Element::wrap_tmpl(&image_tmpl, image, extension_list);
-	return image->self();
+    // Try to build the arguments. If an exceptions is caught, then we
+    // need to rethrow it so the GUI can catch it.
+    if (!Element::build_attributes(args, &element_attributes) ||
+        !Image::build_attributes(args, &image_attributes))
+    {
+        return v8::Undefined();
+    }
+
+    Image* image = new Image(element_attributes, image_attributes);
+
+    // Now wrap the rest of the image
+    Element::wrap_tmpl(&image_tmpl, image, extension_list);
+    return image->self();
 }
 
 }

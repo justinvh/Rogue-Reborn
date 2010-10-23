@@ -38,16 +38,16 @@ nullptr will be returned.
 template <class T>
 T* unwrap(v8::Handle<v8::Object> object_to_be_unwrapped)
 {
-	if (!object_to_be_unwrapped->InternalFieldCount()) {
-		return NULL;
-	}
+    if (!object_to_be_unwrapped->InternalFieldCount()) {
+        return NULL;
+    }
 
-	v8::Handle<v8::Value> v = object_to_be_unwrapped->GetInternalField(0);
-	if (v.IsEmpty()) {
-		return NULL;
-	}
+    v8::Handle<v8::Value> v = object_to_be_unwrapped->GetInternalField(0);
+    if (v.IsEmpty()) {
+        return NULL;
+    }
 
-	return static_cast<T*>(v8::External::Unwrap(v));
+    return static_cast<T*>(v8::External::Unwrap(v));
 }
 
 /*
@@ -57,8 +57,8 @@ appropriate object.
 template <class T>
 T* unwrap_global_pointer(int index)
 {
-	void* p = v8::Context::GetCurrent()->Global()->GetPointerFromInternalField(index);
-	return reinterpret_cast<T*>(p);
+    void* p = v8::Context::GetCurrent()->Global()->GetPointerFromInternalField(index);
+    return reinterpret_cast<T*>(p);
 }
 
 /*
@@ -74,83 +74,86 @@ Macros for defining a getter relationship between a value controlled by the
 class and an accessor from JavaScript.
 */
 #define JS_GETTER(method) \
-	static v8::Handle<v8::Value> js_getter_##method(v8::Local<v8::String> name, \
-		const v8::AccessorInfo& info)
+    static v8::Handle<v8::Value> js_getter_##method(v8::Local<v8::String> name, \
+        const v8::AccessorInfo& info)
 
 #define JS_GETTER_CALLER(klass, method) \
-	klass::JS_internal_##klass::js_getter_##method
+    klass::JS_internal_##klass::js_getter_##method
 
 #define JS_GETTER_CLASS(klass, method) \
-	v8::Handle<v8::Value> JS_GETTER_CALLER(klass,method)(v8::Local<v8::String> name, \
-		const v8::AccessorInfo& info)
+    v8::Handle<v8::Value> JS_GETTER_CALLER(klass,method)(v8::Local<v8::String> name, \
+        const v8::AccessorInfo& info)
 
 /*
 Macros for defining a setter relationship between a value controlled by the
 class and an accessor from JavaScript.
 */
 #define JS_SETTER(method) \
-	static void js_setter_##method(v8::Local<v8::String> name, v8::Local<v8::Value> value, \
-		const v8::AccessorInfo& info)
+    static void js_setter_##method(v8::Local<v8::String> name, v8::Local<v8::Value> value, \
+        const v8::AccessorInfo& info)
 
 #define JS_SETTER_CALLER(klass, method) \
-	klass::JS_internal_##klass::js_setter_##method
+    klass::JS_internal_##klass::js_setter_##method
 
 #define JS_SETTER_CLASS(klass, method) \
-	void JS_SETTER_CALLER(klass, method)(v8::Local<v8::String> name, \
-		v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+    void JS_SETTER_CALLER(klass, method)(v8::Local<v8::String> name, \
+        v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 
 /*
 A wrapper around both the setter and getter for declarations
 */
 #define JS_GETTER_AND_SETTER(method) \
-	static v8::Handle<v8::Value> js_getter_##method(v8::Local<v8::String> name, \
-		const v8::AccessorInfo& info); \
-	static void js_setter_##method(v8::Local<v8::String> name, v8::Local<v8::Value> value, \
-		const v8::AccessorInfo& info);
+    static v8::Handle<v8::Value> js_getter_##method(v8::Local<v8::String> name, \
+        const v8::AccessorInfo& info); \
+    static void js_setter_##method(v8::Local<v8::String> name, v8::Local<v8::Value> value, \
+        const v8::AccessorInfo& info);
 
 /*
 Map methods to define accessors when constructing an initializer list for
 JS_Mapping. See src/element.cpp for an example (accessors[])
 */
 #define JS_MAP(klass, method) \
-	{ #method , JS_GETTER_CALLER(klass, method), JS_SETTER_CALLER(klass, method), false }
+    { #method , JS_GETTER_CALLER(klass, method), JS_SETTER_CALLER(klass, method), false }
 
 #define JS_MAP_INTERNAL(klass, method) \
-	{ #method , JS_GETTER_CALLER(klass, method), JS_SETTER_CALLER(klass, method), true }
+    { #method , JS_GETTER_CALLER(klass, method), JS_SETTER_CALLER(klass, method), true }
 
 #define JS_MAP_GETTER(klass, method) \
-	{ #method , JS_GETTER_CALLER(klass, method), NULL, false }
+    { #method , JS_GETTER_CALLER(klass, method), NULL, false }
 
 #define JS_MAP_GETTER_INTERNAL(klass, method) \
-	{ #method , JS_GETTER_CALLER(klass, method), NULL, true}
+    { #method , JS_GETTER_CALLER(klass, method), NULL, true}
 
 #define JS_MAP_SETTER(klass, method) \
-	{ #method , NULL, JS_SETTER_CALLER(klass, method), false }
+    { #method , NULL, JS_SETTER_CALLER(klass, method), false }
 
 #define JS_MAP_SETTER_INTERNAL(klass, method) \
-	{ #method , NULL, JS_SETTER_CALLER(klass, method), true }
+    { #method , NULL, JS_SETTER_CALLER(klass, method), true }
 
 /*
 A wrapper around defining functions.
 */
 #define JS_FUN_CALLER(klass, method) \
-	klass::JS_internal_##klass::js_fun_##method
+    klass::JS_internal_##klass::js_fun_##method
 
 #define JS_FUN(method) \
-	static v8::Handle<v8::Value> js_fun_##method(const v8::Arguments& args)
+    static v8::Handle<v8::Value> js_fun_##method(const v8::Arguments& args)
 
 #define JS_FUN_CLASS(klass, method) \
-	v8::Handle<v8::Value> JS_FUN_CALLER(klass, method)(const v8::Arguments& args)
+    v8::Handle<v8::Value> JS_FUN_CALLER(klass, method)(const v8::Arguments& args)
 
 /*
 Map methods to define functions when constructing an intializer list for
 JS_fun_mapping.
 */
 #define JS_FUN_MAP(klass, method) \
-	{ #method , JS_FUN_CALLER(klass, method), false }
+    { #method , JS_FUN_CALLER(klass, method), false }
 
 #define JS_FUN_MAP_INTERNAL(klass, method) \
-	{ #method , JS_FUN_CALLER(klass, method), true }
+    { #method , JS_FUN_CALLER(klass, method), true }
+
+#define JS_CLASS_INVOCATION(klass) \
+    { #klass, klass::create, false }
 
 /*
 These typedefs are used for creating the shorthand mapping of the name to
@@ -170,10 +173,10 @@ See src/element.cpp's accessor initializer list (accessors[])
 */
 struct JS_mapping
 {
-	const char* name;
-	JS_getter getter;
-	JS_setter setter;
-	bool is_internal;
+    const char* name;
+    JS_getter getter;
+    JS_setter setter;
+    bool is_internal;
 };
 
 /*
@@ -182,9 +185,9 @@ corresponding function. This is used to define the available functions.
 */
 struct JS_fun_mapping
 {
-	const char* name;
-	JS_fun fun;
-	bool is_internal;
+    const char* name;
+    JS_fun fun;
+    bool is_internal;
 };
 
 
@@ -195,18 +198,55 @@ typedef std::vector<Mapping_pair> Extension_list;
 Create a new template of the wrapped getters and setters
 */
 v8::Handle<v8::ObjectTemplate> generate_tmpl(
-	const JS_mapping* accessors, 
-	const JS_fun_mapping* funs,
-	const Extension_list* extension_list);
+    const JS_mapping* accessors, 
+    const JS_fun_mapping* funs,
+    const Extension_list* extension_list);
 
 /*
 Extend an existing template with the wrapped getters and setters.
 */
 void add_accessors_and_fun_to_tmpl(
-	const JS_mapping* accessors, 
-	const JS_fun_mapping* funs,
-	v8::Handle<v8::ObjectTemplate>* tmpl,
-	bool internal_accessors);
+    const JS_mapping* accessors, 
+    const JS_fun_mapping* funs,
+    v8::Handle<v8::ObjectTemplate>* tmpl,
+    bool internal_accessors);
 }
+
+#define JS_STR_TO_STL(v8str) *v8::String::Utf8Value(v8str)
+
+#define JS_BA_STR(lhs, rhs, error) \
+    if (!rhs->IsString() && !rhs.IsEmpty()) { \
+        v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
+        return false; \
+    } \
+    lhs = JS_STR_TO_STL(rhs->ToString());
+
+#define JS_BA_STR_REQUIRED(lhs, rhs, error) \
+    if (!rhs->IsString() || rhs.IsEmpty()) { \
+        v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
+        return false; \
+    } \
+    lhs = JS_STR_TO_STL(rhs->ToString());
+
+#define JS_BA_INT(lhs, rhs, error) \
+    if (!rhs->IsInt32() && !rhs.IsEmpty()) { \
+        v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
+        return false; \
+    } \
+    lhs = rhs->Int32Value();
+
+#define JS_BA_INT_REQUIRED(lhs, rhs, error) \
+    if (!rhs->IsInt32() || rhs.IsEmpty()) { \
+        v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
+        return false; \
+    } \
+    lhs = rhs->Int32Value();
+
+#define JS_BA_BOOLEAN(lhs, rhs, error) \
+    if (!rhs->IsBoolean()) { \
+        v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
+        return false; \
+    } \
+    lhs = rhs->BooleanValue();
 
 #endif // HAT_GUI_EASY_HPP

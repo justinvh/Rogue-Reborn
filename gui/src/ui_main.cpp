@@ -169,8 +169,15 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
 				gui_state.js_file = menu;
 				gui_state.gui = gui;
 				available_guis[arg0] = gui_state;
-				active_gui = &available_guis[arg0].gui;
-				active_index = arg0;
+
+                // We're only in an active GUI if the constructor was
+                // successful, otherwise there should be an error in the
+                // console at this point.
+                if (!gui_state.bad) {
+    				active_gui = &available_guis[arg0].gui;
+    				active_index = arg0;
+                }
+
 				return 0;
 			}
 

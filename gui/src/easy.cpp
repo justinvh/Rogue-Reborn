@@ -1,4 +1,5 @@
 #include <hat/gui/easy.hpp>
+#include <hat/gui/image.hpp>
 
 namespace hat {
 
@@ -11,29 +12,29 @@ An internal method is one that will be in the *.internal.* namespace.
 */
 
 void add_accessors_and_fun_to_tmpl(
-	const JS_mapping* accessors,
-	const JS_fun_mapping* funs,
-	v8::Handle<v8::ObjectTemplate>* tmpl,
-	const bool internal_methods)
+    const JS_mapping* accessors,
+    const JS_fun_mapping* funs,
+    v8::Handle<v8::ObjectTemplate>* tmpl,
+    const bool internal_methods)
 {
-	for (int i = 0; accessors[i].name != NULL; i++) {
-		if (internal_methods && !accessors[i].is_internal)
-			continue;
+    for (int i = 0; accessors[i].name != NULL; i++) {
+        if (internal_methods && !accessors[i].is_internal)
+            continue;
 
-		(*tmpl)->SetAccessor(
-			v8::String::NewSymbol(accessors[i].name), 
-			accessors[i].getter,
-			accessors[i].setter);
-	}
+        (*tmpl)->SetAccessor(
+            v8::String::NewSymbol(accessors[i].name), 
+            accessors[i].getter,
+            accessors[i].setter);
+    }
 
-	for (int i = 0; funs[i].name != NULL; i++) {
-		if (funs[i].is_internal && !internal_methods)
-			continue;
-		
-		(*tmpl)->Set(
-			v8::String::NewSymbol(funs[i].name),
-			v8::FunctionTemplate::New(funs[i].fun));
-	}
+    for (int i = 0; funs[i].name != NULL; i++) {
+        if (funs[i].is_internal && !internal_methods)
+            continue;
+        
+        (*tmpl)->Set(
+            v8::String::NewSymbol(funs[i].name),
+            v8::FunctionTemplate::New(funs[i].fun));
+    }
 }
 
 /*
@@ -42,31 +43,31 @@ reserves a field for the to-be-determined class that will be binded in
 the internal pointer.
 */
 v8::Handle<v8::ObjectTemplate> generate_tmpl(
-	const JS_mapping* accessors, 
-	const JS_fun_mapping* funs,
-	const Extension_list* extension_list)
+    const JS_mapping* accessors, 
+    const JS_fun_mapping* funs,
+    const Extension_list* extension_list)
 {
-	v8::Handle<v8::ObjectTemplate> element_public = v8::ObjectTemplate::New();
-	v8::Handle<v8::ObjectTemplate> element_internal = v8::ObjectTemplate::New();
+    v8::Handle<v8::ObjectTemplate> element_public = v8::ObjectTemplate::New();
+    v8::Handle<v8::ObjectTemplate> element_internal = v8::ObjectTemplate::New();
 
-	element_public->SetInternalFieldCount(1);
+    element_public->SetInternalFieldCount(1);
 
-	add_accessors_and_fun_to_tmpl(accessors, funs, &element_public, false);
-	add_accessors_and_fun_to_tmpl(accessors, funs, &element_internal, true);
+    add_accessors_and_fun_to_tmpl(accessors, funs, &element_public, false);
+    add_accessors_and_fun_to_tmpl(accessors, funs, &element_internal, true);
 
-	if (extension_list) {
-		for (auto ecit = extension_list->begin();
-			ecit != extension_list->end();
-			++ecit)
-		{
-			add_accessors_and_fun_to_tmpl(ecit->first, ecit->second, &element_public, false);
-			add_accessors_and_fun_to_tmpl(ecit->first, ecit->second, &element_internal, false);
-		}
-	}
+    if (extension_list) {
+        for (auto ecit = extension_list->begin();
+            ecit != extension_list->end();
+            ++ecit)
+        {
+            add_accessors_and_fun_to_tmpl(ecit->first, ecit->second, &element_public, false);
+            add_accessors_and_fun_to_tmpl(ecit->first, ecit->second, &element_internal, false);
+        }
+    }
 
-	element_public->Set("internal", element_internal);
+    element_public->Set("internal", element_internal);
 
-	return element_public;
+    return element_public;
 }
 
 }

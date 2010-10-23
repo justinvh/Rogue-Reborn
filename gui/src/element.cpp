@@ -29,28 +29,28 @@ namespace hat {
 
 namespace {
 /*
-This is a list of accessors made available through the Element class.
-Any additional elements that are added to the class should be added here.
-They will be looped over and added to the accessor list when a template
-is constructed.
-*/
-JS_mapping accessors[] = {
-	JS_MAP(Element, id),
-	JS_MAP(Element, x),
-	JS_MAP(Element, y),
-	JS_MAP(Element, active),
-	{ NULL, NULL, NULL } // Signals the end of the accessor list
-};
+    This is a list of accessors made available through the Element class.
+    Any additional elements that are added to the class should be added here.
+    They will be looped over and added to the accessor list when a template
+    is constructed.
+    */
+    JS_mapping accessors[] = {
+        JS_MAP(Element, id),
+        JS_MAP(Element, x),
+        JS_MAP(Element, y),
+        JS_MAP(Element, active),
+        { NULL, NULL, NULL } // Signals the end of the accessor list
+    };
 
-/*
-This is a list of functions made availabe through the Element class.
-Any additional functions that are addeed tot he class should be added here.
-They will be looped over and added to the function list when a template
-is constructued.
-*/
-JS_fun_mapping funs[] = {
-	{ NULL, NULL, NULL } // Signlas the end of the function list
-};
+    /*
+    This is a list of functions made availabe through the Element class.
+    Any additional functions that are addeed tot he class should be added here.
+    They will be looped over and added to the function list when a template
+    is constructued.
+    */
+    JS_fun_mapping funs[] = {
+        { NULL, NULL, NULL } // Signlas the end of the function list
+    };
 }
 
 /*
@@ -60,8 +60,8 @@ converted to a hash. If it is an integer, then it is used as the hash.
 */
 JS_SETTER_CLASS(Element, id)
 {
-	Element* e = unwrap<Element>(info.Holder());
-	e->element_attrs.id = value->Int32Value();
+    Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.id = value->Int32Value();
 }
 
 /*
@@ -71,8 +71,8 @@ double precision, but it will be converted to a float.
 */
 JS_SETTER_CLASS(Element, x)
 {
-	Element* e = unwrap<Element>(info.Holder());
-	e->element_attrs.x = (float)value->NumberValue();
+    Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.x = (float)value->NumberValue();
 }
 
 /*
@@ -82,8 +82,8 @@ double precision, but it will be converted to a float.
 */
 JS_SETTER_CLASS(Element, y)
 {
-	Element* e = unwrap<Element>(info.Holder());
-	e->element_attrs.y = (float)value->NumberValue();
+    Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.y = (float)value->NumberValue();
 }
 
 /*
@@ -94,8 +94,8 @@ the element to get it to "think" again.
 */
 JS_SETTER_CLASS(Element, active)
 {
-	Element* e = unwrap<Element>(info.Holder());
-	e->element_attrs.active = value->BooleanValue();
+    Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.active = value->BooleanValue();
 }
 
 /*
@@ -105,8 +105,8 @@ the hash value will be returned.
 */
 JS_GETTER_CLASS(Element, id)
 {
-	Element* e = unwrap<Element>(info.Holder());
-	return v8::Int32::New(e->element_attrs.id);
+    Element* e = unwrap<Element>(info.Holder());
+    return v8::String::New(e->element_attrs.id.c_str());
 }
 
 /*
@@ -118,8 +118,8 @@ getting and setting.
 */
 JS_GETTER_CLASS(Element, x)
 {
-	Element* e = unwrap<Element>(info.Holder());
-	return v8::Number::New(e->element_attrs.x);
+    Element* e = unwrap<Element>(info.Holder());
+    return v8::Number::New(e->element_attrs.x);
 }
 
 /*
@@ -131,8 +131,8 @@ getting and setting.
 */
 JS_GETTER_CLASS(Element, y)
 {
-	Element* e = unwrap<Element>(info.Holder());
-	return v8::Number::New(e->element_attrs.y);
+    Element* e = unwrap<Element>(info.Holder());
+    return v8::Number::New(e->element_attrs.y);
 }
 
 /*
@@ -143,8 +143,8 @@ the element to get it to "think" again.
 */
 JS_GETTER_CLASS(Element, active)
 {
-	Element* e = unwrap<Element>(info.Holder());
-	return v8::Boolean::New(e->element_attrs.active);
+    Element* e = unwrap<Element>(info.Holder());
+    return v8::Boolean::New(e->element_attrs.active);
 }
 
 /*
@@ -155,7 +155,49 @@ rather in the execution scope/context that the object was created in.
 */
 v8::Handle<v8::Value> Element::self()
 {
-	return element_attrs.self;
+    return element_attrs.self;
+}
+
+bool Element::build_attributes(const v8::Arguments& args, Element_attributes* ea)
+{
+    if (args[0]->IsUndefined() || (!args[0]->IsObject() && args.Length() == 1) || !ea) {
+        return true;
+    }
+
+    v8::Local<v8::Object> arg_obj = args[0]->ToObject();
+
+    // Get the various values for this structure
+    v8::Local<v8::Value> id     = arg_obj->Get(v8::String::New("id"));
+    v8::Local<v8::Value> active	= arg_obj->Get(v8::String::New("active"));
+    v8::Local<v8::Value> x      = arg_obj->Get(v8::String::New("x"));
+    v8::Local<v8::Value> y      = arg_obj->Get(v8::String::New("y"));
+    v8::Local<v8::Value> width  = arg_obj->Get(v8::String::New("width"));
+    v8::Local<v8::Value> height = arg_obj->Get(v8::String::New("height"));
+    v8::Local<v8::Value> bg     = arg_obj->Get(v8::String::New("background-color"));
+    v8::Local<v8::Value> parent = arg_obj->Get(v8::String::New("parent"));
+
+    // Borders have two variations
+    v8::Local<v8::Value> border  = arg_obj->Get(v8::String::New("border"));
+    v8::Local<v8::Value> borderl = arg_obj->Get(v8::String::New("border-left"));
+    v8::Local<v8::Value> borderr = arg_obj->Get(v8::String::New("border-right"));
+    v8::Local<v8::Value> bordert = arg_obj->Get(v8::String::New("border-top"));
+    v8::Local<v8::Value> borderb = arg_obj->Get(v8::String::New("border-bottom"));
+
+    // A lot of values have to be interpreted
+    std::string bg_str;
+
+    // Assign values; the constructor of the Element_attributes is
+    // responsible for assigning initial values, so we don't do it here.
+    JS_BA_INT_REQUIRED(ea->x, x, "Expected an integer for `x`.");
+    JS_BA_INT_REQUIRED(ea->y, y, "Expected an integer for `y`.");
+    JS_BA_INT_REQUIRED(ea->width, width, "Expected an integer for `width`.");
+    JS_BA_INT_REQUIRED(ea->height, height, "Expected an integer for `height`.");
+
+    // These are values that we can live without
+    JS_BA_STR(ea->id, id, "Expected a string for `id`.");
+    JS_BA_INT(bg_str, bg, "Expected a string for `background-color`.");
+
+    return true;
 }
 
 
@@ -166,29 +208,29 @@ remains in memory during the execution of script. This responsibility
 is dictated by the container, which in this case is the active Gui.
 */
 v8::Handle<v8::Object> Element::wrap_tmpl(
-	v8::Handle<v8::ObjectTemplate>* tmpl, 
-	Element* e, 
-	const Extension_list& extension_list)
+    v8::Handle<v8::ObjectTemplate>* tmpl, 
+    Element* e, 
+    const Extension_list& extension_list)
 {
-	v8::HandleScope handle_scope;
+    v8::HandleScope handle_scope;
 
-	// We only need to create the template once.
-	if (tmpl->IsEmpty()) {
-		v8::Handle<v8::ObjectTemplate> result = generate_tmpl(accessors, funs, &extension_list);
-		result->SetInternalFieldCount(1);
-		*tmpl = v8::Persistent<v8::ObjectTemplate>::New(result);
-	}
+    // We only need to create the template once.
+    if (tmpl->IsEmpty()) {
+        v8::Handle<v8::ObjectTemplate> result = generate_tmpl(accessors, funs, &extension_list);
+        result->SetInternalFieldCount(1);
+        *tmpl = v8::Persistent<v8::ObjectTemplate>::New(result);
+    }
 
-	// The active Gui is all we care about
-	v8::Handle<v8::External> class_ptr = v8::External::New(e);
-	v8::Handle<v8::Object> result = (*tmpl)->NewInstance();
-	result->SetInternalField(0, class_ptr);
-	e->element_attrs.self = v8::Persistent<v8::Object>::New(handle_scope.Close(result));
+    // The active Gui is all we care about
+    v8::Handle<v8::External> class_ptr = v8::External::New(e);
+    v8::Handle<v8::Object> result = (*tmpl)->NewInstance();
+    result->SetInternalField(0, class_ptr);
+    e->element_attrs.self = v8::Persistent<v8::Object>::New(handle_scope.Close(result));
 
-	// Now add it to the GUI that is in memory.
-	Gui* gui = unwrap_global_pointer<Gui>(0);
-	gui->add_element(e);
-	return result;
+    // Now add it to the GUI that is in memory.
+    Gui* gui = unwrap_global_pointer<Gui>(0);
+    gui->add_element(e);
+    return result;
 }
 
 }

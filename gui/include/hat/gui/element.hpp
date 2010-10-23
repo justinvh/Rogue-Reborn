@@ -38,15 +38,15 @@ on the method of its use.
 */
 struct Border_attributes
 {
-	float width;
-	float color[4];
+    float width;
+    float color[4];
 
-	enum Border_side {
-		TOP,
-		RIGHT,
-		DOWN,
-		LEFT,
-	};
+    enum Border_side {
+        TOP,
+        RIGHT,
+        DOWN,
+        LEFT,
+    };
 };
 
 /*
@@ -57,16 +57,16 @@ initialized to 0.
 */
 struct Element_attributes
 {
-	Element_attributes() :
-		x(0), y(0), width(0), height(0), id(0) { }
-	
-	int id;
-	bool active;
-	float x, y, width, height;
-	float background_color[3];
-	Border_attributes borders[4];
-	Element* parent;
-	v8::Handle<v8::Value> self;
+    Element_attributes() :
+        x(0), y(0), width(0), height(0), id("") { }
+    
+    std::string id;
+    bool active;
+    float x, y, width, height;
+    float background_color[3];
+    Border_attributes borders[4];
+    Element* parent;
+    v8::Handle<v8::Value> self;
 };
 
 /*
@@ -78,48 +78,49 @@ to represent any sort of per-class markup.
 class Element
 {
 public:
-	virtual ~Element() { };	
+    virtual ~Element() { };	
 
-	/*
-	A think method is a method that is called 60 per frame.
-	*/
-	virtual void think() = 0;
+    /*
+    A think method is a method that is called 60 per frame.
+    */
+    virtual void think() = 0;
 
-	/*
-	A reference to `this` in JavaScript land.
-	*/
-	v8::Handle<v8::Value> self();
+    /*
+    A reference to `this` in JavaScript land.
+    */
+    v8::Handle<v8::Value> self();
 
-	/*
-	This is an internal structure that is represented by a few macros
-	to make creating setters and getters easier. There is really no
-	reason to access these methods directly. They are set as accessors
-	and made available through the interface between V8 and JavaScript.
-	*/
-	JS_INTERNAL_DEF(Element)
-	{
-		/*
-		Getters and setters for the Element_attributes.
-		*/
-		JS_GETTER_AND_SETTER(id);
-		JS_GETTER_AND_SETTER(x);
-		JS_GETTER_AND_SETTER(y);
-		JS_GETTER_AND_SETTER(width);
-		JS_GETTER_AND_SETTER(height);
-		JS_GETTER_AND_SETTER(background_color);
-		JS_GETTER_AND_SETTER(border);
-		JS_GETTER_AND_SETTER(parent);
-		JS_GETTER_AND_SETTER(active);
-	};
+    /*
+    This is an internal structure that is represented by a few macros
+    to make creating setters and getters easier. There is really no
+    reason to access these methods directly. They are set as accessors
+    and made available through the interface between V8 and JavaScript.
+    */
+    JS_INTERNAL_DEF(Element)
+    {
+        /*
+        Getters and setters for the Element_attributes.
+        */
+        JS_GETTER_AND_SETTER(id);
+        JS_GETTER_AND_SETTER(x);
+        JS_GETTER_AND_SETTER(y);
+        JS_GETTER_AND_SETTER(width);
+        JS_GETTER_AND_SETTER(height);
+        JS_GETTER_AND_SETTER(background_color);
+        JS_GETTER_AND_SETTER(border);
+        JS_GETTER_AND_SETTER(parent);
+        JS_GETTER_AND_SETTER(active);
+    };
 
-	/*
-	Wraps an instance of Element and transforms it into an object that
-	is usable by JavaScript. The object can then be unwrapped at any time.
-	*/
-	static v8::Handle<v8::Object> wrap_tmpl(v8::Handle<v8::ObjectTemplate>* tmpl,
-		Element* e, const Extension_list& extension);
+    /*
+    Wraps an instance of Element and transforms it into an object that
+    is usable by JavaScript. The object can then be unwrapped at any time.
+    */
+    static v8::Handle<v8::Object> wrap_tmpl(v8::Handle<v8::ObjectTemplate>* tmpl,
+        Element* e, const Extension_list& extension);
 protected:
-	Element_attributes element_attrs;
+    Element_attributes element_attrs;
+    static bool build_attributes(const v8::Arguments& args, Element_attributes* ea);
 };
 
 }

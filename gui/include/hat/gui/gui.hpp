@@ -40,20 +40,20 @@ button states, that affect how different elements interact with the user.
 */
 struct Gui_kbm
 {
-	int mx, my, key;
-	bool down, held;
+    int mx, my, key;
+    bool down, held;
 
-	void reset_keys()
-	{
-		key = 0;
-		down = held = false;
-	}
+    void reset_keys()
+    {
+        key = 0;
+        down = held = false;
+    }
 
-	void reset_all()
-	{
-		mx = my = key = 0;
-		down = held = false;
-	}
+    void reset_all()
+    {
+        mx = my = key = 0;
+        down = held = false;
+    }
 };
 
 /*
@@ -61,14 +61,14 @@ A Gui exception describing what happened and how.
 */
 struct Gui_exception
 {
-	Gui_exception() : line(-1) { }
+    Gui_exception() : line(-1) { }
 
-	Gui_exception(const std::string& file, int line, const std::string& message)
-		: file(file), line(line), message(message) { }
+    Gui_exception(const std::string& file, int line, const std::string& message)
+        : file(file), line(line), message(message) { }
 
-	std::string file;
-	std::string message;
-	int line;
+    std::string file;
+    std::string message;
+    int line;
 };
 
 
@@ -83,120 +83,120 @@ active at a time.
 class Gui
 {
 public:
-	/*
-	A Gui can not exist without being initialized without a JavaScript
-	file being intialized. This constructor will throw exceptions if
-	anything goes wrong. 
-	
-	Exceptions thrown:
-		o hat::Gui_compile_error
-			If the intial compilations goes bad. Unrecoverable.
-		o hat::Gui_execution_error
-			If the initial run of the script goes bad. Unrecoverable.
-		o std::ifstream::failure
-			Loading the file goes bad. Unrecoverable.
-	*/
-	Gui(const char* js_file);
-	~Gui();
+    /*
+    A Gui can not exist without being initialized without a JavaScript
+    file being intialized. This constructor will throw exceptions if
+    anything goes wrong. 
+    
+    Exceptions thrown:
+        o hat::Gui_compile_error
+            If the intial compilations goes bad. Unrecoverable.
+        o hat::Gui_execution_error
+            If the initial run of the script goes bad. Unrecoverable.
+        o std::ifstream::failure
+            Loading the file goes bad. Unrecoverable.
+    */
+    Gui(const char* js_file);
+    ~Gui();
 
-	JS_INTERNAL_DEF(Gui)
-	{
-		/*
-		These are internal methods and are available via gui.internal.*
-		*/
-		JS_FUN(setup_menus);
+    JS_INTERNAL_DEF(Gui)
+    {
+        /*
+        These are internal methods and are available via gui.internal.*
+        */
+        JS_FUN(setup_menus);
 
-		/*
-		These are public methods and are available via gui.*
-		*/
-		JS_FUN(log);
-		JS_FUN(toString);
-		JS_FUN(think);
-	};
+        /*
+        These are public methods and are available via gui.*
+        */
+        JS_FUN(log);
+        JS_FUN(toString);
+        JS_FUN(think);
+    };
 
-	/*
-	Tells the Gui instance that it is the master.
-	*/
-	void add(Element* element);
+    /*
+    Tells the Gui instance that it is the master.
+    */
+    void add(Element* element);
 
-	/*
-	This is a method that is called 1 time per frame.
-	It will run the think method for all the elements in the object
-	array given that they are active.
-	*/
-	void think(const Gui_kbm& kbm_state);
+    /*
+    This is a method that is called 1 time per frame.
+    It will run the think method for all the elements in the object
+    array given that they are active.
+    */
+    void think(const Gui_kbm& kbm_state);
 
-	/*
-	This method will cause the gui to unload all the elements that the
-	Gui is responsible for. It will also render the object useless.
-	*/
-	void shutdown();
+    /*
+    This method will cause the gui to unload all the elements that the
+    Gui is responsible for. It will also render the object useless.
+    */
+    void shutdown();
 
-	/*
-	If the Gui went into an exception state, then this will be true.
-	*/
-	bool in_exception_state();
+    /*
+    If the Gui went into an exception state, then this will be true.
+    */
+    bool in_exception_state();
 
-	/*
-	Return the exception that occured.
-	*/
-	const Gui_exception& exception();
+    /*
+    Return the exception that occured.
+    */
+    const Gui_exception& exception();
 
-	/*
-	Adds an element to the current GUI.
-	*/
-	void add_element(Element* element)
-	{
-		pending_elements.push_back(element);
-	}
+    /*
+    Adds an element to the current GUI.
+    */
+    void add_element(Element* element)
+    {
+        pending_elements.push_back(element);
+    }
 
-	/*
-	Returns the name of the menu if the menu exists.
-	*/
-	static void engine_menu_clear();
-	static const char* engine_menu_exists(const int menu);
-	static const char* engine_menu_name(const int menu);
+    /*
+    Returns the name of the menu if the menu exists.
+    */
+    static void engine_menu_clear();
+    static const char* engine_menu_exists(const int menu);
+    static const char* engine_menu_name(const int menu);
 private:
-	/*
-	It doesn't make sense to declare a Gui without a JavaScript file.
-	Nor does it make sense to allow accessible methods in the case that
-	the JavaScript file does not properly compile. However, we do need
-	container libraries to be able to have Gui objects. So, we allow those
-	on a per-container basis.
-	*/
-	Gui() { }
-	friend struct Gui_state;
+    /*
+    It doesn't make sense to declare a Gui without a JavaScript file.
+    Nor does it make sense to allow accessible methods in the case that
+    the JavaScript file does not properly compile. However, we do need
+    container libraries to be able to have Gui objects. So, we allow those
+    on a per-container basis.
+    */
+    Gui() { }
+    friend struct Gui_state;
 
-	typedef std::vector<Element*> Element_list;
-	Element_list pending_elements, available_elements;
+    typedef std::vector<Element*> Element_list;
+    Element_list pending_elements, available_elements;
 
-	/*
-	Wraps an instance of Element and transforms it into an object that
-	is usable by JavaScript. The object can then be unwrapped at any time.
-	*/
-	static v8::Handle<v8::Object> wrap_tmpl(v8::Handle<v8::ObjectTemplate>* tmpl,
-		Gui* e, Object_template_extension extension);
+    /*
+    Wraps an instance of Element and transforms it into an object that
+    is usable by JavaScript. The object can then be unwrapped at any time.
+    */
+    static v8::Handle<v8::Object> wrap_tmpl(v8::Handle<v8::ObjectTemplate>* tmpl,
+        Gui* e, Object_template_extension extension);
 
-	/*
-	In general we need the following:
-	- A global scope
-	- An object template for the `gui` namespace.
-	- The `gui` namespace itself.
-	- A sort-of "entry point" to the JavaScript file
-	*/
-	v8::Handle<v8::ObjectTemplate> global_scope;
-	v8::Persistent<v8::ObjectTemplate> gui_tmpl;
-	v8::Handle<v8::Object> gui_ns;
+    /*
+    In general we need the following:
+    - A global scope
+    - An object template for the `gui` namespace.
+    - The `gui` namespace itself.
+    - A sort-of "entry point" to the JavaScript file
+    */
+    v8::Handle<v8::ObjectTemplate> global_scope;
+    v8::Persistent<v8::ObjectTemplate> gui_tmpl;
+    v8::Handle<v8::Object> gui_ns;
 
-	typedef std::vector<v8::Persistent<v8::Function> > Think_list;
-	Think_list gui_think_funs;
-	Gui_exception current_exception;
-	Gui_kbm last_kbm_state;
+    typedef std::vector<v8::Persistent<v8::Function> > Think_list;
+    Think_list gui_think_funs;
+    Gui_exception current_exception;
+    Gui_kbm last_kbm_state;
 private:
-	void think_fun();
+    void think_fun();
 public:
-	v8::Persistent<v8::Context> global_context;
-	const char* js_filename;
+    v8::Persistent<v8::Context> global_context;
+    const char* js_filename;
 };
 
 }

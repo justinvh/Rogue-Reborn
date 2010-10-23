@@ -31,46 +31,48 @@ namespace hat {
 
 struct Image_attributes
 {
-	const char* src;
-	int src_handle;
+    const char* src;
+    int src_handle;
 };
 
 class Image :
-	public Element
+    public Element
 {
 public:
-	Image(const Element_attributes& element_attributes,
-		const Image_attributes& image_attributes);
+    Image(const Element_attributes& element_attributes,
+        const Image_attributes& image_attributes);
 
-	/*
-	The think() routine is called 60 time per frame.
-	*/
-	virtual void think();
+    /*
+    The think() routine is called 60 time per frame.
+    */
+    virtual void think();
 
-	/*
-	This is an internal structure that is represented by a few macros
-	to make creating setters and getters easier. There is really no
-	reason to access these methods directly. They are set as accessors
-	and made available through the interface between V8 and JavaScript.
-	*/
-	JS_INTERNAL_DEF(Image)
-	{
-		/*
-		Getters and setters for the Image_attributes.
-		*/
-		JS_GETTER_AND_SETTER(src);
-	};
-	
+    /*
+    This is an internal structure that is represented by a few macros
+    to make creating setters and getters easier. There is really no
+    reason to access these methods directly. They are set as accessors
+    and made available through the interface between V8 and JavaScript.
+    */
+    JS_INTERNAL_DEF(Image)
+    {
+        /*
+        Getters and setters for the Image_attributes.
+        */
+        JS_GETTER_AND_SETTER(src);
+    };
+
+    /*
+    Create a new instance of Image whenever a matching JavaScript object
+    is instanitiated. This method will only be called internally.
+    */
+    static v8::Handle<v8::Value> create(const v8::Arguments& args);
+
 protected:
-	Image_attributes image_attributes;
+    Image_attributes image_attributes;
+    static bool build_attributes(const v8::Arguments& args, Image_attributes* ia);
 
 private:
-	/*
-	Create a new instance of Image whenever a matching JavaScript object
-	is instanitiated. This method will only be called internally.
-	*/
-	static v8::Handle<v8::Value> create(const v8::Arguments& args);
-	static void wrap_extension_list(Extension_list* list);
+    static void wrap_extension_list(Extension_list* list);
 };
 
 }
