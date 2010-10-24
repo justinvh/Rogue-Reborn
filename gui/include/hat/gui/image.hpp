@@ -31,7 +31,8 @@ namespace hat {
 
 struct Image_attributes
 {
-    const char* src;
+    Image_attributes() : src_handle(-1) { }
+    std::string src;
     int src_handle;
 };
 
@@ -45,7 +46,7 @@ public:
     /*
     The think() routine is called 60 time per frame.
     */
-    virtual void think();
+    virtual void think(int ms);
 
     /*
     This is an internal structure that is represented by a few macros
@@ -68,8 +69,8 @@ public:
     static v8::Handle<v8::Value> create(const v8::Arguments& args);
 
 protected:
-    Image_attributes image_attributes;
-    static bool build_attributes(const v8::Arguments& args, Image_attributes* ia);
+    Image_attributes image_attrs;
+    static bool build_attributes(const v8::Arguments& args, Element_attributes* ea, Image_attributes* ia);
 
 private:
     static void wrap_extension_list(Extension_list* list);

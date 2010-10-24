@@ -118,6 +118,12 @@ JS_Mapping. See src/element.cpp for an example (accessors[])
 #define JS_MAP_INTERNAL(klass, method) \
     { #method , JS_GETTER_CALLER(klass, method), JS_SETTER_CALLER(klass, method), true }
 
+#define JS_MAP_CUSTOM(klass, method, name) \
+    { name, JS_GETTER_CALLER(klass, method), JS_SETTER_CALLER(klass, method), false }
+
+#define JS_MAP_CUSTOM_INTERNAL(klass, method, name) \
+    { name, JS_GETTER_CALLER(klass, method), JS_SETTER_CALLER(klass, method), true }
+
 #define JS_MAP_GETTER(klass, method) \
     { #method , JS_GETTER_CALLER(klass, method), NULL, false }
 
@@ -193,6 +199,7 @@ struct JS_fun_mapping
 
 typedef std::pair<JS_mapping*, JS_fun_mapping*> Mapping_pair;
 typedef std::vector<Mapping_pair> Extension_list;
+typedef std::vector<v8::Persistent<v8::Function> > Think_list;
 
 /*
 Create a new template of the wrapped getters and setters

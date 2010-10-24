@@ -40,7 +40,7 @@ namespace hat {
 		Gui_state() : bad(false) { }
 		const char* js_file;
 		bool bad; 
-		Gui gui; 
+		Gui* gui; 
 	};
 };
 
@@ -86,6 +86,12 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
 			active_gui =  NULL;
 			broken_menu = NULL;
 			kbm_state.reset_all();
+            for (auto iter = available_guis.begin();
+                iter != available_guis.end();
+                ++iter)
+            {
+                delete iter->second.gui;
+            }
 			available_guis.clear();
 			hat::Gui::engine_menu_clear();
 			return 0;
@@ -105,7 +111,6 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
 			// on the GUI with the new KBM state. It's important to reset
 			// the keys after the think() so we can figure out a new key
 			// state after.
-			if (!active_gui || arg0 - last_time < 60) return -1;
 			active_gui->think(kbm_state);
 			kbm_state.reset_keys();
 			last_time = arg0;
@@ -130,6 +135,8 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
 
 		case UI_RECOMPILE:
 		case UI_SET_ACTIVE_MENU: {
+            if (active_index == arg0) return 0;
+
 			auto ci = available_guis.find(arg0);
 
 			// Reset the active states
@@ -156,12 +163,12 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
 				// of reporting to ensure everything looks right. The GUI
 				// will be put into a state regardless of the success of
 				// the constructor.
-				hat::Gui gui(menu);
+                hat::Gui* gui = new hat::Gui(menu);
 				hat::Gui_state gui_state;
-				if (gui.in_exception_state()) {
-					const hat::Gui_exception& e = gui.exception();
+				if (gui->in_exception_state()) {
+					const hat::Gui_exception& e = gui->exception();
 					gui_state.bad = true;
-					gui.shutdown();
+					gui->shutdown();
 					Com_Error(ERR_GUI, "<%s>:%d - %s", e.file.c_str(), e.line, e.message.c_str());
 				}
 
@@ -174,7 +181,7 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
                 // successful, otherwise there should be an error in the
                 // console at this point.
                 if (!gui_state.bad) {
-    				active_gui = &available_guis[arg0].gui;
+    				active_gui = available_guis[arg0].gui;
     				active_index = arg0;
                 }
 
@@ -192,7 +199,7 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
 
 			// Everything looks good, now we can just set the active_gui
 			// correctly so the refreshes and thinks work.
-			active_gui = &ci->second.gui;
+			active_gui = ci->second.gui;
 			active_index = arg0;
 			return 0;
 		}

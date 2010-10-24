@@ -39,6 +39,14 @@ namespace {
         JS_MAP(Element, x),
         JS_MAP(Element, y),
         JS_MAP(Element, active),
+        JS_MAP(Element, width),
+        JS_MAP(Element, height),
+        JS_MAP(Element, parent),
+        JS_MAP(Element, border),
+        JS_MAP(Element, border_left),
+        JS_MAP(Element, border_right),
+        JS_MAP(Element, border_top),
+        JS_MAP(Element, border_bottom),
         { NULL, NULL, NULL } // Signals the end of the accessor list
     };
 
@@ -49,6 +57,7 @@ namespace {
     is constructued.
     */
     JS_fun_mapping funs[] = {
+        JS_FUN_MAP(Element, think),
         { NULL, NULL, NULL } // Signlas the end of the function list
     };
 }
@@ -93,6 +102,54 @@ In this case, another condition will have to trigger the active-ness of
 the element to get it to "think" again.
 */
 JS_SETTER_CLASS(Element, active)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.active = value->BooleanValue();
+}
+
+JS_SETTER_CLASS(Element, height)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.active = value->BooleanValue();
+}
+
+JS_SETTER_CLASS(Element, width)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.active = value->BooleanValue();
+}
+
+JS_SETTER_CLASS(Element, parent)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.active = value->BooleanValue();
+}
+
+JS_SETTER_CLASS(Element, border)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.active = value->BooleanValue();
+}
+
+JS_SETTER_CLASS(Element, border_left)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.active = value->BooleanValue();
+}
+
+JS_SETTER_CLASS(Element, border_right)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.active = value->BooleanValue();
+}
+
+JS_SETTER_CLASS(Element, border_top)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.active = value->BooleanValue();
+}
+
+JS_SETTER_CLASS(Element, border_bottom)
 {
     Element* e = unwrap<Element>(info.Holder());
     e->element_attrs.active = value->BooleanValue();
@@ -148,6 +205,124 @@ JS_GETTER_CLASS(Element, active)
 }
 
 /*
+*/
+JS_GETTER_CLASS(Element, parent)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    return v8::Boolean::New(e->element_attrs.active);
+}
+
+/*
+*/
+JS_GETTER_CLASS(Element, height)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    return v8::Boolean::New(e->element_attrs.active);
+}
+
+/*
+*/
+JS_GETTER_CLASS(Element, width)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    return v8::Boolean::New(e->element_attrs.active);
+}
+
+/*
+*/
+JS_GETTER_CLASS(Element, border)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    return v8::Boolean::New(e->element_attrs.active);
+}
+
+/*
+*/
+JS_GETTER_CLASS(Element, border_left)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    return v8::Boolean::New(e->element_attrs.active);
+}
+
+JS_GETTER_CLASS(Element, border_right)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    return v8::Boolean::New(e->element_attrs.active);
+}
+
+JS_GETTER_CLASS(Element, border_top)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    return v8::Boolean::New(e->element_attrs.active);
+}
+
+JS_GETTER_CLASS(Element, border_bottom)
+{
+    Element* e = unwrap<Element>(info.Holder());
+    return v8::Boolean::New(e->element_attrs.active);
+}
+
+/*
+A new think() call has been made. This means that we are either calling
+think without arguments (implied to call the methods themselves) or we
+are adding a new function to the list.
+*/
+JS_FUN_CLASS(Element, think)
+{
+    v8::Local<v8::Object> menu_obj = args[0]->ToObject();
+    Element* e = unwrap<Element>(args.Holder());
+
+    if (!e) {
+        return v8::Exception::Error(v8::String::New("Element has become detached?"));
+    }
+
+    // We have an actual argument to the function, we are going to need
+    // to check if the argument is a function and if it is, we append
+    // the function to the function list
+    if (args.Length() > 0) {
+        v8::Handle<v8::Value> think_val = args[0];
+        if (think_val->IsFunction()) {
+            v8::Handle<v8::Function> think_fun = v8::Handle<v8::Function>::Cast(think_val);
+            e->element_attrs.think_funs.push_back(v8::Persistent<v8::Function>::New(think_fun));
+            return args.Holder();
+        } else {
+            return v8::Exception::TypeError(v8::String::New("Expected a function, but got something else."));
+        }
+    }
+
+    e->think_fun(0);
+    return args.Holder();
+}
+
+/*
+*/
+void Element::think_fun(int ms)
+{
+    if (!element_attrs.think_funs.size()) return;
+
+    // Important, we always need to know where we are at in terms of the
+    // execution scope and context scope.
+    v8::HandleScope execution_scope;
+
+    // These will change; they are the KBM state.
+    v8::Handle<v8::Object> ms_argv = v8::Object::New();
+    ms_argv->Set(v8::Int32::New(0), v8::Int32::New(ms));
+
+    // The two arguments to the GUI think() are the timer and kbm
+    v8::Handle<v8::Value> argvs[1] = { ms_argv };
+
+    // We're in the case that the args don't exist, so now we are calling 
+    // the various methods of the think()
+    v8::TryCatch run_try_catch;
+    for (auto tci = element_attrs.think_funs.begin();
+        tci != element_attrs.think_funs.end();
+        ++tci)
+    {
+        (*tci)->Call(element_attrs.self->ToObject(), 1, argvs);
+    }
+}
+
+/*
 This allows an object to return itself as a JavaScript object so there
 can be a self reference, aka `this`. That way when the methods are being
 applied on the JavaScript object they are not in the global context, but
@@ -160,7 +335,7 @@ v8::Handle<v8::Value> Element::self()
 
 bool Element::build_attributes(const v8::Arguments& args, Element_attributes* ea)
 {
-    if (args[0]->IsUndefined() || (!args[0]->IsObject() && args.Length() == 1) || !ea) {
+    if (args.Length() > 1 || !args[0]->IsObject()) {
         return true;
     }
 

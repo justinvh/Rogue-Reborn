@@ -188,7 +188,6 @@ private:
     v8::Persistent<v8::ObjectTemplate> gui_tmpl;
     v8::Handle<v8::Object> gui_ns;
 
-    typedef std::vector<v8::Persistent<v8::Function> > Think_list;
     Think_list gui_think_funs;
     Gui_exception current_exception;
     Gui_kbm last_kbm_state;

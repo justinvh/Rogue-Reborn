@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include <fstream>
 #include <map>
 #include <string>
+#include <iterator>
 #include <sstream>
 #include <v8.h>
 #include <hat/gui/gui.hpp>
@@ -224,11 +225,45 @@ what runs and doesn't run. It's a powerful method.
 void Gui::think(const Gui_kbm& kbm_state)
 {
     last_kbm_state = kbm_state;
+
+    // Add any elements that were created during the last execution
+    std::copy(pending_elements.begin(), 
+              pending_elements.end(), 
+              std::back_inserter(available_elements));
+    pending_elements.clear();
+
+    // Call the thinks for our GUI
     think_fun();
+
+    // Iterate through the elements and do our thinks and checks
+    for (auto iter = available_elements.begin();
+        iter != available_elements.end();
+        ++iter)
+    {
+        Element* e = (*iter);
+        e->think(trap_Milliseconds());
+    }
 }
 
 void Gui::shutdown()
 {
+    // Be nice and free memory for the current elements
+    for (auto iter = available_elements.begin();
+        iter != available_elements.end();
+        ++iter)
+    {
+        (*iter)->cleanup();
+        delete (*iter);
+    }
+
+    // Be nice and free memory for the active elements
+    for (auto iter = pending_elements.begin();
+        iter != pending_elements.end();
+        ++iter)
+    {
+        (*iter)->cleanup();
+        delete (*iter);
+    }
 }
 
 bool Gui::in_exception_state()

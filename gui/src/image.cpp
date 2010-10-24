@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 
 #include <hat/gui/image.hpp>
+#include <hat/gui/ui_local.h>
 
 namespace hat {
    
@@ -54,7 +55,8 @@ JS_fun_mapping funs[] = {
 JS_SETTER_CLASS(Image, src)
 {
     Image* i = unwrap<Image>(info.Holder());
-    //i->image_attributes.src = value->BooleanValue();
+    i->image_attrs.src = JS_STR_TO_STL(value->ToString());
+    i->image_attrs.src_handle = -1;
 }
 
 /*
@@ -62,7 +64,7 @@ JS_SETTER_CLASS(Image, src)
 JS_GETTER_CLASS(Image, src)
 {
     Image* i = unwrap<Image>(info.Holder());
-    return v8::String::New(i->image_attributes.src);
+    return v8::String::New(i->image_attrs.src.c_str());
 }
 
 /*
@@ -70,19 +72,64 @@ JS_GETTER_CLASS(Image, src)
 Image::Image(const Element_attributes& element_attributes,
     const Image_attributes& image_attributes)
 {
+    element_attrs = element_attributes;
+    image_attrs = image_attributes;
 }
 
 /*
 */
-void Image::think()
+void Image::think(int ms)
 {
+    if (!element_attrs.active) {
+        return;
+    }
+
+    // We think first
+    think_fun(ms);
+
+    // Whenever we get a new source, our file handle is invalidadated, so
+    // if the src_handle is -1 then we need to re-evaluate the image
+    if (image_attrs.src_handle == -1) {
+        image_attrs.src_handle = trap_R_RegisterShaderNoMip(image_attrs.src.c_str());
+    }
+    
+    // Draw the image
+    trap_R_DrawStretchPic(element_attrs.x,
+        element_attrs.y,
+        element_attrs.width,
+        element_attrs.height,
+        0.0, 0.0, 1.0, 1.0, 
+        image_attrs.src_handle);
 }
 
 
 /*
 */
-bool Image::build_attributes(const v8::Arguments& args, Image_attributes* ia)
+bool Image::build_attributes(const v8::Arguments& args, Element_attributes* ea, Image_attributes* ia)
 {
+    // There are two conditions that we care about. The first is that we
+    // get an argument pattern like:
+    //      Image("src", x-pos, y-pos, width, height);
+    // and the other is:
+    //      Image({ dict });
+
+    if (args.Length() == 5) {
+        v8::Local<v8::Value> src    = args[0];
+        v8::Local<v8::Value> x      = args[1];
+        v8::Local<v8::Value> y      = args[2];
+        v8::Local<v8::Value> width  = args[3];
+        v8::Local<v8::Value> height = args[4];
+        JS_BA_STR_REQUIRED(ia->src, src, "Expected a string for `str`");
+        JS_BA_INT_REQUIRED(ea->x, x, "Expected an integer for `x`.");
+        JS_BA_INT_REQUIRED(ea->y, y, "Expected an integer for `y`.");
+        JS_BA_INT_REQUIRED(ea->width, width, "Expected an integer for `width`.");
+        JS_BA_INT_REQUIRED(ea->height, height, "Expected an integer for `height`.");
+    } else if (args.Length() == 1 && args[0]->IsObject()) {
+        v8::Local<v8::Object> arg_obj = args[0]->ToObject();
+        v8::Local<v8::Value> src = arg_obj->Get(v8::String::New("src"));
+        JS_BA_STR_REQUIRED(ia->src, src, "Expected a string for `str`");
+    }
+
     return true;
 }
 
@@ -116,7 +163,7 @@ v8::Handle<v8::Value> Image::create(const v8::Arguments& args)
     // Try to build the arguments. If an exceptions is caught, then we
     // need to rethrow it so the GUI can catch it.
     if (!Element::build_attributes(args, &element_attributes) ||
-        !Image::build_attributes(args, &image_attributes))
+        !Image::build_attributes(args, &element_attributes, &image_attributes))
     {
         return v8::Undefined();
     }

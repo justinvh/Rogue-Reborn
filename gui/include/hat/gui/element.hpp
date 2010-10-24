@@ -66,6 +66,7 @@ struct Element_attributes
     float background_color[3];
     Border_attributes borders[4];
     Element* parent;
+    Think_list think_funs;
     v8::Handle<v8::Value> self;
 };
 
@@ -83,7 +84,14 @@ public:
     /*
     A think method is a method that is called 60 per frame.
     */
-    virtual void think() = 0;
+    virtual void think(int ms) = 0;
+
+
+
+    /*
+    When V8 destroys the object, we might need to do some cleanup.
+    */
+    virtual void cleanup() { }
 
     /*
     A reference to `this` in JavaScript land.
@@ -108,8 +116,16 @@ public:
         JS_GETTER_AND_SETTER(height);
         JS_GETTER_AND_SETTER(background_color);
         JS_GETTER_AND_SETTER(border);
+        JS_GETTER_AND_SETTER(border_left);
+        JS_GETTER_AND_SETTER(border_right);
+        JS_GETTER_AND_SETTER(border_top);
+        JS_GETTER_AND_SETTER(border_bottom);
         JS_GETTER_AND_SETTER(parent);
         JS_GETTER_AND_SETTER(active);
+        /*
+        Generalized functions.
+        */
+        JS_FUN(think);
     };
 
     /*
@@ -120,7 +136,17 @@ public:
         Element* e, const Extension_list& extension);
 protected:
     Element_attributes element_attrs;
+protected:
+    /*
+    Constructs the basic element object.
+    */
     static bool build_attributes(const v8::Arguments& args, Element_attributes* ea);
+
+    /*
+    A way of representing what happens when think() is called
+    in the JavaScript object.
+    */
+    virtual void think_fun(int ms);
 };
 
 }
