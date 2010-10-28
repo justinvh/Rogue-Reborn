@@ -26,6 +26,10 @@ THE SOFTWARE.
 #define HAT_GUI_IMAGE_HPP
 
 #include <hat/gui/element.hpp>
+#include <hat/gui/eventful.hpp>
+
+// Yeah, yeah, diamond inheritance, I know.
+#pragma warning(disable : 4250)
 
 namespace hat {
 
@@ -37,11 +41,13 @@ struct Image_attributes
 };
 
 class Image :
-    public Element
+    public virtual Element
 {
 public:
     Image(const Element_attributes& element_attributes,
         const Image_attributes& image_attributes);
+
+    virtual ~Image() { }
 
     /*
     The think() routine is called 60 time per frame.
@@ -74,6 +80,21 @@ protected:
 
 private:
     static void wrap_extension_list(Extension_list* list);
+};
+
+class Eventful_image
+    : public Image, public Eventful
+{
+public:
+    Eventful_image(const Element_attributes& element_attributes,
+        const Image_attributes& image_attributes);
+    /*
+    Create a new instance of Eventful_image whenever a matching JavaScript object
+    is instanitiated. This method will only be called internally.
+    */
+    static v8::Handle<v8::Value> create(const v8::Arguments& args);
+    Eventful_attributes eventful_attrs;
+
 };
 
 }

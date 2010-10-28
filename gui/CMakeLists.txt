@@ -44,6 +44,7 @@ set(GUI_SRC_HEADER_LIST
 	"${GUI_INCLUDE_GUI_DIR}/ui_local.h"
 	"${GUI_INCLUDE_GUI_DIR}/ui_public.h"
 	"${GUI_INCLUDE_GUI_DIR}/element.hpp"
+	"${GUI_INCLUDE_GUI_DIR}/eventful.hpp"
 	"${GUI_INCLUDE_GUI_DIR}/gui.hpp"
 	"${GUI_INCLUDE_GUI_DIR}/easy.hpp"
 	"${GUI_INCLUDE_GUI_DIR}/image.hpp"
@@ -63,6 +64,7 @@ set(GUI_SRC_LIST
 	"${GUI_SRC_DIR}/ui_atoms.c"
 	# New gui
 	"${GUI_SRC_DIR}/element.cpp"
+	"${GUI_SRC_DIR}/eventful.cpp"
 	"${GUI_SRC_DIR}/gui.cpp"
 	"${GUI_SRC_DIR}/easy.cpp"
 	"${GUI_SRC_DIR}/image.cpp"

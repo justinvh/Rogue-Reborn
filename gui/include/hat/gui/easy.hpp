@@ -29,7 +29,6 @@ THE SOFTWARE.
 #include <vector>
 
 namespace hat {
-
 /*
 Generically unwraps a handle to a V8 object of a specified class.
 If the object does not have an internal field count then a
@@ -42,12 +41,14 @@ T* unwrap(v8::Handle<v8::Object> object_to_be_unwrapped)
         return NULL;
     }
 
-    v8::Handle<v8::Value> v = object_to_be_unwrapped->GetInternalField(0);
-    if (v.IsEmpty()) {
+    v8::Local<v8::External> wrapped = 
+        v8::Local<v8::External>::Cast(object_to_be_unwrapped->GetInternalField(0));
+
+    if (wrapped.IsEmpty()) {
         return NULL;
     }
 
-    return static_cast<T*>(v8::External::Unwrap(v));
+    return static_cast<T*>(wrapped->Value());
 }
 
 /*
@@ -60,6 +61,13 @@ T* unwrap_global_pointer(int index)
     void* p = v8::Context::GetCurrent()->Global()->GetPointerFromInternalField(index);
     return reinterpret_cast<T*>(p);
 }
+
+/*
+The classic bit()
+*/
+#ifndef BIT
+#define BIT(x) 1 << x
+#endif
 
 /*
 These are macros for generating setters and getters for any attribute that
@@ -161,6 +169,8 @@ JS_fun_mapping.
 #define JS_CLASS_INVOCATION(klass) \
     { #klass, klass::create, false }
 
+#define JS_CLASS_INVOCATION_CUSTOM(klass, name) \
+    { name, klass::create, false }
 /*
 These typedefs are used for creating the shorthand mapping of the name to
 function setters and getters.
@@ -169,7 +179,6 @@ typedef v8::Handle<v8::Value> (*JS_getter)(v8::Local<v8::String>, const v8::Acce
 typedef void (*JS_setter)(v8::Local<v8::String>, v8::Local<v8::Value>, const v8::AccessorInfo&);
 typedef v8::Handle<v8::Value> (*JS_fun)(const v8::Arguments&);
 typedef void (Object_template_extension)(v8::Handle<v8::ObjectTemplate>*);
-
 
 
 /*
@@ -199,12 +208,13 @@ struct JS_fun_mapping
 
 typedef std::pair<JS_mapping*, JS_fun_mapping*> Mapping_pair;
 typedef std::vector<Mapping_pair> Extension_list;
-typedef std::vector<v8::Persistent<v8::Function> > Think_list;
+typedef std::vector<v8::Persistent<v8::Function> > Function_list;
 
 /*
 Create a new template of the wrapped getters and setters
 */
-v8::Handle<v8::ObjectTemplate> generate_tmpl(
+v8::Handle<v8::FunctionTemplate> generate_fun_tmpl(
+    v8::Handle<v8::FunctionTemplate>* tmpl,
     const JS_mapping* accessors, 
     const JS_fun_mapping* funs,
     const Extension_list* extension_list);
@@ -212,10 +222,10 @@ v8::Handle<v8::ObjectTemplate> generate_tmpl(
 /*
 Extend an existing template with the wrapped getters and setters.
 */
-void add_accessors_and_fun_to_tmpl(
+void add_accessors_and_fun_to_fun_tmpl(
     const JS_mapping* accessors, 
     const JS_fun_mapping* funs,
-    v8::Handle<v8::ObjectTemplate>* tmpl,
+    v8::Handle<v8::FunctionTemplate>* tmpl,
     bool internal_accessors);
 }
 
@@ -242,6 +252,7 @@ void add_accessors_and_fun_to_tmpl(
     } \
     lhs = rhs->Int32Value();
 
+
 #define JS_BA_INT_REQUIRED(lhs, rhs, error) \
     if (!rhs->IsInt32() || rhs.IsEmpty()) { \
         v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
@@ -249,11 +260,47 @@ void add_accessors_and_fun_to_tmpl(
     } \
     lhs = rhs->Int32Value();
 
+#define JS_BA_FLOAT(lhs, rhs, error) \
+    if (!rhs->IsNumber() && !rhs.IsEmpty()) { \
+        v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
+        return false; \
+    } \
+    lhs = rhs->NumberValue();
+
+#define JS_BA_FLOAT_REQUIRED(lhs, rhs, error) \
+    if (!rhs->IsNumber() || rhs.IsEmpty()) { \
+        v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
+        return false; \
+    } \
+    lhs = rhs->NumberValue();
+
 #define JS_BA_BOOLEAN(lhs, rhs, error) \
     if (!rhs->IsBoolean()) { \
         v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
         return false; \
     } \
     lhs = rhs->BooleanValue();
+
+#define JS_BA_FUNCTION(type, fun_list, alt) \
+    v8::Local<v8::Object> menu_obj = args[0]->ToObject(); \
+    Element* b = unwrap<Element>(args.Holder()); \
+    type* e = dynamic_cast<type*>(b); \
+    \
+    if (!e) { \
+        return v8::Exception::Error(v8::String::New(#type " has become detached?")); \
+    } \
+    \
+    if (args.Length() > 0) { \
+        v8::Handle<v8::Value> fun_val = args[0]; \
+        if (fun_val->IsFunction()) { \
+            v8::Handle<v8::Function> fun = v8::Handle<v8::Function>::Cast(fun_val); \
+            e->##fun_list.push_back(v8::Persistent<v8::Function>::New(fun)); \
+            return args.Holder(); \
+        } else { \
+            return v8::Exception::TypeError(v8::String::New("Expected a function, but got something else.")); \
+        } \
+    } \
+    alt; \
+    return args.Holder(); \
 
 #endif // HAT_GUI_EASY_HPP

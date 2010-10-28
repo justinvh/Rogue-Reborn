@@ -72,6 +72,7 @@ JS_GETTER_CLASS(Image, src)
 Image::Image(const Element_attributes& element_attributes,
     const Image_attributes& image_attributes)
 {
+    name = "SimpleImage";
     element_attrs = element_attributes;
     image_attrs = image_attributes;
 }
@@ -149,7 +150,7 @@ is dictated by the container, which in this case is the active Gui.
 
 v8::Handle<v8::Value> Image::create(const v8::Arguments& args)
 {
-    static v8::Persistent<v8::ObjectTemplate> image_tmpl;
+    static v8::Persistent<v8::FunctionTemplate> image_tmpl;
     static Extension_list extension_list;
 
     // We only need to build our extension list once
@@ -172,7 +173,52 @@ v8::Handle<v8::Value> Image::create(const v8::Arguments& args)
 
     // Now wrap the rest of the image
     Element::wrap_tmpl(&image_tmpl, image, extension_list);
-    return image->self();
+    return image->self;
+}
+
+/*
+*/
+Eventful_image::Eventful_image(const Element_attributes& element_attributes,
+    const Image_attributes& image_attributes)
+    : Image(element_attributes, image_attributes)
+{
+    name = "Image";
+}
+
+/*
+The only way to expose classes to JavaScript natively is to wrap the
+existing object. To properly due this, we have to ensure that the object
+remains in memory during the execution of script. This responsibility
+is dictated by the container, which in this case is the active Gui.
+*/
+
+v8::Handle<v8::Value> Eventful_image::create(const v8::Arguments& args)
+{
+    static v8::Persistent<v8::FunctionTemplate> image_tmpl;
+    static Extension_list extension_list;
+
+    // We only need to build our extension list once
+    if (!extension_list.size()) {
+        extension_list.push_back(std::make_pair(accessors, funs));
+        Eventful::wrap_extension_list(&extension_list);
+    }
+
+    // Create a new instance of the image, build the attributes,
+    // and make sure there are no problems during the build.
+    Element_attributes element_attributes;
+    Image_attributes image_attributes;
+
+    // Try to build the arguments. If an exceptions is caught, then we
+    // need to rethrow it so the GUI can catch it.
+    if (!Element::build_attributes(args, &element_attributes) ||
+        !Image::build_attributes(args, &element_attributes, &image_attributes))
+    {
+        return v8::Undefined();
+    }
+
+    // Now wrap the rest of the image
+    Eventful_image* image = new Eventful_image(element_attributes, image_attributes);
+    return Element::wrap_tmpl(&image_tmpl, image, extension_list);
 }
 
 }

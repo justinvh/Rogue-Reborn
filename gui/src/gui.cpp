@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <v8.h>
 #include <hat/gui/gui.hpp>
 #include <hat/gui/image.hpp>
+#include <hat/gui/eventful.hpp>
 #include <hat/engine/q_shared.h>
 #include <hat/gui/ui_public.h>
 #include <hat/gui/ui_local.h>
@@ -70,7 +71,8 @@ JS_fun_mapping funs[] = {
     JS_FUN_MAP(Gui, think),
     JS_FUN_MAP(Gui, log),
     JS_FUN_MAP(Gui, toString),
-    JS_CLASS_INVOCATION(Image),
+    JS_CLASS_INVOCATION_CUSTOM(Image, "SimpleImage"),
+    JS_CLASS_INVOCATION_CUSTOM(Eventful_image, "Image"),
     { NULL, NULL, NULL } // Signlas the end of the function list
 };
 
@@ -101,7 +103,7 @@ any problems along the way, then an exception will occur that can be
 checked from in_exception_state() method.
 */
 Gui::Gui(const char* js_file)
-    : js_filename(js_file)
+    : js_filename(js_file), cursor_handle(-1)
 {
     // Static menus that are a must
     if (engine_menus.empty()) {
@@ -136,9 +138,8 @@ Gui::Gui(const char* js_file)
     v8::Context::Scope context_scope(execution_context);
 
     // Create the gui namespace template and initialize the namespace
-    gui_tmpl = v8::Persistent<v8::ObjectTemplate>();
-    wrap_tmpl(&gui_tmpl, this, NULL);
-    gui_ns = gui_tmpl->NewInstance();
+    gui_tmpl = v8::Persistent<v8::FunctionTemplate>();
+    gui_ns = wrap_tmpl(&gui_tmpl, this, NULL);
     global_context->Global()->SetPointerInInternalField(0, this);
     global_context->Global()->Set(v8::String::New("gui"), gui_ns);
 
@@ -159,6 +160,9 @@ Gui::Gui(const char* js_file)
         EXCEPTION(js_file, e->GetLineNumber(), *v8::String::Utf8Value(e->Get()));
         return;
     }
+
+    cursor_handle = trap_R_RegisterShaderNoMip("gfx/2d/cursors/Azenis/Arrow.png");
+    last_game_msec = trap_Milliseconds();
 }
 
 Gui::~Gui()
@@ -224,7 +228,11 @@ what runs and doesn't run. It's a powerful method.
 */
 void Gui::think(const Gui_kbm& kbm_state)
 {
+    Gui_kbm old_state = last_kbm_state;
     last_kbm_state = kbm_state;
+
+    // Clear the color buffer
+    trap_R_SetColor(NULL);
 
     // Add any elements that were created during the last execution
     std::copy(pending_elements.begin(), 
@@ -236,13 +244,71 @@ void Gui::think(const Gui_kbm& kbm_state)
     think_fun();
 
     // Iterate through the elements and do our thinks and checks
+    const int mx = kbm_state.mx;
+    const int my = kbm_state.my;
     for (auto iter = available_elements.begin();
         iter != available_elements.end();
         ++iter)
     {
-        Element* e = (*iter);
+        Element* e = *iter;
         e->think(trap_Milliseconds());
+
+        Eventful* eventful_e = dynamic_cast<Eventful*>(e);
+        if (!eventful_e) continue;
+
+        bool in_bounds = e->check_bounds(kbm_state.mx, kbm_state.my);
+
+        // If we were previously in a mouse_over event and we are
+        // no longer in the bounds of the element, then we are
+        // in a mouse_out state
+        if (eventful_e->eventful_attrs.is_mouse_over && !in_bounds) {
+            eventful_e->mouse_out(mx, my);
+            continue;
+        } 
+
+        // If we are not in bounds, then we can just finish up
+        // and clean our state. This is important to do.
+        if (!in_bounds) {
+            eventful_e->finish_state();
+            continue;
+        }
+
+        // We can't really click or have any other events without first
+        // calling the mouse over
+        eventful_e->mouse_over(mx, my);
+        
+        // If we have clicked some mouse button between a series of buttons
+        if (kbm_state.button >= GB_LEFT_CLICK && kbm_state.button <= GB_NEXT_CLICK) {
+            // And this is a new click, then call mouse_down
+            if (kbm_state.down && !eventful_e->eventful_attrs.is_mouse_down) {
+                eventful_e->mouse_down(mx, my, kbm_state.button);
+            // Or if we were in a click state previously and the button
+            // has been held for longer than 250 msec, then we are dragging
+            } else if (kbm_state.down && 
+                eventful_e->eventful_attrs.is_mouse_down && 
+                kbm_state.held_time > 250) {
+                eventful_e->mouse_drag(mx, my, kbm_state.button);
+            // Otherwise, we are releasing our mouse button and
+            // calling the mouse up event now
+            } else {
+                eventful_e->mouse_up(mx, my, kbm_state.button);
+            }
+        // If we are scrolling, then we have two separate events to
+        // check for -- both of which are unique
+        } else if (kbm_state.button == GB_SCROLL_UP) {
+            eventful_e->scroll_up();
+        } else if (kbm_state.button == GB_SCROLL_DOWN) {
+            eventful_e->scroll_down();
+        }
+
+        // This is important, it lets the eventful element know that we
+        // are done manipulating the state of the object for this pass.
+        eventful_e->finish_state();
     }
+
+    // Draw the cursor and update the internal timer
+    trap_R_DrawStretchPic(kbm_state.mx, kbm_state.my, 50, 50, 0, 0, 1, 1, cursor_handle);
+    last_game_msec = trap_Milliseconds();
 }
 
 void Gui::shutdown()
@@ -301,6 +367,11 @@ JS_FUN_CLASS(Gui, setup_menus)
     v8::Local<v8::Object> menu_obj = args[0]->ToObject();
     v8::Local<v8::Array> menu_to_be_set = menu_obj->GetPropertyNames();
 
+    Gui* gui = unwrap<Gui>(args.Holder());
+    if (!gui) {
+        return v8::Exception::Error(v8::String::New("Gui class has become detached?"));
+    }
+
     std::unique_ptr<char> fs_basegame(new char[512]);
     trap_Cvar_VariableStringBuffer("fs_basegame", fs_basegame.get(), sizeof(char) * 512);
 
@@ -329,7 +400,7 @@ are adding a new function to the list.
 JS_FUN_CLASS(Gui, think)
 {
     v8::Local<v8::Object> menu_obj = args[0]->ToObject();
-    Gui* gui = unwrap_global_pointer<Gui>(0);
+    Gui* gui = unwrap<Gui>(args.Holder());
 
     if (!gui) {
         return v8::Exception::Error(v8::String::New("Gui class has become detached?"));
@@ -386,23 +457,23 @@ remains in memory during the execution of script. This responsibility
 is dictated by the container, which in this case is the active Gui.
 */
 v8::Handle<v8::Object> Gui::wrap_tmpl(
-    v8::Handle<v8::ObjectTemplate>* tmpl, 
+    v8::Handle<v8::FunctionTemplate>* tmpl, 
     Gui* e, 
     Object_template_extension extension)
 {
-    // We only need to create an "image" of the template once.
+    v8::HandleScope handle_scope;
+
     if (tmpl->IsEmpty()) {
-        v8::Handle<v8::ObjectTemplate> result = generate_tmpl(accessors, funs, NULL);
-        result->SetInternalFieldCount(1);
-        if (extension != NULL) extension(&result);
-        *tmpl = v8::Persistent<v8::ObjectTemplate>::New(result);
+        (*tmpl) = v8::FunctionTemplate::New();
     }
 
-    // The active Gui is all we care about
-    v8::Handle<v8::External> class_ptr = v8::External::New(e);
-    v8::Handle<v8::Object> result = (*tmpl)->NewInstance();
-    result->SetInternalField(0, class_ptr);
-    return result;
+    (*tmpl)->SetClassName(v8::String::New("Gui"));
+    // We only need to create the template once.
+    generate_fun_tmpl(tmpl, accessors, funs, NULL);
+    v8::Handle<v8::Function> gui_ctor = (*tmpl)->GetFunction();
+    v8::Local<v8::Object> obj = gui_ctor->NewInstance();
+    obj->SetInternalField(0, v8::External::New(e));
+    return handle_scope.Close(obj);
 }
 
 }

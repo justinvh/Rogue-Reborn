@@ -34,24 +34,45 @@ namespace hat {
 
 class Element;
 
+enum Gui_buttons
+{
+    GB_NONE         = 0,
+    GB_BUTTON_START = 177,
+    GB_LEFT_CLICK   = 178,
+    GB_RIGHT_CLICK  = 179,
+    GB_MIDDLE_CLICK = 180,
+    GB_PREV_CLICK   = 181,
+    GB_NEXT_CLICK   = 182,
+    GB_SCROLL_UP    = 183,
+    GB_SCROLL_DOWN  = 184,
+    GB_BUTTON_END   = 185,
+};
+
 /*
 A Gui can have a state, defined as a mix of buttons, mouse positions, and
 button states, that affect how different elements interact with the user.
 */
 struct Gui_kbm
 {
-    int mx, my, key;
+    int mx, my, key, held_time;
+    char character;
+    Gui_buttons button;
     bool down, held;
 
     void reset_keys()
     {
+        character = '\0';
         key = 0;
+        held_time = 0;
+        button = GB_NONE;
         down = held = false;
     }
 
     void reset_all()
     {
-        mx = my = key = 0;
+        character = '\0';
+        mx = my = key = held_time = 0;
+        button = GB_NONE;
         down = held = false;
     }
 };
@@ -174,7 +195,7 @@ private:
     Wraps an instance of Element and transforms it into an object that
     is usable by JavaScript. The object can then be unwrapped at any time.
     */
-    static v8::Handle<v8::Object> wrap_tmpl(v8::Handle<v8::ObjectTemplate>* tmpl,
+    static v8::Handle<v8::Object> wrap_tmpl(v8::Handle<v8::FunctionTemplate>* tmpl,
         Gui* e, Object_template_extension extension);
 
     /*
@@ -185,16 +206,17 @@ private:
     - A sort-of "entry point" to the JavaScript file
     */
     v8::Handle<v8::ObjectTemplate> global_scope;
-    v8::Persistent<v8::ObjectTemplate> gui_tmpl;
+    v8::Persistent<v8::FunctionTemplate> gui_tmpl;
     v8::Handle<v8::Object> gui_ns;
 
-    Think_list gui_think_funs;
+    Function_list gui_think_funs;
     Gui_exception current_exception;
-    Gui_kbm last_kbm_state;
+    int cursor_handle, last_game_msec;
 private:
     void think_fun();
 public:
     v8::Persistent<v8::Context> global_context;
+    Gui_kbm last_kbm_state;
     const char* js_filename;
 };
 

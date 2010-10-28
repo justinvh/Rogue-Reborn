@@ -25,6 +25,9 @@ THE SOFTWARE.
 #include <hat/gui/element.hpp>
 #include <hat/gui/gui.hpp>
 
+// We want to avoid the double to float issues between V8 and C++
+#pragma warning(disable : 4244)
+
 namespace hat {
 
 namespace {
@@ -110,49 +113,50 @@ JS_SETTER_CLASS(Element, active)
 JS_SETTER_CLASS(Element, height)
 {
     Element* e = unwrap<Element>(info.Holder());
-    e->element_attrs.active = value->BooleanValue();
+    e->element_attrs.height = value->NumberValue();
 }
 
 JS_SETTER_CLASS(Element, width)
 {
     Element* e = unwrap<Element>(info.Holder());
-    e->element_attrs.active = value->BooleanValue();
+    e->element_attrs.width = value->NumberValue();
 }
 
 JS_SETTER_CLASS(Element, parent)
 {
     Element* e = unwrap<Element>(info.Holder());
-    e->element_attrs.active = value->BooleanValue();
+    Element* p = unwrap<Element>(value->ToObject());
+    if (!p) {
+        v8::ThrowException(v8::Exception::TypeError(v8::String::New("Expected an instance of a derived `Element` class.")));
+        return;
+    }
+
+    e->element_attrs.parent = p;
 }
 
 JS_SETTER_CLASS(Element, border)
 {
     Element* e = unwrap<Element>(info.Holder());
-    e->element_attrs.active = value->BooleanValue();
 }
 
 JS_SETTER_CLASS(Element, border_left)
 {
     Element* e = unwrap<Element>(info.Holder());
-    e->element_attrs.active = value->BooleanValue();
 }
 
 JS_SETTER_CLASS(Element, border_right)
 {
     Element* e = unwrap<Element>(info.Holder());
-    e->element_attrs.active = value->BooleanValue();
 }
 
 JS_SETTER_CLASS(Element, border_top)
 {
     Element* e = unwrap<Element>(info.Holder());
-    e->element_attrs.active = value->BooleanValue();
 }
 
 JS_SETTER_CLASS(Element, border_bottom)
 {
     Element* e = unwrap<Element>(info.Holder());
-    e->element_attrs.active = value->BooleanValue();
 }
 
 /*
@@ -209,7 +213,10 @@ JS_GETTER_CLASS(Element, active)
 JS_GETTER_CLASS(Element, parent)
 {
     Element* e = unwrap<Element>(info.Holder());
-    return v8::Boolean::New(e->element_attrs.active);
+    if (e->element_attrs.parent) {
+        return e->element_attrs.parent->self;
+    }
+    return v8::Undefined();
 }
 
 /*
@@ -217,7 +224,7 @@ JS_GETTER_CLASS(Element, parent)
 JS_GETTER_CLASS(Element, height)
 {
     Element* e = unwrap<Element>(info.Holder());
-    return v8::Boolean::New(e->element_attrs.active);
+    return v8::Number::New(e->element_attrs.height);
 }
 
 /*
@@ -225,7 +232,7 @@ JS_GETTER_CLASS(Element, height)
 JS_GETTER_CLASS(Element, width)
 {
     Element* e = unwrap<Element>(info.Holder());
-    return v8::Boolean::New(e->element_attrs.active);
+    return v8::Number::New(e->element_attrs.width);
 }
 
 /*
@@ -233,7 +240,7 @@ JS_GETTER_CLASS(Element, width)
 JS_GETTER_CLASS(Element, border)
 {
     Element* e = unwrap<Element>(info.Holder());
-    return v8::Boolean::New(e->element_attrs.active);
+    return v8::Undefined();
 }
 
 /*
@@ -241,25 +248,25 @@ JS_GETTER_CLASS(Element, border)
 JS_GETTER_CLASS(Element, border_left)
 {
     Element* e = unwrap<Element>(info.Holder());
-    return v8::Boolean::New(e->element_attrs.active);
+    return v8::Undefined();
 }
 
 JS_GETTER_CLASS(Element, border_right)
 {
     Element* e = unwrap<Element>(info.Holder());
-    return v8::Boolean::New(e->element_attrs.active);
+    return v8::Undefined();
 }
 
 JS_GETTER_CLASS(Element, border_top)
 {
     Element* e = unwrap<Element>(info.Holder());
-    return v8::Boolean::New(e->element_attrs.active);
+    return v8::Undefined();
 }
 
 JS_GETTER_CLASS(Element, border_bottom)
 {
     Element* e = unwrap<Element>(info.Holder());
-    return v8::Boolean::New(e->element_attrs.active);
+    return v8::Undefined();
 }
 
 /*
@@ -294,6 +301,29 @@ JS_FUN_CLASS(Element, think)
     return args.Holder();
 }
 
+bool Element::check_bounds(int mx, int my)
+{
+    float top = element_attrs.y;
+    float bottom = element_attrs.y + element_attrs.height;
+    float left = element_attrs.x;
+    float right = element_attrs.x + element_attrs.width;
+
+    if (element_attrs.parent) {
+        const Element_attributes& p = element_attrs.parent->element_attrs;
+        left += p.x;
+        right += p.x;
+        top += p.y;
+        bottom += p.y;
+    }
+
+    if (mx < left || mx > right || my < top || my > bottom) {
+        return false;
+    }
+
+    return true;
+}
+
+
 /*
 */
 void Element::think_fun(int ms)
@@ -318,19 +348,8 @@ void Element::think_fun(int ms)
         tci != element_attrs.think_funs.end();
         ++tci)
     {
-        (*tci)->Call(element_attrs.self->ToObject(), 1, argvs);
+        (*tci)->Call(self, 1, argvs);
     }
-}
-
-/*
-This allows an object to return itself as a JavaScript object so there
-can be a self reference, aka `this`. That way when the methods are being
-applied on the JavaScript object they are not in the global context, but
-rather in the execution scope/context that the object was created in.
-*/
-v8::Handle<v8::Value> Element::self()
-{
-    return element_attrs.self;
 }
 
 bool Element::build_attributes(const v8::Arguments& args, Element_attributes* ea)
@@ -363,10 +382,10 @@ bool Element::build_attributes(const v8::Arguments& args, Element_attributes* ea
 
     // Assign values; the constructor of the Element_attributes is
     // responsible for assigning initial values, so we don't do it here.
-    JS_BA_INT_REQUIRED(ea->x, x, "Expected an integer for `x`.");
-    JS_BA_INT_REQUIRED(ea->y, y, "Expected an integer for `y`.");
-    JS_BA_INT_REQUIRED(ea->width, width, "Expected an integer for `width`.");
-    JS_BA_INT_REQUIRED(ea->height, height, "Expected an integer for `height`.");
+    JS_BA_FLOAT_REQUIRED(ea->x, x, "Expected a number for `x`.");
+    JS_BA_FLOAT_REQUIRED(ea->y, y, "Expected a number for `y`.");
+    JS_BA_FLOAT_REQUIRED(ea->width, width, "Expected a number for `width`.");
+    JS_BA_FLOAT_REQUIRED(ea->height, height, "Expected a number for `height`.");
 
     // These are values that we can live without
     JS_BA_STR(ea->id, id, "Expected a string for `id`.");
@@ -383,29 +402,32 @@ remains in memory during the execution of script. This responsibility
 is dictated by the container, which in this case is the active Gui.
 */
 v8::Handle<v8::Object> Element::wrap_tmpl(
-    v8::Handle<v8::ObjectTemplate>* tmpl, 
+    v8::Handle<v8::FunctionTemplate>* tmpl, 
     Element* e, 
     const Extension_list& extension_list)
 {
     v8::HandleScope handle_scope;
 
-    // We only need to create the template once.
     if (tmpl->IsEmpty()) {
-        v8::Handle<v8::ObjectTemplate> result = generate_tmpl(accessors, funs, &extension_list);
-        result->SetInternalFieldCount(1);
-        *tmpl = v8::Persistent<v8::ObjectTemplate>::New(result);
+        (*tmpl) = v8::FunctionTemplate::New();
     }
 
-    // The active Gui is all we care about
-    v8::Handle<v8::External> class_ptr = v8::External::New(e);
-    v8::Handle<v8::Object> result = (*tmpl)->NewInstance();
-    result->SetInternalField(0, class_ptr);
-    e->element_attrs.self = v8::Persistent<v8::Object>::New(handle_scope.Close(result));
+    (*tmpl)->SetClassName(v8::String::New(e->name));
 
-    // Now add it to the GUI that is in memory.
+    // We only need to create the template once.
+    generate_fun_tmpl(tmpl, accessors, funs, &extension_list);
+
+    // The active Gui is all we care about
+    v8::Handle<v8::Function> gui_ctor = (*tmpl)->GetFunction();
+    v8::Local<v8::Object> obj = gui_ctor->NewInstance();
+    obj->SetInternalField(0, v8::External::New(e));
+    e->self = v8::Persistent<v8::Object>::New(handle_scope.Close(obj));
     Gui* gui = unwrap_global_pointer<Gui>(0);
     gui->add_element(e);
-    return result;
+    return e->self;
+    
 }
 
 }
+
+#pragma warning(default : 4244)

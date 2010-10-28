@@ -58,7 +58,7 @@ initialized to 0.
 struct Element_attributes
 {
     Element_attributes() :
-        x(0), y(0), width(0), height(0), id("") { }
+        x(0), y(0), width(0), height(0), id(""), parent(NULL) { }
     
     std::string id;
     bool active;
@@ -66,8 +66,14 @@ struct Element_attributes
     float background_color[3];
     Border_attributes borders[4];
     Element* parent;
-    Think_list think_funs;
-    v8::Handle<v8::Value> self;
+    Function_list think_funs;
+};
+
+class Base {
+public:
+    virtual ~Base() { }
+    v8::Persistent<v8::Object> self;
+    const char* name;
 };
 
 /*
@@ -77,6 +83,7 @@ stored in the Gui manager and dynamically casted against other classes
 to represent any sort of per-class markup.
 */
 class Element
+    : public virtual Base
 {
 public:
     virtual ~Element() { };	
@@ -86,17 +93,15 @@ public:
     */
     virtual void think(int ms) = 0;
 
-
-
     /*
     When V8 destroys the object, we might need to do some cleanup.
     */
     virtual void cleanup() { }
 
     /*
-    A reference to `this` in JavaScript land.
+    Checks the bounds of the element.
     */
-    v8::Handle<v8::Value> self();
+    bool check_bounds(int mx, int my);
 
     /*
     This is an internal structure that is represented by a few macros
@@ -132,7 +137,7 @@ public:
     Wraps an instance of Element and transforms it into an object that
     is usable by JavaScript. The object can then be unwrapped at any time.
     */
-    static v8::Handle<v8::Object> wrap_tmpl(v8::Handle<v8::ObjectTemplate>* tmpl,
+    static v8::Handle<v8::Object> wrap_tmpl(v8::Handle<v8::FunctionTemplate>* tmpl,
         Element* e, const Extension_list& extension);
 protected:
     Element_attributes element_attrs;
