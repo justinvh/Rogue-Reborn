@@ -294,7 +294,7 @@ void add_accessors_and_fun_to_fun_tmpl(
         v8::Handle<v8::Value> fun_val = args[0]; \
         if (fun_val->IsFunction()) { \
             v8::Handle<v8::Function> fun = v8::Handle<v8::Function>::Cast(fun_val); \
-            e->##fun_list.push_back(v8::Persistent<v8::Function>::New(fun)); \
+            e->fun_list.push_back(v8::Persistent<v8::Function>::New(fun)); \
             return args.Holder(); \
         } else { \
             return v8::Exception::TypeError(v8::String::New("Expected a function, but got something else.")); \

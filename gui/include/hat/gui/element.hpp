@@ -26,6 +26,7 @@ THE SOFTWARE.
 #define HAT_GUI_ELEMENT_HPP
 
 #include <hat/gui/easy.hpp>
+#include <string>
 
 namespace hat {
 
