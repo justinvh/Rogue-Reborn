@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // the "gameversion" client command will print this plus compile date
 
-#define	GAMEVERSION	"XreaL"
+#define	GAMEVERSION	"Rogue Reborn"
 
 // Tr3B: added this to compile with different bot versions
 //#define GLADIATOR

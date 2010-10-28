@@ -99,6 +99,7 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
 
         case UI_KEY_EVENT:
             kbm_state.reset_keys();
+            kbm_state.new_event = true;
             if (arg0 > hat::GB_BUTTON_START && arg0 < hat::GB_BUTTON_END) {
                 kbm_state.button = hat::Gui_buttons(arg0);
             } else {
@@ -111,6 +112,8 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
             return 0;
 
         case UI_MOUSE_EVENT:
+            kbm_state.dx = arg0;
+            kbm_state.dy = arg1;
             kbm_state.mx += arg0;
             kbm_state.my += arg1;
             return 0;
@@ -126,8 +129,12 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
             // the keys after the think() so we can figure out a new key
             // state after.
             active_gui->think(kbm_state);
-            kbm_state.held_time += arg0 - last_time;
+            kbm_state.held_delta = arg0 - last_time;
             last_time = arg0;
+
+            kbm_state.new_event = false;
+            kbm_state.dx = 0;
+            kbm_state.dy = 0;
 
             // Make sure that we didn't enter a run-time exception.
             // If this happens, then we need to set the state of the

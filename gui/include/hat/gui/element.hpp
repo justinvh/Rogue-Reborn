@@ -140,6 +140,7 @@ public:
     static v8::Handle<v8::Object> wrap_tmpl(v8::Handle<v8::FunctionTemplate>* tmpl,
         Element* e, const Extension_list& extension);
 protected:
+    friend class Gui;
     Element_attributes element_attrs;
 protected:
     /*

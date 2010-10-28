@@ -54,26 +54,26 @@ button states, that affect how different elements interact with the user.
 */
 struct Gui_kbm
 {
-    int mx, my, key, held_time;
+    int mx, my, dx, dy, key, held_delta;
     char character;
     Gui_buttons button;
-    bool down, held;
+    bool down, new_event;
 
     void reset_keys()
     {
         character = '\0';
         key = 0;
-        held_time = 0;
+        held_delta = 0;
         button = GB_NONE;
-        down = held = false;
+        down = new_event = false;
     }
 
     void reset_all()
     {
         character = '\0';
-        mx = my = key = held_time = 0;
+        mx = my = key = held_delta = 0;
         button = GB_NONE;
-        down = held = false;
+        down = new_event = false;
     }
 };
 

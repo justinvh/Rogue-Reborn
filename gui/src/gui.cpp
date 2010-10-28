@@ -199,7 +199,6 @@ void Gui::think_fun()
     kbm_argv->Set(kbm_argv_my_str, v8::Int32::New(kbm_state.my));
     kbm_argv->Set(kbm_argv_key_str, v8::Int32::New(kbm_state.key));
     kbm_argv->Set(kbm_argv_down_str, v8::Boolean::New(kbm_state.down));
-    kbm_argv->Set(kbm_argv_held_str, v8::Boolean::New(kbm_state.held));
 
     // The two arguments to the GUI think() are the timer and kbm
     v8::Handle<v8::Value> argvs[2] = {
@@ -246,6 +245,8 @@ void Gui::think(const Gui_kbm& kbm_state)
     // Iterate through the elements and do our thinks and checks
     const int mx = kbm_state.mx;
     const int my = kbm_state.my;
+    const int dx = kbm_state.dx;
+    const int dy = kbm_state.dy;
     for (auto iter = available_elements.begin();
         iter != available_elements.end();
         ++iter)
@@ -257,41 +258,50 @@ void Gui::think(const Gui_kbm& kbm_state)
         if (!eventful_e) continue;
 
         bool in_bounds = e->check_bounds(kbm_state.mx, kbm_state.my);
+        bool in_drag = eventful_e->eventful_attrs.is_mouse_drag;
+        bool no_interaction = !in_bounds && !in_drag;
 
         // If we were previously in a mouse_over event and we are
         // no longer in the bounds of the element, then we are
         // in a mouse_out state
-        if (eventful_e->eventful_attrs.is_mouse_over && !in_bounds) {
+        if (eventful_e->eventful_attrs.is_mouse_over && no_interaction) {
             eventful_e->mouse_out(mx, my);
+            eventful_e->finish_state();
             continue;
         } 
 
         // If we are not in bounds, then we can just finish up
         // and clean our state. This is important to do.
-        if (!in_bounds) {
+        if (no_interaction) {
             eventful_e->finish_state();
             continue;
         }
 
         // We can't really click or have any other events without first
-        // calling the mouse over
-        eventful_e->mouse_over(mx, my);
+        // calling the mouse over -- We also don't want to be calling
+        // the mouse_over event when we are dragging.
+        if (in_bounds && !in_drag) {
+            eventful_e->mouse_over(mx, my);
+        }
         
         // If we have clicked some mouse button between a series of buttons
         if (kbm_state.button >= GB_LEFT_CLICK && kbm_state.button <= GB_NEXT_CLICK) {
-            // And this is a new click, then call mouse_down
-            if (kbm_state.down && !eventful_e->eventful_attrs.is_mouse_down) {
-                eventful_e->mouse_down(mx, my, kbm_state.button);
-            // Or if we were in a click state previously and the button
-            // has been held for longer than 250 msec, then we are dragging
-            } else if (kbm_state.down && 
-                eventful_e->eventful_attrs.is_mouse_down && 
-                kbm_state.held_time > 250) {
-                eventful_e->mouse_drag(mx, my, kbm_state.button);
-            // Otherwise, we are releasing our mouse button and
-            // calling the mouse up event now
-            } else {
-                eventful_e->mouse_up(mx, my, kbm_state.button);
+            // New events are going to allow us to have a either a mouse_down or mouse_up
+            // It prevents us from having multiple events of single-click events
+            if (kbm_state.new_event) {
+                if (kbm_state.down) {
+                    eventful_e->mouse_down(mx, my, kbm_state.button);
+                // Otherwise, we are releasing our mouse button and
+                // calling the mouse up event now
+                } else if (!kbm_state.down) {
+                    eventful_e->mouse_up(mx, my, kbm_state.button);
+                } 
+            // Otherwise we are dragging
+            } else if (eventful_e->is_draggable(2500)) {
+                eventful_e->mouse_drag(e->element_attrs.x + dx, e->element_attrs.y + dy, kbm_state.button);
+            } else if (eventful_e->eventful_attrs.is_mouse_down) {
+                Com_Printf("Updating element held_delta: %d     %d\n", kbm_state.held_delta, eventful_e->eventful_attrs.held_timer);
+                eventful_e->update_held_timer(kbm_state.held_delta);
             }
         // If we are scrolling, then we have two separate events to
         // check for -- both of which are unique

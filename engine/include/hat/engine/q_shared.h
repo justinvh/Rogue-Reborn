@@ -32,8 +32,8 @@ extern "C" {
 // q_shared.h -- included first by ALL program modules.
 // A user mod should never modify this file
 
-#define PRODUCT_NAME            "XreaL"
-#define PRODUCT_VERSION         "0.8.2"
+#define PRODUCT_NAME            "Rogue Reborn"
+#define PRODUCT_VERSION         "0.0.1"
 
 #if 0
 #if !defined(COMPAT_Q3A)
@@ -53,8 +53,8 @@ extern "C" {
 # define Q3_VERSION PRODUCT_NAME " " PRODUCT_VERSION
 #endif
 
-#define CLIENT_WINDOW_TITLE     "XreaL"
-#define CLIENT_WINDOW_MIN_TITLE "xreal"
+#define CLIENT_WINDOW_TITLE     "Rogue Reborn"
+#define CLIENT_WINDOW_MIN_TITLE "RR"
 // 1.32 released 7-10-2002
 
 #if !defined(STANDALONE)
@@ -62,7 +62,7 @@ extern "C" {
 #endif
 
 #define BASEGAME				"base"
-#define GAMENAME_FOR_MASTER		"XreaL"	// must NOT contain whitespaces
+#define GAMENAME_FOR_MASTER		"RR"	// must NOT contain whitespaces
 
 /*
 #if !defined(DEBUG) && defined(_DEBUG)
