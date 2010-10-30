@@ -35,9 +35,12 @@ namespace hat {
 
 struct Image_attributes
 {
-    Image_attributes() : src_handle(-1) { }
+    Image_attributes() 
+        : src_handle(-1), s1(0), t1(0), s2(1), t2(1) { }
     std::string src;
     int src_handle;
+    float scaled_x, scaled_y, scaled_h, scaled_w;
+    float s1, s2, t1, t2;
 };
 
 class Image :

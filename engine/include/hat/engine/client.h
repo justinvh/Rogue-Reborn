@@ -653,6 +653,7 @@ int				Java_CG_LastAttacker();
 // cl_ui.c
 //
 void            CL_InitUI(void);
+void            CL_VidUIRestart(void);
 void            CL_ShutdownUI(void);
 void            CL_RecompileUI(void);
 int             Key_GetCatcher(void);

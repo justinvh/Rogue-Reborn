@@ -199,7 +199,8 @@ typedef enum
 // overlayed over whatever the cgame has drawn.
 // a GetClientState syscall will be made to get the current strings
 
-    UI_RECOMPILE
+    UI_RECOMPILE,
+    UI_VID_RESTART
 } uiExport_t;
 
 #endif

@@ -57,6 +57,7 @@ JS_SETTER_CLASS(Image, src)
     Image* i = unwrap<Image>(info.Holder());
     i->image_attrs.src = JS_STR_TO_STL(value->ToString());
     i->image_attrs.src_handle = -1;
+    i->element_attrs.modified = true;
 }
 
 /*
@@ -88,19 +89,30 @@ void Image::think(int ms)
     // We think first
     think_fun(ms);
 
-    // Whenever we get a new source, our file handle is invalidadated, so
-    // if the src_handle is -1 then we need to re-evaluate the image
-    if (image_attrs.src_handle == -1) {
+    // Whenever the image has been modified or we get a new screen
+    // modification, then we need to re-evaluate the image
+    if (image_attrs.src_handle == -1 || global::screen_attrs.modified) {
         image_attrs.src_handle = trap_R_RegisterShaderNoMip(image_attrs.src.c_str());
     }
     
     // Draw the image
-    trap_R_DrawStretchPic(element_attrs.x,
-        element_attrs.y,
-        element_attrs.width,
-        element_attrs.height,
-        0.0, 0.0, 1.0, 1.0, 
+    if (element_attrs.modified || global::screen_attrs.modified) {
+        Screen_attributes& screen = global::screen_attrs;
+        image_attrs.scaled_x = element_attrs.x * screen.scale_x; 
+        image_attrs.scaled_y = element_attrs.y * screen.scale_y; 
+        image_attrs.scaled_w = element_attrs.width * screen.scale_x;
+        image_attrs.scaled_h = element_attrs.height * screen.scale_y;
+    }
+
+    // Draw the actual image
+    trap_R_DrawStretchPic(image_attrs.scaled_x,
+        image_attrs.scaled_y,
+        image_attrs.scaled_w,
+        image_attrs.scaled_h,
+        image_attrs.s1, image_attrs.t1, image_attrs.s2, image_attrs.t2,
         image_attrs.src_handle);
+
+    element_attrs.modified = false;
 }
 
 

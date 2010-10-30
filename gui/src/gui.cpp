@@ -105,6 +105,9 @@ checked from in_exception_state() method.
 Gui::Gui(const char* js_file)
     : js_filename(js_file), cursor_handle(-1)
 {
+    // Assign a binding for the screen attributes
+    screen = &global::screen_attrs;
+
     // Static menus that are a must
     if (engine_menus.empty()) {
         engine_menus["shutdown"] = UIMENU_NONE;
@@ -317,7 +320,17 @@ void Gui::think(const Gui_kbm& kbm_state)
     }
 
     // Draw the cursor and update the internal timer
-    trap_R_DrawStretchPic(kbm_state.mx, kbm_state.my, 50, 50, 0, 0, 1, 1, cursor_handle);
+    if (screen->modified) {
+        cursor_handle = trap_R_RegisterShaderNoMip("gfx/2d/cursors/Azenis/Arrow.png");
+    }
+
+    // Adjust the image like we would an actual element
+    trap_R_DrawStretchPic(
+        kbm_state.mx * screen->scale_x, 
+        kbm_state.my * screen->scale_y,
+        50 * screen->scale_x, 
+        50 * screen->scale_y, 
+        0, 0, 1, 1, cursor_handle);
     last_game_msec = trap_Milliseconds();
 }
 

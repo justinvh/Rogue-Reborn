@@ -62,7 +62,7 @@ struct Element_attributes
         x(0), y(0), width(0), height(0), id(""), parent(NULL) { }
     
     std::string id;
-    bool active;
+    bool active, modified;
     float x, y, width, height;
     float background_color[3];
     Border_attributes borders[4];

@@ -74,6 +74,7 @@ JS_SETTER_CLASS(Element, id)
 {
     Element* e = unwrap<Element>(info.Holder());
     e->element_attrs.id = value->Int32Value();
+    e->element_attrs.modified = true;
 }
 
 /*
@@ -85,6 +86,7 @@ JS_SETTER_CLASS(Element, x)
 {
     Element* e = unwrap<Element>(info.Holder());
     e->element_attrs.x = (float)value->NumberValue();
+    e->element_attrs.modified = true;
 }
 
 /*
@@ -96,6 +98,7 @@ JS_SETTER_CLASS(Element, y)
 {
     Element* e = unwrap<Element>(info.Holder());
     e->element_attrs.y = (float)value->NumberValue();
+    e->element_attrs.modified = true;
 }
 
 /*
@@ -108,18 +111,21 @@ JS_SETTER_CLASS(Element, active)
 {
     Element* e = unwrap<Element>(info.Holder());
     e->element_attrs.active = value->BooleanValue();
+    e->element_attrs.modified = true;
 }
 
 JS_SETTER_CLASS(Element, height)
 {
     Element* e = unwrap<Element>(info.Holder());
     e->element_attrs.height = value->NumberValue();
+    e->element_attrs.modified = true;
 }
 
 JS_SETTER_CLASS(Element, width)
 {
     Element* e = unwrap<Element>(info.Holder());
     e->element_attrs.width = value->NumberValue();
+    e->element_attrs.modified = true;
 }
 
 JS_SETTER_CLASS(Element, parent)
@@ -131,32 +137,38 @@ JS_SETTER_CLASS(Element, parent)
         return;
     }
 
+    e->element_attrs.modified = true;
     e->element_attrs.parent = p;
 }
 
 JS_SETTER_CLASS(Element, border)
 {
     Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.modified = true;
 }
 
 JS_SETTER_CLASS(Element, border_left)
 {
     Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.modified = true;
 }
 
 JS_SETTER_CLASS(Element, border_right)
 {
     Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.modified = true;
 }
 
 JS_SETTER_CLASS(Element, border_top)
 {
     Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.modified = true;
 }
 
 JS_SETTER_CLASS(Element, border_bottom)
 {
     Element* e = unwrap<Element>(info.Holder());
+    e->element_attrs.modified = true;
 }
 
 /*
@@ -289,6 +301,7 @@ JS_FUN_CLASS(Element, think)
     if (args.Length() > 0) {
         v8::Handle<v8::Value> think_val = args[0];
         if (think_val->IsFunction()) {
+            e->element_attrs.modified = true;
             v8::Handle<v8::Function> think_fun = v8::Handle<v8::Function>::Cast(think_val);
             e->element_attrs.think_funs.push_back(v8::Persistent<v8::Function>::New(think_fun));
             return args.Holder();
@@ -390,6 +403,8 @@ bool Element::build_attributes(const v8::Arguments& args, Element_attributes* ea
     // These are values that we can live without
     JS_BA_STR(ea->id, id, "Expected a string for `id`.");
     JS_BA_INT(bg_str, bg, "Expected a string for `background-color`.");
+
+    ea->modified = true;
 
     return true;
 }

@@ -212,6 +212,7 @@ private:
     Function_list gui_think_funs;
     Gui_exception current_exception;
     int cursor_handle, last_game_msec;
+    Screen_attributes* screen;
 private:
     void think_fun();
 public:

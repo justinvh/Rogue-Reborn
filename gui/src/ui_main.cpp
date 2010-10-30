@@ -36,6 +36,12 @@ USER INTERFACE MAIN
 #include <fstream>
 
 namespace hat {
+    // Initialize the global variables
+    namespace global {
+    Screen_attributes screen_attrs;
+    }
+
+    // The state of the current gui
     struct Gui_state { 
         Gui_state() : bad(false) { }
         const char* js_file;
@@ -53,6 +59,21 @@ namespace {
     int last_time = 0;
     int active_index = -1;
 };
+
+void reset_gl_bindings()
+{
+    // The screen is virtualized on a 800x600 screen
+    glConfig_t glconfig;
+    hat::Screen_attributes& screen = hat::global::screen_attrs;
+    trap_GetGlconfig(&glconfig);
+
+    // Setup the accurate scaling
+    screen.width = glconfig.vidWidth;
+    screen.height = glconfig.vidHeight;
+    screen.scale_x = screen.width / 800.0f;
+    screen.scale_y = screen.height / 600.0f;
+    screen.modified = true;
+}
 
 
 /*
@@ -74,13 +95,16 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
         case UI_GETAPIVERSION:
             return UI_API_VERSION;
 
+        case UI_VID_RESTART:
+            reset_gl_bindings();
+            break;
+
         case UI_INIT: {
-            glConfig_t config;
-            trap_GetGlconfig(&config);
             // There is a general initialization script that is run
             // for the GUI subsystem. This basically makes sure that we
             // have some correlation between the GUI and the rest of
             // the engine.
+            reset_gl_bindings();
             hat::Gui menu_init("base/guis/init.js");
             kbm_state.reset_all();
             return 0;
@@ -135,9 +159,11 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
             kbm_state.held_delta = arg0 - last_time;
             last_time = arg0;
 
+            // We no longer have a new event nor has the screen changed
             kbm_state.new_event = false;
             kbm_state.dx = 0;
             kbm_state.dy = 0;
+            hat::global::screen_attrs.modified = false;
 
             // Make sure that we didn't enter a run-time exception.
             // If this happens, then we need to set the state of the

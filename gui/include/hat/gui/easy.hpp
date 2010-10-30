@@ -29,6 +29,21 @@ THE SOFTWARE.
 #include <vector>
 
 namespace hat {
+
+/*
+A screen descriptor
+*/
+struct Screen_attributes
+{
+    float width, height;
+    float scale_x, scale_y;
+    bool modified;
+};
+
+namespace global {
+extern Screen_attributes screen_attrs;
+}
+
 /*
 Generically unwraps a handle to a V8 object of a specified class.
 If the object does not have an internal field count then a
