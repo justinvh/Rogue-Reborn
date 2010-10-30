@@ -59,7 +59,8 @@ initialized to 0.
 struct Element_attributes
 {
     Element_attributes() :
-        x(0), y(0), width(0), height(0), id(""), parent(NULL) { }
+        x(0), y(0), width(0), height(0), id(""), 
+        active(true), modified(false), parent(NULL) { }
     
     std::string id;
     bool active, modified;

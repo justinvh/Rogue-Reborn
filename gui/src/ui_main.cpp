@@ -105,12 +105,14 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
             // have some correlation between the GUI and the rest of
             // the engine.
             reset_gl_bindings();
+            Com_Printf("Initializing GUI subsystem\n");
             hat::Gui menu_init("base/guis/init.js");
             kbm_state.reset_all();
             return 0;
         }
 
         case UI_SHUTDOWN:
+            Com_Printf("Shutting down GUI subsystem\n");
             active_gui =  NULL;
             broken_menu = NULL;
             kbm_state.reset_all();

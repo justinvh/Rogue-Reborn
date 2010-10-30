@@ -82,6 +82,7 @@ Image::Image(const Element_attributes& element_attributes,
 */
 void Image::think(int ms)
 {
+
     if (!element_attrs.active) {
         return;
     }
@@ -92,6 +93,8 @@ void Image::think(int ms)
     // Whenever the image has been modified or we get a new screen
     // modification, then we need to re-evaluate the image
     if (image_attrs.src_handle == -1 || global::screen_attrs.modified) {
+	Com_Printf("Image::think(%d) for %s - Source handle needs updating to %s\n", 
+            ms, name, image_attrs.src.c_str());
         image_attrs.src_handle = trap_R_RegisterShaderNoMip(image_attrs.src.c_str());
     }
     
@@ -165,6 +168,8 @@ v8::Handle<v8::Value> Image::create(const v8::Arguments& args)
     static v8::Persistent<v8::FunctionTemplate> image_tmpl;
     static Extension_list extension_list;
 
+    Com_Printf("Image::Create() - gui.SimpleImage() is being created\n");
+
     // We only need to build our extension list once
     if (!extension_list.size()) extension_list.push_back(std::make_pair(accessors, funs));
 
@@ -185,6 +190,8 @@ v8::Handle<v8::Value> Image::create(const v8::Arguments& args)
 
     // Now wrap the rest of the image
     Element::wrap_tmpl(&image_tmpl, image, extension_list);
+    Com_Printf("Image::Create() - gui.SimpleImage() has been initialized and created.\n");
+
     return image->self;
 }
 
@@ -209,6 +216,8 @@ v8::Handle<v8::Value> Eventful_image::create(const v8::Arguments& args)
     static v8::Persistent<v8::FunctionTemplate> image_tmpl;
     static Extension_list extension_list;
 
+    Com_Printf("Eventful_image::Create() - gui.Image() is being created\n");
+
     // We only need to build our extension list once
     if (!extension_list.size()) {
         extension_list.push_back(std::make_pair(accessors, funs));
@@ -230,6 +239,8 @@ v8::Handle<v8::Value> Eventful_image::create(const v8::Arguments& args)
 
     // Now wrap the rest of the image
     Eventful_image* image = new Eventful_image(element_attributes, image_attributes);
+    Com_Printf("Eventful_image::Create() - gui.Image() has been initialized and created.\n");
+
     return Element::wrap_tmpl(&image_tmpl, image, extension_list);
 }
 

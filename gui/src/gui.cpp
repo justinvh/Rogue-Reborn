@@ -117,6 +117,8 @@ Gui::Gui(const char* js_file)
         engine_menus["postgame"] = UIMENU_POSTGAME;
     }
 
+    Com_Printf("Gui()::Gui() - %s\n", js_file);
+
     // Read the file into a buffer for script conversion
     std::ifstream file(js_file, std::ios::in | std::ios::binary);
     if (!file) {
@@ -147,6 +149,7 @@ Gui::Gui(const char* js_file)
     global_context->Global()->Set(v8::String::New("gui"), gui_ns);
 
     // Setup the error handling and compile the current script
+    Com_Printf("Compiling...\n");
     v8::TryCatch compile_try_catch;
     v8::Handle<v8::Script> compiled_script = v8::Script::Compile(script);
     if (compile_try_catch.HasCaught()) {
@@ -156,6 +159,7 @@ Gui::Gui(const char* js_file)
     }
 
     // Now run the script and check for errors.
+    Com_Printf("Running...\n");
     v8::TryCatch run_try_catch;
     v8::Handle<v8::Value> compiled_result = compiled_script->Run();
     if (run_try_catch.HasCaught()) {
@@ -164,6 +168,7 @@ Gui::Gui(const char* js_file)
         return;
     }
 
+    Com_Printf("Success...\n");
     cursor_handle = trap_R_RegisterShaderNoMip("gfx/2d/cursors/Azenis/Arrow.png");
     last_game_msec = trap_Milliseconds();
 }
@@ -389,6 +394,7 @@ JS_FUN_CLASS(Gui, setup_menus)
 {
     v8::Local<v8::Object> menu_obj = args[0]->ToObject();
     v8::Local<v8::Array> menu_to_be_set = menu_obj->GetPropertyNames();
+    Com_Printf("Gui()::setup_menus()\n");
 
     Gui* gui = unwrap<Gui>(args.Holder());
     if (!gui) {
@@ -397,6 +403,7 @@ JS_FUN_CLASS(Gui, setup_menus)
 
     std::auto_ptr<char> fs_basegame(new char[512]);
     trap_Cvar_VariableStringBuffer("fs_basegame", fs_basegame.get(), sizeof(char) * 512);
+    Com_Printf("Gui()::setup_menus() - %s\n", fs_basegame.get());
 
     for (int i = 0; i < menu_to_be_set->Length(); i++) {
         const v8::Local<v8::String> real_key = menu_to_be_set->Get(v8::Int32::New(i))->ToString();
