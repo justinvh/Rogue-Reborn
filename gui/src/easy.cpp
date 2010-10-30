@@ -57,7 +57,7 @@ v8::Handle<v8::FunctionTemplate> generate_fun_tmpl(
     add_accessors_and_fun_to_fun_tmpl(accessors, funs, tmpl, true);
 
     if (extension_list) {
-        for (auto ecit = extension_list->begin();
+        for (Extension_list::const_iterator ecit = extension_list->begin();
             ecit != extension_list->end();
             ++ecit)
         {

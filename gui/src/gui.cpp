@@ -125,7 +125,7 @@ Gui::Gui(const char* js_file)
     }
     file.seekg(0, std::ios::end);
     const unsigned int file_size = file.tellg();
-    std::unique_ptr<char> file_raw(new char[file_size]);
+    std::auto_ptr<char> file_raw(new char[file_size]);
     file.seekg(0, std::ios::beg);
     file.read(file_raw.get(), file_size);
     file.close();
@@ -211,7 +211,7 @@ void Gui::think_fun()
     // We're in the case that the args don't exist, so now we are calling 
     // the various methods of the think()
     v8::TryCatch run_try_catch;
-    for (auto tci = gui_think_funs.begin();
+    for (Function_list::const_iterator tci = gui_think_funs.begin();
         tci != gui_think_funs.end();
         ++tci)
     {
@@ -250,7 +250,7 @@ void Gui::think(const Gui_kbm& kbm_state)
     const int my = kbm_state.my;
     const int dx = kbm_state.dx;
     const int dy = kbm_state.dy;
-    for (auto iter = available_elements.begin();
+    for (Element_list::iterator iter = available_elements.begin();
         iter != available_elements.end();
         ++iter)
     {
@@ -300,7 +300,7 @@ void Gui::think(const Gui_kbm& kbm_state)
                     eventful_e->mouse_up(mx, my, kbm_state.button);
                 } 
             // Otherwise we are dragging
-            } else if (eventful_e->is_draggable(2500)) {
+            } else if (eventful_e->is_draggable(250)) {
                 eventful_e->mouse_drag(e->element_attrs.x + dx, e->element_attrs.y + dy, kbm_state.button);
             } else if (eventful_e->eventful_attrs.is_mouse_down) {
                 Com_Printf("Updating element held_delta: %d     %d\n", kbm_state.held_delta, eventful_e->eventful_attrs.held_timer);
@@ -337,7 +337,7 @@ void Gui::think(const Gui_kbm& kbm_state)
 void Gui::shutdown()
 {
     // Be nice and free memory for the current elements
-    for (auto iter = available_elements.begin();
+    for (Element_list::iterator iter = available_elements.begin();
         iter != available_elements.end();
         ++iter)
     {
@@ -346,7 +346,7 @@ void Gui::shutdown()
     }
 
     // Be nice and free memory for the active elements
-    for (auto iter = pending_elements.begin();
+    for (Element_list::iterator iter = pending_elements.begin();
         iter != pending_elements.end();
         ++iter)
     {
@@ -373,7 +373,7 @@ void Gui::engine_menu_clear()
 
 const char* Gui::engine_menu_exists(const int menu)
 {
-    auto menu_name = available_menus.find(menu);
+    Menu_mapping::const_iterator menu_name = available_menus.find(menu);
     if (menu_name == available_menus.end()) {
         return NULL;
     }
@@ -395,7 +395,7 @@ JS_FUN_CLASS(Gui, setup_menus)
         return v8::Exception::Error(v8::String::New("Gui class has become detached?"));
     }
 
-    std::unique_ptr<char> fs_basegame(new char[512]);
+    std::auto_ptr<char> fs_basegame(new char[512]);
     trap_Cvar_VariableStringBuffer("fs_basegame", fs_basegame.get(), sizeof(char) * 512);
 
     for (int i = 0; i < menu_to_be_set->Length(); i++) {
@@ -404,7 +404,7 @@ JS_FUN_CLASS(Gui, setup_menus)
         std::stringstream val(std::stringstream::in | std::stringstream::out);
         val << fs_basegame.get() << "/guis/" << *v8::String::Utf8Value(menu_obj->Get(real_key));
 
-        auto cit = engine_menus.find(key);
+        Engine_mapping::const_iterator cit = engine_menus.find(key);
         if (cit == engine_menus.end()) {
             return v8::Exception::RangeError(v8::String::New("Attempted to set the value of a non-existent engine menu"));
         }

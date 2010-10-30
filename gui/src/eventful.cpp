@@ -184,7 +184,7 @@ void Eventful::mouse_down(int mx, int my, int button)
     };
 
     v8::TryCatch run_try_catch;
-    for (auto tci = eventful_attrs.mouse_down.begin();
+    for (Function_list::const_iterator tci = eventful_attrs.mouse_down.begin();
         tci != eventful_attrs.mouse_down.end();
         ++tci)
     {
@@ -208,7 +208,7 @@ void Eventful::mouse_up(int mx, int my, int button)
     };
 
     v8::TryCatch run_try_catch;
-    for (auto tci = eventful_attrs.mouse_up.begin();
+    for (Function_list::const_iterator tci = eventful_attrs.mouse_up.begin();
         tci != eventful_attrs.mouse_up.end();
         ++tci)
     {
@@ -247,7 +247,7 @@ void Eventful::mouse_drag(int rx, int ry, int button)
     };
 
     v8::TryCatch run_try_catch;
-    for (auto tci = eventful_attrs.mouse_drag.begin();
+    for (Function_list::const_iterator tci = eventful_attrs.mouse_drag.begin();
         tci != eventful_attrs.mouse_drag.end();
         ++tci)
     {
@@ -270,7 +270,7 @@ void Eventful::mouse_over(int mx, int my)
     };
 
     v8::TryCatch run_try_catch;
-    for (auto tci = eventful_attrs.mouse_over.begin();
+    for (Function_list::const_iterator tci = eventful_attrs.mouse_over.begin();
         tci != eventful_attrs.mouse_over.end();
         ++tci)
     {
@@ -293,7 +293,7 @@ void Eventful::mouse_over(int mx, int my)
     };
 
     v8::TryCatch run_try_catch;
-    for (auto tci = eventful_attrs.mouse_out.begin();
+    for (Function_list::const_iterator tci = eventful_attrs.mouse_out.begin();
         tci != eventful_attrs.mouse_out.end();
         ++tci)
     {
@@ -316,7 +316,7 @@ void Eventful::mouse_over(int mx, int my)
     };
 
     v8::TryCatch run_try_catch;
-    for (auto tci = eventful_attrs.key_down.begin();
+    for (Function_list::const_iterator tci = eventful_attrs.key_down.begin();
         tci != eventful_attrs.key_down.end();
         ++tci)
     {
@@ -339,7 +339,7 @@ void Eventful::mouse_over(int mx, int my)
     };
 
     v8::TryCatch run_try_catch;
-    for (auto tci = eventful_attrs.key_up.begin();
+    for (Function_list::const_iterator tci = eventful_attrs.key_up.begin();
         tci != eventful_attrs.key_up.end();
         ++tci)
     {
@@ -362,7 +362,7 @@ void Eventful::mouse_over(int mx, int my)
     };
 
     v8::TryCatch run_try_catch;
-    for (auto tci = eventful_attrs.key_press.begin();
+    for (Function_list::const_iterator tci = eventful_attrs.key_press.begin();
         tci != eventful_attrs.key_press.end();
         ++tci)
     {
@@ -381,7 +381,7 @@ void Eventful::scroll_down()
 
     v8::HandleScope execution_scope;
     v8::TryCatch run_try_catch;
-    for (auto tci = eventful_attrs.scroll_down.begin();
+    for (Function_list::const_iterator tci = eventful_attrs.scroll_down.begin();
         tci != eventful_attrs.scroll_down.end();
         ++tci)
     {
@@ -400,7 +400,7 @@ void Eventful::scroll_up()
 
     v8::HandleScope execution_scope;
     v8::TryCatch run_try_catch;
-    for (auto tci = eventful_attrs.scroll_up.begin();
+    for (Function_list::const_iterator tci = eventful_attrs.scroll_up.begin();
         tci != eventful_attrs.scroll_up.end();
         ++tci)
     {

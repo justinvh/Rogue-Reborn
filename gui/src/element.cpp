@@ -357,7 +357,7 @@ void Element::think_fun(int ms)
     // We're in the case that the args don't exist, so now we are calling 
     // the various methods of the think()
     v8::TryCatch run_try_catch;
-    for (auto tci = element_attrs.think_funs.begin();
+    for (Function_list::const_iterator tci = element_attrs.think_funs.begin();
         tci != element_attrs.think_funs.end();
         ++tci)
     {

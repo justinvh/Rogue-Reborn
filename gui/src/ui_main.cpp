@@ -114,7 +114,7 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
             active_gui =  NULL;
             broken_menu = NULL;
             kbm_state.reset_all();
-            for (auto iter = available_guis.begin();
+            for (Cached_gui::iterator iter = available_guis.begin();
                 iter != available_guis.end();
                 ++iter)
             {
@@ -188,7 +188,7 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
             trap_Key_SetCatcher(KEYCATCH_UI);
             if (active_index == arg0 || arg0 == UIMENU_NONE) return 0;
 
-            auto ci = available_guis.find(arg0);
+            Cached_gui::iterator ci = available_guis.find(arg0);
 
             // Reset the active states
             active_index = -1;
