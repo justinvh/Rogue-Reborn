@@ -257,6 +257,32 @@ void locateCamera(gentity_t * ent)
 	ent->s.eventParm = DirToByte(dir);
 }
 
+void gui_surface_think(gentity_t * ent)
+{
+}
+
+/*QUAKED misc_gui_surface (0 0 1) (-8 -8 -8) (8 8 8)
+Creates a GUI on the surface
+*/
+void SP_misc_gui_surface(gentity_t * ent)
+{
+	VectorClear(ent->r.mins);
+	VectorClear(ent->r.maxs);
+	trap_LinkEntity(ent);
+
+	ent->s.eType = ET_GUI;
+
+	if(!ent->target)
+	{
+		VectorCopy(ent->s.origin, ent->s.origin2);
+	}
+	else
+	{
+		ent->think = gui_surface_think;
+		ent->nextthink = level.time + 100;
+	}
+}
+
 /*QUAKED misc_portal_surface (0 0 1) (-8 -8 -8) (8 8 8)
 The portal surface nearest this entity will show a view from the targeted misc_portal_camera, or a mirror view if untargeted.
 This must be within 64 world units of the surface!

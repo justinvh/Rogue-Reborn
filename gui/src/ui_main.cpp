@@ -161,35 +161,45 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
             return 0;
 
         case UI_REFRESH:
-            // We don't do anything if we are not key-catchin
-            if (!(trap_Key_GetCatcher() & KEYCATCH_UI) || !active_gui) {
+            if (!(trap_Key_GetCatcher() & KEYCATCH_UI)) {
                 return 0;
             }
 
-            // Whenever a refresh() is called, then we just call think()
-            // on the GUI with the new KBM state. It's important to reset
-            // the keys after the think() so we can figure out a new key
-            // state after.
-            active_gui->think(kbm_state);
-            kbm_state.held_delta = arg0 - last_time;
-            last_time = arg0;
+            // Cycle through each GUI
+            for (Cached_gui::iterator iter = available_guis.begin();
+                iter != available_guis.end();
+                ++iter)
+            {
+                active_gui = iter->second.gui;
+                if (active_gui->in_exception_state()) {
+                    continue;
+                }
 
-            // We no longer have a new event nor has the screen changed
-            kbm_state.new_event = false;
-            kbm_state.dx = 0;
-            kbm_state.dy = 0;
-            hat::global::screen_attrs.modified = false;
+                // Whenever a refresh() is called, then we just call think()
+                // on the GUI with the new KBM state. It's important to reset
+                // the keys after the think() so we can figure out a new key
+                // state after.
+                active_gui->think(kbm_state);
+                kbm_state.held_delta = arg0 - last_time;
+                last_time = arg0;
 
-            // Make sure that we didn't enter a run-time exception.
-            // If this happens, then we need to set the state of the
-            // GUI to invalid and alert the developer.
-            if (active_gui->in_exception_state()) {
-                const hat::Gui_exception& e = active_gui->exception();
-                Com_Error(ERR_GUI, "<%s>:%d - %s", e.file.c_str(), e.line, e.message.c_str());
-                available_guis[active_index].bad = true;
-                broken_menu = active_gui->js_filename;
-                active_index = -1;
-                active_gui = NULL;
+                // We no longer have a new event nor has the screen changed
+                kbm_state.new_event = false;
+                kbm_state.dx = 0;
+                kbm_state.dy = 0;
+                hat::global::screen_attrs.modified = false;
+
+                // Make sure that we didn't enter a run-time exception.
+                // If this happens, then we need to set the state of the
+                // GUI to invalid and alert the developer.
+                if (active_gui->in_exception_state()) {
+                    const hat::Gui_exception& e = active_gui->exception();
+                    Com_Error(ERR_GUI, "<%s>:%d - %s", e.file.c_str(), e.line, e.message.c_str());
+                    available_guis[active_index].bad = true;
+                    broken_menu = active_gui->js_filename;
+                    active_index = -1;
+                    active_gui = NULL;
+                }
             }
         
             return 0;

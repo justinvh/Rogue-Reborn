@@ -123,21 +123,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 typedef enum
 {
-	GT_FFA,						// free for all
-	GT_TOURNAMENT,				// one on one tournament
-	GT_SINGLE_PLAYER,			// single player ffa
+    GT_FFA,						// free for all
+    GT_TOURNAMENT,				// one on one tournament
+    GT_SINGLE_PLAYER,			// single player ffa
 
 //	GT_KING_OF_THE_HILL			// TODO kill the king Unreal 1 style
 
-	//-- team games go after this --
+    //-- team games go after this --
 
-	GT_TEAM,					// team deathmatch
-	GT_CTF,						// capture the flag
-	GT_1FCTF,
-	GT_OBELISK,
-	GT_HARVESTER,
+    GT_TEAM,					// team deathmatch
+    GT_CTF,						// capture the flag
+    GT_1FCTF,
+    GT_OBELISK,
+    GT_HARVESTER,
 
-	GT_MAX_GAME_TYPE
+    GT_MAX_GAME_TYPE
 } gametype_t;
 
 typedef enum
@@ -156,45 +156,45 @@ movement on the server game.
 
 typedef enum
 {
-	PM_NORMAL,					// can accelerate and turn
-	PM_NOCLIP,					// noclip movement
-	PM_SPECTATOR,				// still run into walls
-	PM_DEAD,					// no acceleration or turning, but free falling
-	PM_FREEZE,					// stuck in place with no control
-	PM_INTERMISSION,			// no movement or status bar
-	PM_SPINTERMISSION			// no movement or status bar
+    PM_NORMAL,					// can accelerate and turn
+    PM_NOCLIP,					// noclip movement
+    PM_SPECTATOR,				// still run into walls
+    PM_DEAD,					// no acceleration or turning, but free falling
+    PM_FREEZE,					// stuck in place with no control
+    PM_INTERMISSION,			// no movement or status bar
+    PM_SPINTERMISSION			// no movement or status bar
 } pmtype_t;
 
 typedef enum
 {
-	WEAPON_READY,
-	WEAPON_RAISING,
-	WEAPON_DROPPING,
-	WEAPON_FIRING,
+    WEAPON_READY,
+    WEAPON_RAISING,
+    WEAPON_DROPPING,
+    WEAPON_FIRING,
 
-	MAX_WEAPON_STATES
+    MAX_WEAPON_STATES
 } weaponstate_t;
 
 // pmove->pm_flags	16 bits
 enum
 {
-	PMF_DUCKED						= BIT(0),
-	PMF_JUMP_HELD					= BIT(1),
-	PMF_BACKWARDS_JUMP				= BIT(2),	// go into backwards land
-	PMF_BACKWARDS_RUN				= BIT(3),	// coast down to backwards run
-	PMF_TIME_LAND					= BIT(4),	// pm_time is time before rejump
-	PMF_TIME_KNOCKBACK				= BIT(5),	// pm_time is an air-accelerate only time
-	PMF_TIME_WATERJUMP				= BIT(6),	// pm_time is waterjump
-	PMF_RESPAWNED					= BIT(7),	// clear after attack and jump buttons come up
-	PMF_USE_ITEM_HELD				= BIT(8),
-	PMF_GRAPPLE_PULL				= BIT(9),	// pull towards grapple location
-	PMF_FOLLOW						= BIT(10),	// spectate following another player
-	PMF_SCOREBOARD					= BIT(11),	// spectate as a scoreboard
-	PMF_INVULEXPAND					= BIT(12),	// invulnerability sphere set to full size
-	PMF_WALLCLIMBING				= BIT(13),
-	PMF_WALLCLIMBINGCEILING			= BIT(14),
+    PMF_DUCKED						= BIT(0),
+    PMF_JUMP_HELD					= BIT(1),
+    PMF_BACKWARDS_JUMP				= BIT(2),	// go into backwards land
+    PMF_BACKWARDS_RUN				= BIT(3),	// coast down to backwards run
+    PMF_TIME_LAND					= BIT(4),	// pm_time is time before rejump
+    PMF_TIME_KNOCKBACK				= BIT(5),	// pm_time is an air-accelerate only time
+    PMF_TIME_WATERJUMP				= BIT(6),	// pm_time is waterjump
+    PMF_RESPAWNED					= BIT(7),	// clear after attack and jump buttons come up
+    PMF_USE_ITEM_HELD				= BIT(8),
+    PMF_GRAPPLE_PULL				= BIT(9),	// pull towards grapple location
+    PMF_FOLLOW						= BIT(10),	// spectate following another player
+    PMF_SCOREBOARD					= BIT(11),	// spectate as a scoreboard
+    PMF_INVULEXPAND					= BIT(12),	// invulnerability sphere set to full size
+    PMF_WALLCLIMBING				= BIT(13),
+    PMF_WALLCLIMBINGCEILING			= BIT(14),
 
-	PMF_ALL_TIMES					= (PMF_TIME_WATERJUMP | PMF_TIME_LAND | PMF_TIME_KNOCKBACK)
+    PMF_ALL_TIMES					= (PMF_TIME_WATERJUMP | PMF_TIME_LAND | PMF_TIME_KNOCKBACK)
 };
 
 extern const vec3_t playerMins;
@@ -203,44 +203,44 @@ extern const vec3_t playerMaxs;
 #define	MAXTOUCH	32
 typedef struct
 {
-	// state (in / out)
-	playerState_t  *ps;
+    // state (in / out)
+    playerState_t  *ps;
 
-	// command (in)
-	usercmd_t       cmd;
-	int             tracemask;	// collide against these types of surfaces
-	int             debugLevel;	// if set, diagnostic output will be printed
-	int             airControl;	// if set, air control will be allowed
-	int             fastWeaponSwitches;	// if set, weapon lower and raise animations will be skipped
-	qboolean        noFootsteps;	// if the game is setup for no footsteps by the server
-	qboolean        gauntletHit;	// true if a gauntlet attack would actually hit something
+    // command (in)
+    usercmd_t       cmd;
+    int             tracemask;	// collide against these types of surfaces
+    int             debugLevel;	// if set, diagnostic output will be printed
+    int             airControl;	// if set, air control will be allowed
+    int             fastWeaponSwitches;	// if set, weapon lower and raise animations will be skipped
+    qboolean        noFootsteps;	// if the game is setup for no footsteps by the server
+    qboolean        gauntletHit;	// true if a gauntlet attack would actually hit something
 
-	int             framecount;
+    int             framecount;
 
-	// results (out)
-	int             numtouch;
-	int             touchents[MAXTOUCH];
+    // results (out)
+    int             numtouch;
+    int             touchents[MAXTOUCH];
 
-	vec3_t          mins, maxs;	// bounding box size
+    vec3_t          mins, maxs;	// bounding box size
 
-	int             watertype;
-	int             waterlevel;
+    int             watertype;
+    int             waterlevel;
 
-	float           xyspeed;
+    float           xyspeed;
 
-	// fixed pmove
-	int             fixedPmove;
-	int             fixedPmoveFPS;
+    // fixed pmove
+    int             fixedPmove;
+    int             fixedPmoveFPS;
 
-	// leaning
-	int				allowLeaning;
-	int				allowLeaningWithMovement;
+    // leaning
+    int				allowLeaning;
+    int				allowLeaningWithMovement;
 
-	// callbacks to test the world
-	// these will be different functions during game and cgame
-	void            (*trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
-							  int passEntityNum, int contentMask);
-	int             (*pointcontents) (const vec3_t point, int passEntityNum);
+    // callbacks to test the world
+    // these will be different functions during game and cgame
+    void            (*trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
+                              int passEntityNum, int contentMask);
+    int             (*pointcontents) (const vec3_t point, int passEntityNum);
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles
@@ -254,16 +254,16 @@ void            Pmove(pmove_t * pmove);
 // NOTE: may not have more than 16
 typedef enum
 {
-	STAT_HEALTH,
-	STAT_HOLDABLE_ITEM,
+    STAT_HEALTH,
+    STAT_HOLDABLE_ITEM,
 #ifdef MISSIONPACK
-	STAT_PERSISTANT_POWERUP,
+    STAT_PERSISTANT_POWERUP,
 #endif
-	STAT_WEAPONS,				// 16 bit fields
-	STAT_ARMOR,
-	STAT_DEAD_YAW,				// look this direction when dead (FIXME: get rid of?)
-	STAT_CLIENTS_READY,			// bit mask of clients wishing to exit the intermission (FIXME: configstring?)
-	STAT_MAX_HEALTH				// health / armor limit, changable by handicap
+    STAT_WEAPONS,				// 16 bit fields
+    STAT_ARMOR,
+    STAT_DEAD_YAW,				// look this direction when dead (FIXME: get rid of?)
+    STAT_CLIENTS_READY,			// bit mask of clients wishing to exit the intermission (FIXME: configstring?)
+    STAT_MAX_HEALTH				// health / armor limit, changable by handicap
 } statIndex_t;
 
 
@@ -273,23 +273,23 @@ typedef enum
 // NOTE: may not have more than 16
 typedef enum
 {
-	PERS_SCORE,					// !!! MUST NOT CHANGE, SERVER AND GAME BOTH REFERENCE !!!
-	PERS_HITS,					// total points damage inflicted so damage beeps can sound on change
-	PERS_RANK,					// player rank or team rank
-	PERS_TEAM,					// player team
-	PERS_SPAWN_COUNT,			// incremented every respawn
-	PERS_PLAYEREVENTS,			// 16 bits that can be flipped for events
-	PERS_ATTACKER,				// clientnum of last damage inflicter
-	PERS_ATTACKEE_ARMOR,		// health/armor of last person we attacked
-	PERS_KILLED,				// count of the number of times you died
-	// player awards tracking
-	PERS_IMPRESSIVE_COUNT,		// two railgun hits in a row
-	PERS_EXCELLENT_COUNT,		// two successive kills in a short amount of time
-	PERS_DEFEND_COUNT,			// defend awards
-	PERS_ASSIST_COUNT,			// assist awards
-	PERS_GAUNTLET_FRAG_COUNT,	// kills with the guantlet
-	PERS_CAPTURES,				// captures
-	PERS_TELEFRAG_FRAG_COUNT	// kills by telefragging
+    PERS_SCORE,					// !!! MUST NOT CHANGE, SERVER AND GAME BOTH REFERENCE !!!
+    PERS_HITS,					// total points damage inflicted so damage beeps can sound on change
+    PERS_RANK,					// player rank or team rank
+    PERS_TEAM,					// player team
+    PERS_SPAWN_COUNT,			// incremented every respawn
+    PERS_PLAYEREVENTS,			// 16 bits that can be flipped for events
+    PERS_ATTACKER,				// clientnum of last damage inflicter
+    PERS_ATTACKEE_ARMOR,		// health/armor of last person we attacked
+    PERS_KILLED,				// count of the number of times you died
+    // player awards tracking
+    PERS_IMPRESSIVE_COUNT,		// two railgun hits in a row
+    PERS_EXCELLENT_COUNT,		// two successive kills in a short amount of time
+    PERS_DEFEND_COUNT,			// defend awards
+    PERS_ASSIST_COUNT,			// assist awards
+    PERS_GAUNTLET_FRAG_COUNT,	// kills with the guantlet
+    PERS_CAPTURES,				// captures
+    PERS_TELEFRAG_FRAG_COUNT	// kills by telefragging
 } persEnum_t;
 
 
@@ -297,92 +297,92 @@ typedef enum
 // *INDENT-OFF*
 enum
 {
-	EF_DEAD					= BIT(0),	// don't draw a foe marker over players with EF_DEAD
-	EF_TELEPORT_BIT			= BIT(1),	// toggled every time the origin abruptly changes
-	EF_AWARD_EXCELLENT		= BIT(2),	// draw an excellent sprite
-	EF_PLAYER_EVENT			= BIT(3),
-	EF_BOUNCE				= BIT(4),	// for missiles
-	EF_BOUNCE_HALF			= BIT(5),	// for missiles
-	EF_AWARD_GAUNTLET		= BIT(6),	// draw a gauntlet sprite
-	EF_NODRAW				= BIT(7),	// may have an event, but no model (unspawned items)
-	EF_FIRING				= BIT(8),	// for lightning gun
-	EF_MOVER_STOP			= BIT(9),	// will push otherwise
-	EF_AWARD_CAP			= BIT(10),	// draw the capture sprite
-	EF_TALK					= BIT(11),	// draw a talk balloon
-	EF_CONNECTION			= BIT(12),	// draw a connection trouble sprite
-	EF_VOTED				= BIT(13),	// already cast a vote
-	EF_AWARD_IMPRESSIVE		= BIT(14),	// draw an impressive sprite
-	EF_AWARD_DEFEND			= BIT(15),	// draw a defend sprite
-	EF_AWARD_ASSIST			= BIT(16),	// draw a assist sprite
-	EF_AWARD_DENIED			= BIT(17),	// denied
-	EF_AWARD_TELEFRAG		= BIT(18),	// draw a telefrag sprite
-	EF_TEAMVOTED			= BIT(19),	// already cast a team vote
-	EF_KAMIKAZE				= BIT(20),
-	EF_TICKING				= BIT(21),	// used to make players play the prox mine ticking sound
-	EF_FIRING2				= BIT(22),	// for lightning gun
-	EF_WALLCLIMB			= BIT(23),	// TA: wall walking
-	EF_WALLCLIMBCEILING		= BIT(24),	// TA: wall walking ceiling hack
+    EF_DEAD					= BIT(0),	// don't draw a foe marker over players with EF_DEAD
+    EF_TELEPORT_BIT			= BIT(1),	// toggled every time the origin abruptly changes
+    EF_AWARD_EXCELLENT		= BIT(2),	// draw an excellent sprite
+    EF_PLAYER_EVENT			= BIT(3),
+    EF_BOUNCE				= BIT(4),	// for missiles
+    EF_BOUNCE_HALF			= BIT(5),	// for missiles
+    EF_AWARD_GAUNTLET		= BIT(6),	// draw a gauntlet sprite
+    EF_NODRAW				= BIT(7),	// may have an event, but no model (unspawned items)
+    EF_FIRING				= BIT(8),	// for lightning gun
+    EF_MOVER_STOP			= BIT(9),	// will push otherwise
+    EF_AWARD_CAP			= BIT(10),	// draw the capture sprite
+    EF_TALK					= BIT(11),	// draw a talk balloon
+    EF_CONNECTION			= BIT(12),	// draw a connection trouble sprite
+    EF_VOTED				= BIT(13),	// already cast a vote
+    EF_AWARD_IMPRESSIVE		= BIT(14),	// draw an impressive sprite
+    EF_AWARD_DEFEND			= BIT(15),	// draw a defend sprite
+    EF_AWARD_ASSIST			= BIT(16),	// draw a assist sprite
+    EF_AWARD_DENIED			= BIT(17),	// denied
+    EF_AWARD_TELEFRAG		= BIT(18),	// draw a telefrag sprite
+    EF_TEAMVOTED			= BIT(19),	// already cast a team vote
+    EF_KAMIKAZE				= BIT(20),
+    EF_TICKING				= BIT(21),	// used to make players play the prox mine ticking sound
+    EF_FIRING2				= BIT(22),	// for lightning gun
+    EF_WALLCLIMB			= BIT(23),	// TA: wall walking
+    EF_WALLCLIMBCEILING		= BIT(24),	// TA: wall walking ceiling hack
 };
 // *INDENT-ON*
 
 // NOTE: may not have more than 16
 typedef enum
 {
-	PW_NONE,
+    PW_NONE,
 
-	PW_QUAD,
-	PW_BATTLESUIT,
-	PW_HASTE,
-	PW_INVIS,
-	PW_REGEN,
-	PW_FLIGHT,
+    PW_QUAD,
+    PW_BATTLESUIT,
+    PW_HASTE,
+    PW_INVIS,
+    PW_REGEN,
+    PW_FLIGHT,
 
-	PW_REDFLAG,
-	PW_BLUEFLAG,
-	PW_NEUTRALFLAG,
+    PW_REDFLAG,
+    PW_BLUEFLAG,
+    PW_NEUTRALFLAG,
 
-	PW_SCOUT,
-	PW_GUARD,
-	PW_DOUBLER,
-	PW_AMMOREGEN,
-	PW_INVULNERABILITY,
+    PW_SCOUT,
+    PW_GUARD,
+    PW_DOUBLER,
+    PW_AMMOREGEN,
+    PW_INVULNERABILITY,
 
-	PW_NUM_POWERUPS
+    PW_NUM_POWERUPS
 } powerup_t;
 
 typedef enum
 {
-	HI_NONE,
+    HI_NONE,
 
-	HI_TELEPORTER,
-	HI_MEDKIT,
-	HI_KAMIKAZE,
-	HI_PORTAL,
-	HI_INVULNERABILITY,
+    HI_TELEPORTER,
+    HI_MEDKIT,
+    HI_KAMIKAZE,
+    HI_PORTAL,
+    HI_INVULNERABILITY,
 
-	HI_NUM_HOLDABLE
+    HI_NUM_HOLDABLE
 } holdable_t;
 
 
 typedef enum
 {
-	WP_NONE,
+    WP_NONE,
 
-	WP_GAUNTLET,
-	WP_MACHINEGUN,
-	WP_SHOTGUN,
-	WP_FLAK_CANNON,
-	WP_ROCKET_LAUNCHER,
-	WP_LIGHTNING,
-	WP_RAILGUN,
-	WP_PLASMAGUN,
-	WP_BFG,
+    WP_GAUNTLET,
+    WP_MACHINEGUN,
+    WP_SHOTGUN,
+    WP_FLAK_CANNON,
+    WP_ROCKET_LAUNCHER,
+    WP_LIGHTNING,
+    WP_RAILGUN,
+    WP_PLASMAGUN,
+    WP_BFG,
 #ifdef MISSIONPACK
-	WP_PROX_LAUNCHER,
-	WP_CHAINGUN,
+    WP_PROX_LAUNCHER,
+    WP_CHAINGUN,
 #endif
 
-	WP_NUM_WEAPONS
+    WP_NUM_WEAPONS
 } weapon_t;
 
 
@@ -409,215 +409,215 @@ typedef enum
 
 typedef enum
 {
-	EV_NONE,
+    EV_NONE,
 
-	EV_FOOTSTEP,
-	EV_FOOTSTEP_METAL,
-	EV_FOOTSTEP_WALLWALK,
-	EV_FOOTSPLASH,
-	EV_FOOTWADE,
-	EV_SWIM,
+    EV_FOOTSTEP,
+    EV_FOOTSTEP_METAL,
+    EV_FOOTSTEP_WALLWALK,
+    EV_FOOTSPLASH,
+    EV_FOOTWADE,
+    EV_SWIM,
 
-	EV_STEP_4,
-	EV_STEP_8,
-	EV_STEP_12,
-	EV_STEP_16,
+    EV_STEP_4,
+    EV_STEP_8,
+    EV_STEP_12,
+    EV_STEP_16,
 
-	EV_STEPDN_4,
-	EV_STEPDN_8,
-	EV_STEPDN_12,
-	EV_STEPDN_16,
+    EV_STEPDN_4,
+    EV_STEPDN_8,
+    EV_STEPDN_12,
+    EV_STEPDN_16,
 
-	EV_FALL_SHORT,
-	EV_FALL_MEDIUM,
-	EV_FALL_FAR,
+    EV_FALL_SHORT,
+    EV_FALL_MEDIUM,
+    EV_FALL_FAR,
 
-	EV_JUMP_PAD,				// boing sound at origin, jump sound on player
+    EV_JUMP_PAD,				// boing sound at origin, jump sound on player
 
-	EV_JUMP,
-	EV_WATER_TOUCH,				// foot touches
-	EV_WATER_LEAVE,				// foot leaves
-	EV_WATER_UNDER,				// head touches
-	EV_WATER_CLEAR,				// head leaves
+    EV_JUMP,
+    EV_WATER_TOUCH,				// foot touches
+    EV_WATER_LEAVE,				// foot leaves
+    EV_WATER_UNDER,				// head touches
+    EV_WATER_CLEAR,				// head leaves
 
-	EV_ITEM_PICKUP,				// normal item pickups are predictable
-	EV_GLOBAL_ITEM_PICKUP,		// powerup / team sounds are broadcast to everyone
+    EV_ITEM_PICKUP,				// normal item pickups are predictable
+    EV_GLOBAL_ITEM_PICKUP,		// powerup / team sounds are broadcast to everyone
 
-	EV_NOAMMO,
-	EV_CHANGE_WEAPON,
-	EV_FIRE_WEAPON,
-	EV_FIRE_WEAPON2,			// Tr3B: new
+    EV_NOAMMO,
+    EV_CHANGE_WEAPON,
+    EV_FIRE_WEAPON,
+    EV_FIRE_WEAPON2,			// Tr3B: new
 
-	EV_USE_ITEM0,
-	EV_USE_ITEM1,
-	EV_USE_ITEM2,
-	EV_USE_ITEM3,
-	EV_USE_ITEM4,
-	EV_USE_ITEM5,
-	EV_USE_ITEM6,
-	EV_USE_ITEM7,
-	EV_USE_ITEM8,
-	EV_USE_ITEM9,
-	EV_USE_ITEM10,
-	EV_USE_ITEM11,
-	EV_USE_ITEM12,
-	EV_USE_ITEM13,
-	EV_USE_ITEM14,
-	EV_USE_ITEM15,
+    EV_USE_ITEM0,
+    EV_USE_ITEM1,
+    EV_USE_ITEM2,
+    EV_USE_ITEM3,
+    EV_USE_ITEM4,
+    EV_USE_ITEM5,
+    EV_USE_ITEM6,
+    EV_USE_ITEM7,
+    EV_USE_ITEM8,
+    EV_USE_ITEM9,
+    EV_USE_ITEM10,
+    EV_USE_ITEM11,
+    EV_USE_ITEM12,
+    EV_USE_ITEM13,
+    EV_USE_ITEM14,
+    EV_USE_ITEM15,
 
-	EV_ITEM_RESPAWN,
-	EV_ITEM_POP,
-	EV_PLAYER_TELEPORT_IN,
-	EV_PLAYER_TELEPORT_OUT,
+    EV_ITEM_RESPAWN,
+    EV_ITEM_POP,
+    EV_PLAYER_TELEPORT_IN,
+    EV_PLAYER_TELEPORT_OUT,
 
-	EV_GRENADE_BOUNCE,			// eventParm will be the soundindex
+    EV_GRENADE_BOUNCE,			// eventParm will be the soundindex
 
-	EV_GENERAL_SOUND,
-	EV_GLOBAL_SOUND,			// no attenuation
-	EV_GLOBAL_TEAM_SOUND,
+    EV_GENERAL_SOUND,
+    EV_GLOBAL_SOUND,			// no attenuation
+    EV_GLOBAL_TEAM_SOUND,
 
-	EV_BULLET_HIT_FLESH,
-	EV_BULLET_HIT_WALL,
+    EV_BULLET_HIT_FLESH,
+    EV_BULLET_HIT_WALL,
 
-	EV_PROJECTILE_HIT,
-	EV_PROJECTILE_MISS,
-	EV_PROJECTILE_MISS_METAL,
+    EV_PROJECTILE_HIT,
+    EV_PROJECTILE_MISS,
+    EV_PROJECTILE_MISS_METAL,
 
-	EV_RAILTRAIL,
-	EV_SHOTGUN,
-	EV_BULLET,					// otherEntity is the shooter
+    EV_RAILTRAIL,
+    EV_SHOTGUN,
+    EV_BULLET,					// otherEntity is the shooter
 
-	EV_PAIN,
-	EV_DEATH1,
-	EV_DEATH2,
-	EV_DEATH3,
-	EV_OBITUARY,
+    EV_PAIN,
+    EV_DEATH1,
+    EV_DEATH2,
+    EV_DEATH3,
+    EV_OBITUARY,
 
-	EV_POWERUP_QUAD,
-	EV_POWERUP_BATTLESUIT,
-	EV_POWERUP_REGEN,
+    EV_POWERUP_QUAD,
+    EV_POWERUP_BATTLESUIT,
+    EV_POWERUP_REGEN,
 
-	EV_GIB_PLAYER,				// gib a previously living player
-	EV_SCOREPLUM,				// score plum
+    EV_GIB_PLAYER,				// gib a previously living player
+    EV_SCOREPLUM,				// score plum
 
 //#ifdef MISSIONPACK
-	EV_PROXIMITY_MINE_STICK,
-	EV_PROXIMITY_MINE_TRIGGER,
-	EV_KAMIKAZE,				// kamikaze explodes
-	EV_RAILEXLOSION,
-	EV_OBELISKEXPLODE,			// obelisk explodes
-	EV_OBELISKPAIN,				// obelisk is in pain
-	EV_INVUL_IMPACT,			// invulnerability sphere impact
-	EV_JUICED,					// invulnerability juiced effect
-	EV_LIGHTNINGBOLT,			// lightning bolt bounced of invulnerability sphere
+    EV_PROXIMITY_MINE_STICK,
+    EV_PROXIMITY_MINE_TRIGGER,
+    EV_KAMIKAZE,				// kamikaze explodes
+    EV_RAILEXLOSION,
+    EV_OBELISKEXPLODE,			// obelisk explodes
+    EV_OBELISKPAIN,				// obelisk is in pain
+    EV_INVUL_IMPACT,			// invulnerability sphere impact
+    EV_JUICED,					// invulnerability juiced effect
+    EV_LIGHTNINGBOLT,			// lightning bolt bounced of invulnerability sphere
 //#endif
 
-	EV_EFFECT,					// Lua scripted special effect
+    EV_EFFECT,					// Lua scripted special effect
 
-	EV_EXPLODE,
+    EV_EXPLODE,
 
-	EV_DEBUG_LINE,
-	EV_STOPLOOPINGSOUND,
-	EV_TAUNT,
-	EV_TAUNT_YES,
-	EV_TAUNT_NO,
-	EV_TAUNT_FOLLOWME,
-	EV_TAUNT_GETFLAG,
-	EV_TAUNT_GUARDBASE,
-	EV_TAUNT_PATROL
+    EV_DEBUG_LINE,
+    EV_STOPLOOPINGSOUND,
+    EV_TAUNT,
+    EV_TAUNT_YES,
+    EV_TAUNT_NO,
+    EV_TAUNT_FOLLOWME,
+    EV_TAUNT_GETFLAG,
+    EV_TAUNT_GUARDBASE,
+    EV_TAUNT_PATROL
 } entity_event_t;
 
 
 typedef enum
 {
-	GTS_RED_CAPTURE,
-	GTS_BLUE_CAPTURE,
-	GTS_RED_RETURN,
-	GTS_BLUE_RETURN,
-	GTS_RED_TAKEN,
-	GTS_BLUE_TAKEN,
-	GTS_REDOBELISK_ATTACKED,
-	GTS_BLUEOBELISK_ATTACKED,
-	GTS_REDTEAM_SCORED,
-	GTS_BLUETEAM_SCORED,
-	GTS_REDTEAM_TOOK_LEAD,
-	GTS_BLUETEAM_TOOK_LEAD,
-	GTS_TEAMS_ARE_TIED,
-	GTS_KAMIKAZE
+    GTS_RED_CAPTURE,
+    GTS_BLUE_CAPTURE,
+    GTS_RED_RETURN,
+    GTS_BLUE_RETURN,
+    GTS_RED_TAKEN,
+    GTS_BLUE_TAKEN,
+    GTS_REDOBELISK_ATTACKED,
+    GTS_BLUEOBELISK_ATTACKED,
+    GTS_REDTEAM_SCORED,
+    GTS_BLUETEAM_SCORED,
+    GTS_REDTEAM_TOOK_LEAD,
+    GTS_BLUETEAM_TOOK_LEAD,
+    GTS_TEAMS_ARE_TIED,
+    GTS_KAMIKAZE
 } global_team_sound_t;
 
 
 typedef enum
 {
-	BOTH_DEATH1,
-	BOTH_DEAD1,
-	BOTH_DEATH2,
-	BOTH_DEAD2,
-	BOTH_DEATH3,
-	BOTH_DEAD3,
+    BOTH_DEATH1,
+    BOTH_DEAD1,
+    BOTH_DEATH2,
+    BOTH_DEAD2,
+    BOTH_DEATH3,
+    BOTH_DEAD3,
 
-	TORSO_GESTURE,
+    TORSO_GESTURE,
 
-	TORSO_ATTACK,
-	TORSO_ATTACK2,
+    TORSO_ATTACK,
+    TORSO_ATTACK2,
 
-	TORSO_DROP,
-	TORSO_RAISE,
+    TORSO_DROP,
+    TORSO_RAISE,
 
-	TORSO_STAND,
-	TORSO_STAND2,
+    TORSO_STAND,
+    TORSO_STAND2,
 
-	LEGS_WALKCR,
-	LEGS_WALK,
-	LEGS_RUN,
-	LEGS_BACK,
-	LEGS_SWIM,
+    LEGS_WALKCR,
+    LEGS_WALK,
+    LEGS_RUN,
+    LEGS_BACK,
+    LEGS_SWIM,
 
-	LEGS_JUMP,
-	LEGS_LAND,
+    LEGS_JUMP,
+    LEGS_LAND,
 
-	LEGS_JUMPB,
-	LEGS_LANDB,
+    LEGS_JUMPB,
+    LEGS_LANDB,
 
-	LEGS_IDLE,
-	LEGS_IDLECR,
+    LEGS_IDLE,
+    LEGS_IDLECR,
 
-	LEGS_TURN,
+    LEGS_TURN,
 
-	TORSO_GETFLAG,
-	TORSO_GUARDBASE,
-	TORSO_PATROL,
-	TORSO_FOLLOWME,
-	TORSO_AFFIRMATIVE,
-	TORSO_NEGATIVE,
+    TORSO_GETFLAG,
+    TORSO_GUARDBASE,
+    TORSO_PATROL,
+    TORSO_FOLLOWME,
+    TORSO_AFFIRMATIVE,
+    TORSO_NEGATIVE,
 
-	LEGS_BACKCR,
-	LEGS_BACKWALK,
+    LEGS_BACKCR,
+    LEGS_BACKWALK,
 
-	MAX_PLAYER_ANIMATIONS
+    MAX_PLAYER_ANIMATIONS
 } playerAnimNumber_t;
 
 typedef enum
 {
-	FLAG_IDLE,
-	FLAG_RUN,
+    FLAG_IDLE,
+    FLAG_RUN,
 
-	MAX_FLAG_ANIMATIONS
+    MAX_FLAG_ANIMATIONS
 } flagAnimNumber_t;
 
 typedef struct animation_s
 {
 
-	qhandle_t       handle;		// registered md5Animation or whatever
-	qboolean        clearOrigin;	// reset the origin bone
+    qhandle_t       handle;		// registered md5Animation or whatever
+    qboolean        clearOrigin;	// reset the origin bone
 
-	int             firstFrame;
-	int             numFrames;
-	int             loopFrames;	// 0 to numFrames
-	int             frameTime;	// msec between frames
-	int             initialLerp;	// msec to get to first frame
-	int             reversed;	// true if animation is reversed
-	int             flipflop;	// true if animation should flipflop back to base
+    int             firstFrame;
+    int             numFrames;
+    int             loopFrames;	// 0 to numFrames
+    int             frameTime;	// msec between frames
+    int             initialLerp;	// msec to get to first frame
+    int             reversed;	// true if animation is reversed
+    int             flipflop;	// true if animation should flipflop back to base
 } animation_t;
 
 
@@ -628,12 +628,12 @@ typedef struct animation_s
 
 typedef enum
 {
-	TEAM_FREE,
-	TEAM_RED,
-	TEAM_BLUE,
-	TEAM_SPECTATOR,
+    TEAM_FREE,
+    TEAM_RED,
+    TEAM_BLUE,
+    TEAM_SPECTATOR,
 
-	TEAM_NUM_TEAMS
+    TEAM_NUM_TEAMS
 } team_t;
 
 // Time between location updates
@@ -645,54 +645,54 @@ typedef enum
 //team task
 typedef enum
 {
-	TEAMTASK_NONE,
-	TEAMTASK_OFFENSE,
-	TEAMTASK_DEFENSE,
-	TEAMTASK_PATROL,
-	TEAMTASK_FOLLOW,
-	TEAMTASK_RETRIEVE,
-	TEAMTASK_ESCORT,
-	TEAMTASK_CAMP
+    TEAMTASK_NONE,
+    TEAMTASK_OFFENSE,
+    TEAMTASK_DEFENSE,
+    TEAMTASK_PATROL,
+    TEAMTASK_FOLLOW,
+    TEAMTASK_RETRIEVE,
+    TEAMTASK_ESCORT,
+    TEAMTASK_CAMP
 } teamtask_t;
 
 // means of death
 typedef enum
 {
-	MOD_UNKNOWN,
-	MOD_SHOTGUN,
-	MOD_GAUNTLET,
-	MOD_MACHINEGUN,
-	MOD_GRENADE,
-	MOD_GRENADE_SPLASH,
-	MOD_ROCKET,
-	MOD_ROCKET_SPLASH,
-	MOD_PLASMA,
-	MOD_PLASMA_SPLASH,
-	MOD_RAILGUN,
-	MOD_RAILGUN_SPLASH,
-	MOD_LIGHTNING,
-	MOD_BFG,
-	MOD_BFG_SPLASH,
-	MOD_WATER,
-	MOD_SLIME,
-	MOD_LAVA,
-	MOD_CRUSH,
-	MOD_TELEFRAG,
-	MOD_FALLING,
-	MOD_SUICIDE,
-	MOD_TARGET_LASER,
-	MOD_TRIGGER_HURT,
-	MOD_NAIL,
+    MOD_UNKNOWN,
+    MOD_SHOTGUN,
+    MOD_GAUNTLET,
+    MOD_MACHINEGUN,
+    MOD_GRENADE,
+    MOD_GRENADE_SPLASH,
+    MOD_ROCKET,
+    MOD_ROCKET_SPLASH,
+    MOD_PLASMA,
+    MOD_PLASMA_SPLASH,
+    MOD_RAILGUN,
+    MOD_RAILGUN_SPLASH,
+    MOD_LIGHTNING,
+    MOD_BFG,
+    MOD_BFG_SPLASH,
+    MOD_WATER,
+    MOD_SLIME,
+    MOD_LAVA,
+    MOD_CRUSH,
+    MOD_TELEFRAG,
+    MOD_FALLING,
+    MOD_SUICIDE,
+    MOD_TARGET_LASER,
+    MOD_TRIGGER_HURT,
+    MOD_NAIL,
 #ifdef MISSIONPACK
-	MOD_CHAINGUN,
-	MOD_PROXIMITY_MINE,
+    MOD_CHAINGUN,
+    MOD_PROXIMITY_MINE,
 #endif
-	MOD_KAMIKAZE,
+    MOD_KAMIKAZE,
 #ifdef MISSIONPACK
-	MOD_JUICED,
+    MOD_JUICED,
 #endif
-	MOD_GRAPPLE,
-	MOD_BURN
+    MOD_GRAPPLE,
+    MOD_BURN
 } meansOfDeath_t;
 
 
@@ -701,37 +701,37 @@ typedef enum
 // gitem_t->type
 typedef enum
 {
-	IT_BAD,
-	IT_WEAPON,					// EFX: rotate + upscale + minlight
-	IT_AMMO,					// EFX: rotate
-	IT_ARMOR,					// EFX: rotate + minlight
-	IT_HEALTH,					// EFX: static external sphere + rotating internal
-	IT_POWERUP,					// instant on, timer based
-	// EFX: rotate + external ring that rotates
-	IT_HOLDABLE,				// single use, holdable item
-	// EFX: rotate + bob
-	IT_PERSISTANT_POWERUP,
-	IT_TEAM
+    IT_BAD,
+    IT_WEAPON,					// EFX: rotate + upscale + minlight
+    IT_AMMO,					// EFX: rotate
+    IT_ARMOR,					// EFX: rotate + minlight
+    IT_HEALTH,					// EFX: static external sphere + rotating internal
+    IT_POWERUP,					// instant on, timer based
+    // EFX: rotate + external ring that rotates
+    IT_HOLDABLE,				// single use, holdable item
+    // EFX: rotate + bob
+    IT_PERSISTANT_POWERUP,
+    IT_TEAM
 } itemType_t;
 
 #define MAX_ITEM_MODELS 4
 
 typedef struct gitem_s
 {
-	char           *classname;	// spawning name
-	char           *pickup_sound;
-	char           *models[MAX_ITEM_MODELS];
-	char           *skins[MAX_ITEM_MODELS];
-	char           *icon;
-	char           *pickup_name;	// for printing on pickup
+    char           *classname;	// spawning name
+    char           *pickup_sound;
+    char           *models[MAX_ITEM_MODELS];
+    char           *skins[MAX_ITEM_MODELS];
+    char           *icon;
+    char           *pickup_name;	// for printing on pickup
 
-	int             quantity;	// for ammo how much, or duration of powerup
-	itemType_t      giType;		// IT_* flags
+    int             quantity;	// for ammo how much, or duration of powerup
+    itemType_t      giType;		// IT_* flags
 
-	int             giTag;
+    int             giTag;
 
-	char           *precaches;	// string of all models and images this item will use
-	char           *sounds;		// string of all sounds this item will use
+    char           *precaches;	// string of all models and images this item will use
+    char           *sounds;		// string of all sounds this item will use
 } gitem_t;
 
 // included in both the game dll and the client
@@ -770,29 +770,30 @@ qboolean        BG_CanItemBeGrabbed(int gametype, const entityState_t * ent, con
 //
 typedef enum
 {
-	ET_GENERAL,
-	ET_PLAYER,
-	ET_ITEM,
-	ET_PROJECTILE,
-	ET_PROJECTILE2,
-	ET_MOVER,
-	ET_BEAM,
-	ET_PORTAL,
-	ET_SPEAKER,
-	ET_PUSH_TRIGGER,
-	ET_TELEPORT_TRIGGER,
-	ET_INVISIBLE,
-	ET_GRAPPLE,					// grapple hooked on wall
-	ET_TEAM,
-	ET_AI_NODE,					// AI visualization tool
-	ET_AI_LINK,
-	ET_EXPLOSIVE,
-	ET_FIRE,
-	ET_PHYSICS_BOX,				// JBullet visualization tool
+    ET_GENERAL,
+    ET_PLAYER,
+    ET_ITEM,
+    ET_PROJECTILE,
+    ET_PROJECTILE2,
+    ET_MOVER,
+    ET_BEAM,
+    ET_PORTAL,
+    ET_SPEAKER,
+    ET_PUSH_TRIGGER,
+    ET_TELEPORT_TRIGGER,
+    ET_INVISIBLE,
+    ET_GRAPPLE,					// grapple hooked on wall
+    ET_TEAM,
+    ET_AI_NODE,					// AI visualization tool
+    ET_AI_LINK,
+    ET_EXPLOSIVE,
+    ET_FIRE,
+    ET_PHYSICS_BOX,				// JBullet visualization tool
+    ET_GUI,
 
-	ET_EVENTS					// any of the EV_* events can be added freestanding
-		// by setting eType to ET_EVENTS + eventNum
-		// this avoids having to set eFlags and eventNum
+    ET_EVENTS					// any of the EV_* events can be added freestanding
+        // by setting eType to ET_EVENTS + eventNum
+        // this avoids having to set eFlags and eventNum
 } entityType_t;
 
 
@@ -879,22 +880,22 @@ qboolean        BG_RotateAxis(vec3_t surfNormal, vec3_t inAxis[3], vec3_t outAxi
 // DerSaidin 2009-01-15
 typedef enum
 {
-	ENTMAT_NONE,
-	ENTMAT_WOOD,				//chunks, thin shards
-	ENTMAT_GLASS,				//large flat shards
-	ENTMAT_METAL,
-	ENTMAT_GIBS,				//blood, small chunks
-	ENTMAT_BODY,				//head, arms, legs
-	ENTMAT_BRICK,				//rectangular chunks
-	ENTMAT_STONE,				//rough chunks
-	ENTMAT_TILES,				//small square chunks
-	ENTMAT_PLASTER,				//thin like riped paper chunks
-	ENTMAT_FIBERS,				//thin wires
-	ENTMAT_SPRITE,				//sprites, down
-	ENTMAT_SMOKE,				//sprites, up
-	ENTMAT_GAS,					//sprites, every direction
-	ENTMAT_FIRE,				//many polys on random angles
-	ENTMAT_NUMBER
+    ENTMAT_NONE,
+    ENTMAT_WOOD,				//chunks, thin shards
+    ENTMAT_GLASS,				//large flat shards
+    ENTMAT_METAL,
+    ENTMAT_GIBS,				//blood, small chunks
+    ENTMAT_BODY,				//head, arms, legs
+    ENTMAT_BRICK,				//rectangular chunks
+    ENTMAT_STONE,				//rough chunks
+    ENTMAT_TILES,				//small square chunks
+    ENTMAT_PLASTER,				//thin like riped paper chunks
+    ENTMAT_FIBERS,				//thin wires
+    ENTMAT_SPRITE,				//sprites, down
+    ENTMAT_SMOKE,				//sprites, up
+    ENTMAT_GAS,					//sprites, every direction
+    ENTMAT_FIRE,				//many polys on random angles
+    ENTMAT_NUMBER
 } entityMaterial_t;
 
 #endif // HAT_SERVER_BG_PUBLIC_H

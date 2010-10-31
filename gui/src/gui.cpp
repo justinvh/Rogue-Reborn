@@ -121,7 +121,8 @@ Gui::Gui(const char* js_file)
 
     // Read the file into a buffer for script conversion
     fileHandle_t handle;
-    if (!trap_FS_FOpenFile(js_file, &handle, FS_READ)) {
+    trap_FS_FOpenFile(js_file, &handle, FS_READ);
+    if (!handle) {
         EXCEPTION(__FILE__, __LINE__, js_file << " could not be opened/read");
         return;
     }
