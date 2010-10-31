@@ -894,6 +894,9 @@ intptr_t CL_UISystemCalls(intptr_t * args)
             FS_Write(VMA(1), args[2], args[3]);
             return 0;
 
+        case UI_FS_FILESIZE:
+            return FS_ReadFile(VMA(1), NULL);
+
         case UI_FS_FCLOSEFILE:
             FS_FCloseFile(args[1]);
             return 0;

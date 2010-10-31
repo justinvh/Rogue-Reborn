@@ -106,7 +106,7 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
             // the engine.
             reset_gl_bindings();
             Com_Printf("Initializing GUI subsystem\n");
-            hat::Gui menu_init("base/guis/init.js");
+            hat::Gui menu_init("guis/init.js");
 
             // Make sure that we didn't enter a run-time exception.
             // If this happens, then we need to set the state of the

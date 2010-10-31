@@ -120,18 +120,20 @@ Gui::Gui(const char* js_file)
     Com_Printf("Gui()::Gui() - %s\n", js_file);
 
     // Read the file into a buffer for script conversion
-    std::ifstream file(js_file, std::ios::in | std::ios::binary);
-    if (!file) {
+    fileHandle_t handle;
+    if (!trap_FS_FOpenFile(js_file, &handle, FS_READ)) {
         EXCEPTION(__FILE__, __LINE__, js_file << " could not be opened/read");
         return;
     }
-    file.seekg(0, std::ios::end);
-    const unsigned int file_size = file.tellg();
-    std::auto_ptr<char> file_raw(new char[file_size]);
-    file.seekg(0, std::ios::beg);
-    file.read(file_raw.get(), file_size);
-    file.close();
 
+    const unsigned int file_size = trap_FS_FileSize(js_file);
+    std::auto_ptr<char> file_raw(new char[file_size]);
+    memset(file_raw.get(), '\0', sizeof(char) * file_size);
+
+    // Parse the data buffer
+    trap_FS_Read(file_raw.get(), file_size, handle);
+    trap_FS_FCloseFile(handle);
+  
     // An execution scope is necessary for temporary references
     v8::HandleScope execution_scope;
     v8::Handle<v8::String> script = v8::String::New(file_raw.get(), file_size);
@@ -401,15 +403,11 @@ JS_FUN_CLASS(Gui, setup_menus)
         return v8::Exception::Error(v8::String::New("Gui class has become detached?"));
     }
 
-    std::auto_ptr<char> fs_basegame(new char[512]);
-    trap_Cvar_VariableStringBuffer("fs_basegame", fs_basegame.get(), sizeof(char) * 512);
-    Com_Printf("Gui()::setup_menus() - %s\n", fs_basegame.get());
-
     for (int i = 0; i < menu_to_be_set->Length(); i++) {
         const v8::Local<v8::String> real_key = menu_to_be_set->Get(v8::Int32::New(i))->ToString();
         const std::string key = *v8::String::Utf8Value(real_key);
         std::stringstream val(std::stringstream::in | std::stringstream::out);
-        val << fs_basegame.get() << "/guis/" << *v8::String::Utf8Value(menu_obj->Get(real_key));
+        val << "guis/" << *v8::String::Utf8Value(menu_obj->Get(real_key));
 
         Engine_mapping::const_iterator cit = engine_menus.find(key);
         if (cit == engine_menus.end()) {
