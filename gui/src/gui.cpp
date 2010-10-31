@@ -147,8 +147,12 @@ Gui::Gui(const char* js_file)
     // Create the gui namespace template and initialize the namespace
     gui_tmpl = v8::Persistent<v8::FunctionTemplate>();
     gui_ns = wrap_tmpl(&gui_tmpl, this, NULL);
-    global_context->Global()->SetPointerInInternalField(0, this);
-    global_context->Global()->Set(v8::String::New("gui"), gui_ns);
+    v8::Handle<v8::Object> global_proxy = global_context->Global();
+    v8::Handle<v8::Object> global = global_proxy->GetPrototype().As<v8::Object>();
+    assert(global->InternalFieldCount() == 1);
+    assert(global->GetPointerFromInternalField(0) == NULL);
+    global->SetPointerInInternalField(0, this);
+    global->Set(v8::String::New("gui"), gui_ns);
 
     // Setup the error handling and compile the current script
     Com_Printf("Compiling...\n");

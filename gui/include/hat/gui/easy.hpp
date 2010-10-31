@@ -80,16 +80,24 @@ T* unwrap(v8::Handle<v8::Object> object_to_be_unwrapped)
     return static_cast<T*>(wrapped->Value());
 }
 
+/*
+Performs a unwrap for Diamond-structured classes.
+*/
 #define diamond_unwrap(T, S) dynamic_cast<T*>(unwrap<Element>(S));
 
 /*
 Returns the internal pointer of the current v8 context and casts it to the
 appropriate object.
+
+Why can't we just reference Global()?
+http://code.google.com/p/v8/source/browse/trunk/test/cctest/test-api.cc#1470
 */
 template <class T>
 T* unwrap_global_pointer(int index)
 {
-    void* p = v8::Context::GetCurrent()->Global()->GetPointerFromInternalField(index);
+    v8::Handle<v8::Object> proxy = v8::Context::GetCurrent()->Global();
+    v8::Handle<v8::Object> global = proxy->GetPrototype().As<v8::Object>();
+    void* p = global->GetPointerFromInternalField(index);
     return reinterpret_cast<T*>(p);
 }
 
