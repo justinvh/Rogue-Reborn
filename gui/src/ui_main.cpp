@@ -107,6 +107,20 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
             reset_gl_bindings();
             Com_Printf("Initializing GUI subsystem\n");
             hat::Gui menu_init("base/guis/init.js");
+
+            // Make sure that we didn't enter a run-time exception.
+            // If this happens, then we need to set the state of the
+            // GUI to invalid and alert the developer.
+            if (menu_init.in_exception_state()) {
+                const hat::Gui_exception& e = active_gui->exception();
+                Com_Error(ERR_GUI, "<%s>:%d - %s", e.file.c_str(), e.line, e.message.c_str());
+                available_guis[active_index].bad = true;
+                broken_menu = active_gui->js_filename;
+                active_index = -1;
+                active_gui = NULL;
+            }
+
+            // Reset keyboard states
             kbm_state.reset_all();
             return 0;
         }
