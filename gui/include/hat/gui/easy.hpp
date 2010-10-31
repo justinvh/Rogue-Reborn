@@ -31,6 +31,20 @@ THE SOFTWARE.
 namespace hat {
 
 /*
+Creates a new indent for printing
+*/
+struct Scope_indent
+{
+    Scope_indent();
+    ~Scope_indent();
+};
+
+/*
+Defined as an atom in atom.cpp
+*/
+Scope_indent Com_ScopeIndent();
+
+/*
 A screen descriptor
 */
 struct Screen_attributes
@@ -65,6 +79,8 @@ T* unwrap(v8::Handle<v8::Object> object_to_be_unwrapped)
 
     return static_cast<T*>(wrapped->Value());
 }
+
+#define diamond_unwrap(T, S) dynamic_cast<T*>(unwrap<Element>(S));
 
 /*
 Returns the internal pointer of the current v8 context and casts it to the
@@ -247,21 +263,21 @@ void add_accessors_and_fun_to_fun_tmpl(
 #define JS_STR_TO_STL(v8str) *v8::String::Utf8Value(v8str)
 
 #define JS_BA_STR(lhs, rhs, error) \
-    if (!rhs->IsString() && !rhs.IsEmpty()) { \
+    if (!rhs->IsString() && !rhs->IsUndefined()) { \
         v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
         return false; \
     } \
     lhs = JS_STR_TO_STL(rhs->ToString());
 
 #define JS_BA_STR_REQUIRED(lhs, rhs, error) \
-    if (!rhs->IsString() || rhs.IsEmpty()) { \
+    if (!rhs->IsString()) { \
         v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
         return false; \
     } \
     lhs = JS_STR_TO_STL(rhs->ToString());
 
 #define JS_BA_INT(lhs, rhs, error) \
-    if (!rhs->IsInt32() && !rhs.IsEmpty()) { \
+    if (!rhs->IsInt32() && !rhs->IsUndefined()) { \
         v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
         return false; \
     } \
@@ -269,27 +285,35 @@ void add_accessors_and_fun_to_fun_tmpl(
 
 
 #define JS_BA_INT_REQUIRED(lhs, rhs, error) \
-    if (!rhs->IsInt32() || rhs.IsEmpty()) { \
+    if (!rhs->IsInt32()) { \
         v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
         return false; \
     } \
     lhs = rhs->Int32Value();
 
 #define JS_BA_FLOAT(lhs, rhs, error) \
-    if (!rhs->IsNumber() && !rhs.IsEmpty()) { \
+    if (!rhs->IsNumber() && !rhs->IsUndefined()) { \
         v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
         return false; \
-    } \
-    lhs = rhs->NumberValue();
+    } else if (rhs->IsNumber()) { \
+        lhs = rhs->NumberValue(); \
+    }
 
 #define JS_BA_FLOAT_REQUIRED(lhs, rhs, error) \
-    if (!rhs->IsNumber() || rhs.IsEmpty()) { \
+    if (!rhs->IsNumber()) { \
         v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
         return false; \
     } \
     lhs = rhs->NumberValue();
 
 #define JS_BA_BOOLEAN(lhs, rhs, error) \
+    if (!rhs->IsBoolean() && rhis->IsUndefined()) { \
+        v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
+        return false; \
+    } \
+    lhs = rhs->BooleanValue();
+
+#define JS_BA_BOOLEAN_REQUIRED(lhs, rhs, error) \
     if (!rhs->IsBoolean()) { \
         v8::ThrowException(v8::Exception::TypeError(v8::String::New(error))); \
         return false; \

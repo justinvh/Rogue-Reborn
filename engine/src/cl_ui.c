@@ -828,6 +828,10 @@ intptr_t CL_UISystemCalls(intptr_t * args)
             Com_Printf("%s", (const char *)VMA(1));
             return 0;
 
+        case UI_WARNING:
+            Com_Warning("%s", (const char *)VMA(1));
+            return 0;
+
         case UI_MILLISECONDS:
             return Sys_Milliseconds();
 
@@ -956,6 +960,10 @@ intptr_t CL_UISystemCalls(intptr_t * args)
 
         case UI_R_SETCOLOR:
             re.SetColor(VMA(1));
+            return 0;
+
+        case UI_R_DRAWROTATEDPIC:
+            re.DrawRotatedPic(VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), args[9], VMF(10));
             return 0;
 
         case UI_R_DRAWSTRETCHPIC:

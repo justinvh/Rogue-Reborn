@@ -70,7 +70,6 @@ JS_fun_mapping funs[] = {
     JS_FUN_MAP_INTERNAL(Gui, setup_menus),
     JS_FUN_MAP(Gui, think),
     JS_FUN_MAP(Gui, log),
-    JS_FUN_MAP(Gui, toString),
     JS_CLASS_INVOCATION_CUSTOM(Image, "SimpleImage"),
     JS_CLASS_INVOCATION_CUSTOM(Eventful_image, "Image"),
     { NULL, NULL, NULL } // Signlas the end of the function list
@@ -408,7 +407,7 @@ JS_FUN_CLASS(Gui, setup_menus)
         const v8::Local<v8::String> real_key = menu_to_be_set->Get(v8::Int32::New(i))->ToString();
         const std::string key = *v8::String::Utf8Value(real_key);
         std::stringstream val(std::stringstream::in | std::stringstream::out);
-        val << "guis/" << *v8::String::Utf8Value(menu_obj->Get(real_key));
+        val << "javascript/gui/" << *v8::String::Utf8Value(menu_obj->Get(real_key));
 
         Engine_mapping::const_iterator cit = engine_menus.find(key);
         if (cit == engine_menus.end()) {
@@ -469,14 +468,6 @@ JS_FUN_CLASS(Gui, log)
     }
 
     return v8::Undefined();
-}
-
-/*
-Simply returns "gui namespace" for the object name.
-*/
-JS_FUN_CLASS(Gui, toString)
-{
-    return v8::String::New("`gui namespace`");
 }
 
 /*

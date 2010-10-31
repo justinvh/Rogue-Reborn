@@ -61,13 +61,13 @@ set(GUI_SRC_LIST
 	# Gui specific code
 	"${GUI_SRC_DIR}/ui_main.cpp"
 	"${GUI_SRC_DIR}/ui_syscalls.c"
-	"${GUI_SRC_DIR}/ui_atoms.c"
 	# New gui
 	"${GUI_SRC_DIR}/element.cpp"
 	"${GUI_SRC_DIR}/eventful.cpp"
 	"${GUI_SRC_DIR}/gui.cpp"
 	"${GUI_SRC_DIR}/easy.cpp"
 	"${GUI_SRC_DIR}/image.cpp"
+	"${GUI_SRC_DIR}/atoms.cpp"
 )
 
 set(GUI_SRC_EXT_LIST

@@ -43,6 +43,11 @@ void trap_Print(const char *string)
     syscall(UI_PRINT, string);
 }
 
+void trap_Warning(const char *string)
+{
+    syscall(UI_WARNING, string);
+}
+
 void trap_Error(int code, const char *string)
 {
     syscall(UI_ERROR, code, string);
@@ -225,6 +230,13 @@ void trap_R_DrawStretchPic(float x, float y, float w, float h, float s1, float t
 {
     syscall(UI_R_DRAWSTRETCHPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1),
             PASSFLOAT(s2), PASSFLOAT(t2), hShader);
+}
+
+void trap_R_DrawRotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader,
+                           float angle)
+{
+    syscall(UI_R_DRAWROTATEDPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1),
+            PASSFLOAT(s2), PASSFLOAT(t2), hShader, PASSFLOAT(angle));
 }
 
 void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs)

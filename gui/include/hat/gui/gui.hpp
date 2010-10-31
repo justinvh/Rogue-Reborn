@@ -131,7 +131,6 @@ public:
         These are public methods and are available via gui.*
         */
         JS_FUN(log);
-        JS_FUN(toString);
         JS_FUN(think);
     };
 
