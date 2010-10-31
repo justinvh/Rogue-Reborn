@@ -138,11 +138,11 @@ Gui::Gui(const char* js_file)
     v8::HandleScope execution_scope;
     v8::Handle<v8::String> script = v8::String::New(file_raw.get(), file_size);
     global_scope = v8::ObjectTemplate::New();
+    global_scope->SetInternalFieldCount(1);
 
     // Create our execution context (global context)
-    v8::Handle<v8::Context> execution_context = v8::Context::New(NULL, global_scope);
-    global_context = v8::Persistent<v8::Context>::New(execution_context);
-    v8::Context::Scope context_scope(execution_context);
+    global_context = v8::Context::New(NULL, global_scope);
+    v8::Context::Scope context_scope(global_context);
 
     // Create the gui namespace template and initialize the namespace
     gui_tmpl = v8::Persistent<v8::FunctionTemplate>();
