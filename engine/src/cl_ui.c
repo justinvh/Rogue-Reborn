@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(USE_JAVA)
 
 vm_t           *uivm;
+const char     *UI_TEST = NULL;
 
 /*
 ====================
@@ -1230,6 +1231,7 @@ void CL_ShutdownUI(void)
     uivm = NULL;
 }
 
+
 /*
 ====================
 CL_InitUI
@@ -1237,7 +1239,7 @@ CL_InitUI
 */
 #define UI_OLD_API_VERSION	4
 
-void CL_InitUI(void)
+void CL_InitUI(qboolean test)
 {
     int             v;
     vmInterpret_t   interpret = VMI_NATIVE;
@@ -1254,7 +1256,11 @@ void CL_InitUI(void)
         interpret = Cvar_VariableValue("vm_ui");
     }
 #endif
-    uivm = VM_Create("gui", CL_UISystemCalls, interpret);
+    if (test) {
+        uivm = VM_Create("gui", NULL, interpret);
+    } else {
+        uivm = VM_Create("gui", CL_UISystemCalls, interpret);
+    }
     if(!uivm)
     {
         Com_Error(ERR_FATAL, "VM_Create on UI failed");

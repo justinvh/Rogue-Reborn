@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     User interface building blocks and support functions.
 **********************************************************************/
 #include <hat/gui/ui_local.h>
-#include <hat/gui/easy.hpp>
+#include <hat/v8/easy.hpp>
 #include <string>
 
 namespace {

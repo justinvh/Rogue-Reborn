@@ -37,6 +37,7 @@ set(GUI_SRC_ENGINE_SHARED_LIST
 	# Engine shared
 	"${ENGINE_INCLUDE_ENGINE_DIR}/q_shared.h"
 	"${ENGINE_INCLUDE_ENGINE_DIR}/keycodes.h"
+	"${ENGINE_INCLUDE_TOPLEVEL_DIR}/hat/v8/easy.hpp"
 )
 
 set(GUI_SRC_HEADER_LIST
@@ -46,7 +47,6 @@ set(GUI_SRC_HEADER_LIST
 	"${GUI_INCLUDE_GUI_DIR}/element.hpp"
 	"${GUI_INCLUDE_GUI_DIR}/eventful.hpp"
 	"${GUI_INCLUDE_GUI_DIR}/gui.hpp"
-	"${GUI_INCLUDE_GUI_DIR}/easy.hpp"
 	"${GUI_INCLUDE_GUI_DIR}/image.hpp"
 )
 
@@ -65,7 +65,6 @@ set(GUI_SRC_LIST
 	"${GUI_SRC_DIR}/element.cpp"
 	"${GUI_SRC_DIR}/eventful.cpp"
 	"${GUI_SRC_DIR}/gui.cpp"
-	"${GUI_SRC_DIR}/easy.cpp"
 	"${GUI_SRC_DIR}/image.cpp"
 	"${GUI_SRC_DIR}/atoms.cpp"
 )

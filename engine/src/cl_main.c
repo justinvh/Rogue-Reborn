@@ -1913,7 +1913,7 @@ doesn't know what graphics to reload
 void CL_Gui_Restart_f(void)
 {
     CL_ShutdownUI();
-    CL_InitUI();
+    CL_InitUI(qfalse);
 }
 
 /*
@@ -3212,7 +3212,7 @@ void CL_StartHunkUsers(qboolean rendererOnly)
     if(!cls.uiStarted)
     {
         cls.uiStarted = qtrue;
-        CL_InitUI();
+        CL_InitUI(qfalse);
     }
 }
 

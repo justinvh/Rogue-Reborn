@@ -25,7 +25,7 @@ THE SOFTWARE.
 #ifndef HAT_GUI_EVENTFUL_HPP
 #define HAT_GUI_EVENTFUL_HPP
 
-#include <hat/gui/easy.hpp>
+#include <hat/v8/easy.hpp>
 #include <hat/gui/element.hpp>
 
 namespace hat {

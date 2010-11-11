@@ -652,7 +652,8 @@ int				Java_CG_LastAttacker();
 //
 // cl_ui.c
 //
-void            CL_InitUI(void);
+extern const char* UI_TEST;
+void            CL_InitUI(qboolean test);
 void            CL_VidUIRestart(void);
 void            CL_ShutdownUI(void);
 void            CL_RecompileUI(void);

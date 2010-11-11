@@ -28,7 +28,7 @@ THE SOFTWARE.
 #include <map>
 #include <vector>
 #include <string>
-#include <hat/gui/easy.hpp>
+#include <hat/v8/easy.hpp>
 
 namespace hat {
 
@@ -91,7 +91,6 @@ struct Gui_exception
     std::string message;
     int line;
 };
-
 
 
 /*
