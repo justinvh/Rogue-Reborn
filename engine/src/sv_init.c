@@ -739,8 +739,10 @@ void SV_Init(void)
 	sv_hostname = Cvar_Get("sv_hostname", "noname", CVAR_SERVERINFO | CVAR_ARCHIVE);
 	sv_maxclients = Cvar_Get("sv_maxclients", "8", CVAR_SERVERINFO | CVAR_LATCH);
 
-	sv_allowLean = Cvar_Get("sv_allowLean", "1", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE);
-	sv_allowLeanWithMovement = Cvar_Get("sv_allowLeanWithMovement", "0", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE);
+  // Rogue Reborn
+	sv_allowLean = Cvar_Get("sv_allowLean", "1", CVAR_SERVERINFO | CVAR_LATCH);
+	sv_allowLeanWithMovement = Cvar_Get("sv_allowLeanWithMovement", "0", CVAR_SERVERINFO | CVAR_LATCH);
+	rr_weaponsAllowed = Cvar_Get("rr_weaponsAllowed", "", CVAR_SERVERINFO | CVAR_LATCH);
 
 	sv_minRate = Cvar_Get("sv_minRate", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_maxRate = Cvar_Get("sv_maxRate", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);

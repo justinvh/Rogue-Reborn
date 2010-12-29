@@ -41,6 +41,7 @@ cvar_t         *sv_privatePassword;	// password for the privateClient slots
 cvar_t         *sv_allowDownload;
 cvar_t         *sv_maxclients;
 
+cvar_t         *rr_weaponsAllowed;
 cvar_t         *sv_allowLeanWithMovement;
 cvar_t         *sv_allowLean;
 

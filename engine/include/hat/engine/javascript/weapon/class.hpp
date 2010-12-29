@@ -44,6 +44,7 @@ struct Weapon_attrs {
   Animation_list animations;
   void cleanup()
   {
+    /*
     delete[] name;
     delete[] model;
     for (
@@ -53,6 +54,7 @@ struct Weapon_attrs {
       {
         cit->cleanup();
       }
+      */
   }
 };
 

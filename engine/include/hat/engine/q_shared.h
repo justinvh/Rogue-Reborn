@@ -180,9 +180,9 @@ typedef enum
 
 typedef union
 {
-	float           f;
-	int             i;
-	unsigned int    ui;
+  float           f;
+  int             i;
+  unsigned int    ui;
 } floatint_t;
 
 typedef int     qhandle_t;
@@ -263,10 +263,10 @@ typedef int     clipHandle_t;
 // paramters for command buffer stuffing
 typedef enum
 {
-	EXEC_NOW,					// don't return until completed, a VM should NEVER use this,
-	// because some commands might cause the VM to be unloaded...
-	EXEC_INSERT,				// insert at current position, but don't run yet
-	EXEC_APPEND					// add to end of the command buffer (normal case)
+  EXEC_NOW,					// don't return until completed, a VM should NEVER use this,
+  // because some commands might cause the VM to be unloaded...
+  EXEC_INSERT,				// insert at current position, but don't run yet
+  EXEC_APPEND					// add to end of the command buffer (normal case)
 } cbufExec_t;
 
 
@@ -279,10 +279,10 @@ typedef enum
 // print levels from renderer (FIXME: set up for game / cgame?)
 typedef enum
 {
-	PRINT_ALL,
-	PRINT_DEVELOPER,			// only print when "developer 1"
-	PRINT_WARNING,
-	PRINT_ERROR
+  PRINT_ALL,
+  PRINT_DEVELOPER,			// only print when "developer 1"
+  PRINT_WARNING,
+  PRINT_ERROR
 } printParm_t;
 
 
@@ -293,11 +293,11 @@ typedef enum
 // parameters to the main Error routine
 typedef enum
 {
-	ERR_FATAL,					// exit the entire game with a popup window
-	ERR_GUI,					// gui error
-	ERR_DROP,					// print to console and disconnect from game
-	ERR_SERVERDISCONNECT,		// don't kill server
-	ERR_DISCONNECT				// client disconnected from the server
+  ERR_FATAL,					// exit the entire game with a popup window
+  ERR_GUI,					// gui error
+  ERR_DROP,					// print to console and disconnect from game
+  ERR_SERVERDISCONNECT,		// don't kill server
+  ERR_DISCONNECT				// client disconnected from the server
 } errorParm_t;
 
 
@@ -330,9 +330,9 @@ typedef enum
 
 typedef enum
 {
-	h_high,
-	h_low,
-	h_dontcare
+  h_high,
+  h_low,
+  h_dontcare
 } ha_pref;
 
 #ifdef HUNK_DEBUG
@@ -405,10 +405,10 @@ typedef int     fixed16_t;
 // plane sides
 typedef enum
 {
-	SIDE_FRONT = 0,
-	SIDE_BACK = 1,
-	SIDE_ON = 2,
-	SIDE_CROSS = 3
+  SIDE_FRONT = 0,
+  SIDE_BACK = 1,
+  SIDE_ON = 2,
+  SIDE_CROSS = 3
 } planeSide_t;
 
 #define NUMVERTEXNORMALS	162
@@ -497,103 +497,103 @@ extern quat_t   quatIdentity;
 static ID_INLINE long Q_ftol(float f)
 {
 #if id386_sse && defined(_MSC_VER)
-	static int      tmp;
-	__asm fld f
-	__asm fistp tmp
-	__asm mov eax, tmp
+  static int      tmp;
+  __asm fld f
+  __asm fistp tmp
+  __asm mov eax, tmp
 #else
-	return (long)f;
+  return (long)f;
 #endif
 }
 
 static ID_INLINE float Q_rsqrt(float number)
 {
-	float           y;
+  float           y;
 
 #if idppc
-	float           x = 0.5f * number;
+  float           x = 0.5f * number;
 
 #ifdef __GNUC__
-	asm("frsqrte %0, %1": "=f" (y) : "f" (number));
+  asm("frsqrte %0, %1": "=f" (y) : "f" (number));
 #else
-	y = __frsqrte(number);
+  y = __frsqrte(number);
 #endif
-	return y * (1.5f - (x * y * y));
+  return y * (1.5f - (x * y * y));
 
 #elif id386_3dnow && defined __GNUC__
 //#error Q_rqsrt
-	asm volatile
-	(
-												// lo                                   | hi
-	"femms                               \n"
-	"movd           (%%eax),        %%mm0\n"	// in                                   |       -
-	"pfrsqrt        %%mm0,          %%mm1\n"	// 1/sqrt(in)                           | 1/sqrt(in)    (approx)
-	"movq           %%mm1,          %%mm2\n"	// 1/sqrt(in)                           | 1/sqrt(in)    (approx)
-	"pfmul          %%mm1,          %%mm1\n"	// (1/sqrt(in))?                        | (1/sqrt(in))?         step 1
-	"pfrsqit1       %%mm0,          %%mm1\n"	// intermediate                                                 step 2
-	"pfrcpit2       %%mm2,          %%mm1\n"	// 1/sqrt(in) (full 24-bit precision)                           step 3
-	"movd           %%mm1,        (%%edx)\n"
-	"femms                               \n"
-	:
-	:"a" (&number), "d"(&y):"memory"
-	);
+  asm volatile
+  (
+                        // lo                                   | hi
+  "femms                               \n"
+  "movd           (%%eax),        %%mm0\n"	// in                                   |       -
+  "pfrsqrt        %%mm0,          %%mm1\n"	// 1/sqrt(in)                           | 1/sqrt(in)    (approx)
+  "movq           %%mm1,          %%mm2\n"	// 1/sqrt(in)                           | 1/sqrt(in)    (approx)
+  "pfmul          %%mm1,          %%mm1\n"	// (1/sqrt(in))?                        | (1/sqrt(in))?         step 1
+  "pfrsqit1       %%mm0,          %%mm1\n"	// intermediate                                                 step 2
+  "pfrcpit2       %%mm2,          %%mm1\n"	// 1/sqrt(in) (full 24-bit precision)                           step 3
+  "movd           %%mm1,        (%%edx)\n"
+  "femms                               \n"
+  :
+  :"a" (&number), "d"(&y):"memory"
+  );
 #elif id386_sse && defined __GNUC__
-	asm volatile("rsqrtss %0, %1" : "=x" (y) : "x" (number));
+  asm volatile("rsqrtss %0, %1" : "=x" (y) : "x" (number));
 #elif id386_sse && defined _MSC_VER
-	__asm
-	{
-		rsqrtss xmm0, number
-		movss y, xmm0
-	}
+  __asm
+  {
+    rsqrtss xmm0, number
+    movss y, xmm0
+  }
 #else
-	union {
-		float f;
-		int i;
-	} t;
-	float           x2;
-	const float     threehalfs = 1.5F;
+  union {
+    float f;
+    int i;
+  } t;
+  float           x2;
+  const float     threehalfs = 1.5F;
 
-	x2 = number * 0.5F;
-	t.f = number;
-	t.i = 0x5f3759df - (t.i >> 1); // what the fuck?
-	y = t.f;
-	y = y * (threehalfs - (x2 * y * y)); // 1st iteration
+  x2 = number * 0.5F;
+  t.f = number;
+  t.i = 0x5f3759df - (t.i >> 1); // what the fuck?
+  y = t.f;
+  y = y * (threehalfs - (x2 * y * y)); // 1st iteration
 #endif
-	return y;
+  return y;
 }
 
 static ID_INLINE float Q_fabs(float x)
 {
 #if idppc && defined __GNUC__
-	float           abs_x;
+  float           abs_x;
 
- 	asm("fabs %0, %1" : "=f" (abs_x) : "f" (x));
-	return abs_x;
+  asm("fabs %0, %1" : "=f" (abs_x) : "f" (x));
+  return abs_x;
 #else
-	floatint_t      tmp;
+  floatint_t      tmp;
 
-	tmp.f = x;
-	tmp.i &= 0x7FFFFFFF;
-	return tmp.f;
+  tmp.f = x;
+  tmp.i &= 0x7FFFFFFF;
+  return tmp.f;
 #endif
 }
 
 static ID_INLINE vec_t Q_recip(vec_t in)
 {
 #if id386_3dnow && defined __GNUC__ && 0
-	vec_t           out;
+  vec_t           out;
 
-	femms();
-	asm volatile    ("movd		(%%eax),	%%mm0\n" "pfrcp		%%mm0,		%%mm1\n"	// (approx)
-					 "pfrcpit1	%%mm1,		%%mm0\n"	// (intermediate)
-					 "pfrcpit2	%%mm1,		%%mm0\n"	// (full 24-bit)
-					 // out = mm0[low]
-					 "movd		%%mm0,		(%%edx)\n"::"a" (&in), "d"(&out):"memory");
+  femms();
+  asm volatile    ("movd		(%%eax),	%%mm0\n" "pfrcp		%%mm0,		%%mm1\n"	// (approx)
+           "pfrcpit1	%%mm1,		%%mm0\n"	// (intermediate)
+           "pfrcpit2	%%mm1,		%%mm0\n"	// (full 24-bit)
+           // out = mm0[low]
+           "movd		%%mm0,		(%%edx)\n"::"a" (&in), "d"(&out):"memory");
 
-	femms();
-	return out;
+  femms();
+  return out;
 #else
-	return ((float)(1.0f / (in)));
+  return ((float)(1.0f / (in)));
 #endif
 }
 // *INDENT-ON*
@@ -630,13 +630,13 @@ static ID_INLINE void VectorClear(vec3_t v)
 {
 #if defined(SSEVEC3_T)
 //#error VectorClear
-	__m128          _tmp = _mm_setzero_ps();
+  __m128          _tmp = _mm_setzero_ps();
 
-	_mm_storeu_ps(v, _tmp);
+  _mm_storeu_ps(v, _tmp);
 #else
-	out[0] = 0;
-	out[1] = 0;
-	out[2] = 0;
+  out[0] = 0;
+  out[1] = 0;
+  out[2] = 0;
 #endif
 }
 #endif
@@ -649,36 +649,36 @@ static ID_INLINE void VectorClear(vec3_t v)
 static ID_INLINE void VectorCopy(const vec3_t in, vec3_t out)
 {
 #if id386_3dnow && defined __GNUC__ && 0
-	femms();
-	asm volatile    (			// lo                                                           | hi
-						"movq           (%%eax),        %%mm0\n"	// in[0]                                                        | in[1]
-						"movd           8(%%eax),       %%mm1\n"	// in[2]                                                        | -
-						"movq           %%mm0,          (%%edx)\n"
-						"movd           %%mm1,          8(%%edx)\n"::"a" (in), "d"(out):"memory");
-	femms();
+  femms();
+  asm volatile    (			// lo                                                           | hi
+            "movq           (%%eax),        %%mm0\n"	// in[0]                                                        | in[1]
+            "movd           8(%%eax),       %%mm1\n"	// in[2]                                                        | -
+            "movq           %%mm0,          (%%edx)\n"
+            "movd           %%mm1,          8(%%edx)\n"::"a" (in), "d"(out):"memory");
+  femms();
 /*
 #elif id386_sse && defined __GNUC__
 //#error _VectorCopysse
-		asm volatile
-		(
-		"movups         (%%eax),        %%xmm0\n"
-		"movups         %%xmm0,         (%%edx)\n"
-	:
-	: "a"( in ), "d"( out )
-	: "memory"
+    asm volatile
+    (
+    "movups         (%%eax),        %%xmm0\n"
+    "movups         %%xmm0,         (%%edx)\n"
+  :
+  : "a"( in ), "d"( out )
+  : "memory"
         );
 */
 
 #elif defined(SSEVEC3_T)
 //#error VectorCopy
-	__m128          _tmp;
+  __m128          _tmp;
 
-	_tmp = _mm_loadu_ps(in);
-	_mm_storeu_ps(out, _tmp);
+  _tmp = _mm_loadu_ps(in);
+  _mm_storeu_ps(out, _tmp);
 #else
-	out[0] = in[0];
-	out[1] = in[1];
-	out[2] = in[2];
+  out[0] = in[0];
+  out[1] = in[1];
+  out[2] = in[2];
 #endif
 }
 #endif
@@ -691,32 +691,32 @@ static ID_INLINE void VectorCopy(const vec3_t in, vec3_t out)
 static ID_INLINE void VectorAdd(const vec3_t a, const vec3_t b, vec3_t out)
 {
 #if id386_3dnow && defined __GNUC__ && 0
-	femms();
-	asm volatile    (			// lo                                                           | hi
-						"movq           (%%eax),        %%mm0\n"	// a[0]                                                         | a[1]
-						"movq           (%%edx),        %%mm2\n"	// b[0]                                                         | b[1]
-						"movd           8(%%eax),       %%mm1\n"	// a[2]                                                         | -
-						"movd           8(%%edx),       %%mm3\n"	// b[2]                                                         | -
-						"pfadd          %%mm2,          %%mm0\n"	// a[0]+b[0]                                            | a[1]+b[1]
-						"pfadd          %%mm3,          %%mm1\n"	// a[2]+b[2]                                            | -
-						"movq           %%mm0,          (%%ecx)\n"
-						"movd           %%mm1,          8(%%ecx)\n"::"a" (a), "d"(b), "c"(out):"memory");
-	femms();
+  femms();
+  asm volatile    (			// lo                                                           | hi
+            "movq           (%%eax),        %%mm0\n"	// a[0]                                                         | a[1]
+            "movq           (%%edx),        %%mm2\n"	// b[0]                                                         | b[1]
+            "movd           8(%%eax),       %%mm1\n"	// a[2]                                                         | -
+            "movd           8(%%edx),       %%mm3\n"	// b[2]                                                         | -
+            "pfadd          %%mm2,          %%mm0\n"	// a[0]+b[0]                                            | a[1]+b[1]
+            "pfadd          %%mm3,          %%mm1\n"	// a[2]+b[2]                                            | -
+            "movq           %%mm0,          (%%ecx)\n"
+            "movd           %%mm1,          8(%%ecx)\n"::"a" (a), "d"(b), "c"(out):"memory");
+  femms();
 #elif defined(SSEVEC3_T)
 //#error VectorAdd
-	__m128          _a, _b, _out;
+  __m128          _a, _b, _out;
 
-	_a = _mm_loadu_ps(a);
-	_b = _mm_loadu_ps(b);
+  _a = _mm_loadu_ps(a);
+  _b = _mm_loadu_ps(b);
 
-	_out = _mm_add_ps(_a, _b);
+  _out = _mm_add_ps(_a, _b);
 
-	_mm_storeu_ps(out, _out);
+  _mm_storeu_ps(out, _out);
 
 #else
-	out[0] = a[0] + b[0];
-	out[1] = a[1] + b[1];
-	out[2] = a[2] + b[2];
+  out[0] = a[0] + b[0];
+  out[1] = a[1] + b[1];
+  out[2] = a[2] + b[2];
 #endif
 }
 #endif
@@ -729,31 +729,31 @@ static ID_INLINE void VectorAdd(const vec3_t a, const vec3_t b, vec3_t out)
 static ID_INLINE void VectorSubtract(const vec3_t a, const vec3_t b, vec3_t out)
 {
 #if id386_3dnow && defined __GNUC__ && 0
-	femms();
-	asm volatile    (			// lo                                                           | hi
-						"movq           (%%eax),        %%mm0\n"	// a[0]                                                         | a[1]
-						"movq           (%%edx),        %%mm2\n"	// b[0]                                                         | b[1]
-						"movd           8(%%eax),       %%mm1\n"	// a[2]                                                         | -
-						"movd           8(%%edx),       %%mm3\n"	// b[2]                                                         | -
-						"pfsub          %%mm2,          %%mm0\n"	// a[0]-b[0]                                            | a[1]-b[1]
-						"pfsub          %%mm3,          %%mm1\n"	// a[2]-b[2]                                            | -
-						"movq           %%mm0,          (%%ecx)\n"
-						"movd           %%mm1,          8(%%ecx)\n"::"a" (a), "d"(b), "c"(out):"memory");
-	femms();
+  femms();
+  asm volatile    (			// lo                                                           | hi
+            "movq           (%%eax),        %%mm0\n"	// a[0]                                                         | a[1]
+            "movq           (%%edx),        %%mm2\n"	// b[0]                                                         | b[1]
+            "movd           8(%%eax),       %%mm1\n"	// a[2]                                                         | -
+            "movd           8(%%edx),       %%mm3\n"	// b[2]                                                         | -
+            "pfsub          %%mm2,          %%mm0\n"	// a[0]-b[0]                                            | a[1]-b[1]
+            "pfsub          %%mm3,          %%mm1\n"	// a[2]-b[2]                                            | -
+            "movq           %%mm0,          (%%ecx)\n"
+            "movd           %%mm1,          8(%%ecx)\n"::"a" (a), "d"(b), "c"(out):"memory");
+  femms();
 #elif defined(SSEVEC3_T)
 //#error VectorSubtract
-	__m128          _a, _b, _out;
+  __m128          _a, _b, _out;
 
-	_a = _mm_loadu_ps(a);
-	_b = _mm_loadu_ps(b);
+  _a = _mm_loadu_ps(a);
+  _b = _mm_loadu_ps(b);
 
-	_out = _mm_sub_ps(_a, _b);
+  _out = _mm_sub_ps(_a, _b);
 
-	_mm_storeu_ps(out, _out);
+  _mm_storeu_ps(out, _out);
 #else
-	out[0] = a[0] - b[0];
-	out[1] = a[1] - b[1];
-	out[2] = a[2] - b[2];
+  out[0] = a[0] - b[0];
+  out[1] = a[1] - b[1];
+  out[2] = a[2] - b[2];
 #endif
 }
 #endif
@@ -767,20 +767,20 @@ static ID_INLINE void VectorMA(const vec3_t veca, float scale, const vec3_t vecb
 {
 #if defined(SSEVEC3_T)
 //#error VectorMA
-	__m128          _a, _b, _s, _c;
+  __m128          _a, _b, _s, _c;
 
-	_a = _mm_loadu_ps(veca);
-	_b = _mm_loadu_ps(vecb);
-	_s = _mm_set1_ps(scale);
+  _a = _mm_loadu_ps(veca);
+  _b = _mm_loadu_ps(vecb);
+  _s = _mm_set1_ps(scale);
 
-	_c = _mm_mul_ps(_s, _b);
-	_c = _mm_add_ps(_a, _c);
+  _c = _mm_mul_ps(_s, _b);
+  _c = _mm_add_ps(_a, _c);
 
-	_mm_storeu_ps(vecc, _c);
+  _mm_storeu_ps(vecc, _c);
 #else
-	vecc[0] = veca[0] + scale * vecb[0];
-	vecc[1] = veca[1] + scale * vecb[1];
-	vecc[2] = veca[2] + scale * vecb[2];
+  vecc[0] = veca[0] + scale * vecb[0];
+  vecc[1] = veca[1] + scale * vecb[1];
+  vecc[2] = veca[2] + scale * vecb[2];
 #endif
 }
 #endif
@@ -793,34 +793,34 @@ static ID_INLINE void VectorMA(const vec3_t veca, float scale, const vec3_t vecb
 static ID_INLINE void VectorScale(const vec3_t in, vec_t scale, vec3_t out)
 {
 #if id386_3dnow && defined __GNUC__ && 0
-	vec_t           out;
+  vec_t           out;
 
-	femms();
-	asm volatile    (			// lo                                                                   | hi
-						"movq           (%%eax),        %%mm0\n"	// in[0]                                                                | in[1]
-						"movd           8(%%eax),       %%mm1\n"	// in[2]                                                                | -
-						"movd           (%%edx),        %%mm2\n"	// scale                                                                | -
-						"punpckhdq      %%mm2,          %%mm2\n"	// scale                                                                | scale
-						"pfmul          %%mm2,          %%mm0\n"	// in[0]*scale                                                  | in[1]*scale
-						"pfmul          %%mm2,          %%mm1\n"	// in[2]*scale                                                  | -
-						"movq           %%mm0,          (%%ecx)\n"
-						"movd           %%mm1,          8(%%ecx)\n"::"a" (in), "d"(&scale), "c"(out):"memory");
-	femms();
-	return out;
+  femms();
+  asm volatile    (			// lo                                                                   | hi
+            "movq           (%%eax),        %%mm0\n"	// in[0]                                                                | in[1]
+            "movd           8(%%eax),       %%mm1\n"	// in[2]                                                                | -
+            "movd           (%%edx),        %%mm2\n"	// scale                                                                | -
+            "punpckhdq      %%mm2,          %%mm2\n"	// scale                                                                | scale
+            "pfmul          %%mm2,          %%mm0\n"	// in[0]*scale                                                  | in[1]*scale
+            "pfmul          %%mm2,          %%mm1\n"	// in[2]*scale                                                  | -
+            "movq           %%mm0,          (%%ecx)\n"
+            "movd           %%mm1,          8(%%ecx)\n"::"a" (in), "d"(&scale), "c"(out):"memory");
+  femms();
+  return out;
 #elif defined(SSEVEC3_T)
 //#error VectorScale
-	__m128          _in, _scale, _out;
+  __m128          _in, _scale, _out;
 
-	_in = _mm_loadu_ps(in);
-	_scale = _mm_set1_ps(scale);
+  _in = _mm_loadu_ps(in);
+  _scale = _mm_set1_ps(scale);
 
-	_out = _mm_mul_ps(_in, _scale);
+  _out = _mm_mul_ps(_in, _scale);
 
-	_mm_storeu_ps(out, _out);
+  _mm_storeu_ps(out, _out);
 #else
-	out[0] = in[0] * scale;
-	out[1] = in[1] * scale;
-	out[2] = in[2] * scale;
+  out[0] = in[0] * scale;
+  out[1] = in[1] * scale;
+  out[2] = in[2] * scale;
 #endif
 }
 #endif
@@ -833,7 +833,7 @@ static ID_INLINE void VectorScale(const vec3_t in, vec_t scale, vec3_t out)
 #else
 static ID_INLINE vec_t DotProduct(const vec3_t a, const vec3_t b)
 {
-	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 #endif
 
@@ -842,30 +842,30 @@ static ID_INLINE vec_t DotProduct(const vec3_t a, const vec3_t b)
 static ID_INLINE void SnapVector(vec3_t v)
 {
 #if id386 && defined(_MSC_VER)
-	int             i;
-	float           f;
+  int             i;
+  float           f;
 
-	f = *v;
-	__asm fld       f;
-	__asm fistp     i;
+  f = *v;
+  __asm fld       f;
+  __asm fistp     i;
 
-	*v = i;
-	v++;
-	f = *v;
-	__asm fld       f;
-	__asm fistp     i;
+  *v = i;
+  v++;
+  f = *v;
+  __asm fld       f;
+  __asm fistp     i;
 
-	*v = i;
-	v++;
-	f = *v;
-	__asm fld       f;
-	__asm fistp     i;
+  *v = i;
+  v++;
+  f = *v;
+  __asm fld       f;
+  __asm fistp     i;
 
-	*v = i;
+  *v = i;
 #else
-	v[0] = (int)v[0];
-	v[1] = (int)v[1];
-	v[2] = (int)v[2];
+  v[0] = (int)v[0];
+  v[1] = (int)v[1];
+  v[2] = (int)v[2];
 #endif
 
 }
@@ -892,48 +892,48 @@ qboolean        BoundsIntersectPoint(const vec3_t mins, const vec3_t maxs, const
 
 static ID_INLINE void BoundsToCorners(const vec3_t mins, const vec3_t maxs, vec3_t corners[8])
 {
-	VectorSet(corners[0], mins[0], maxs[1], maxs[2]);
-	VectorSet(corners[1], maxs[0], maxs[1], maxs[2]);
-	VectorSet(corners[2], maxs[0], mins[1], maxs[2]);
-	VectorSet(corners[3], mins[0], mins[1], maxs[2]);
-	VectorSet(corners[4], mins[0], maxs[1], mins[2]);
-	VectorSet(corners[5], maxs[0], maxs[1], mins[2]);
-	VectorSet(corners[6], maxs[0], mins[1], mins[2]);
-	VectorSet(corners[7], mins[0], mins[1], mins[2]);
+  VectorSet(corners[0], mins[0], maxs[1], maxs[2]);
+  VectorSet(corners[1], maxs[0], maxs[1], maxs[2]);
+  VectorSet(corners[2], maxs[0], mins[1], maxs[2]);
+  VectorSet(corners[3], mins[0], mins[1], maxs[2]);
+  VectorSet(corners[4], mins[0], maxs[1], mins[2]);
+  VectorSet(corners[5], maxs[0], maxs[1], mins[2]);
+  VectorSet(corners[6], maxs[0], mins[1], mins[2]);
+  VectorSet(corners[7], mins[0], mins[1], mins[2]);
 }
 
 
 static ID_INLINE int VectorCompare(const vec3_t v1, const vec3_t v2)
 {
-	if(v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2])
-	{
-		return 0;
-	}
-	return 1;
+  if(v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2])
+  {
+    return 0;
+  }
+  return 1;
 }
 
 static ID_INLINE int VectorCompare4(const vec4_t v1, const vec4_t v2)
 {
-	if(v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3])
-	{
-		return 0;
-	}
-	return 1;
+  if(v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3])
+  {
+    return 0;
+  }
+  return 1;
 }
 
 static ID_INLINE int VectorCompareEpsilon(const vec3_t v1, const vec3_t v2, float epsilon)
 {
-	vec3_t          d;
+  vec3_t          d;
 
-	VectorSubtract(v1, v2, d);
-	d[0] = fabs(d[0]);
-	d[1] = fabs(d[1]);
-	d[2] = fabs(d[2]);
+  VectorSubtract(v1, v2, d);
+  d[0] = fabs(d[0]);
+  d[1] = fabs(d[1]);
+  d[2] = fabs(d[2]);
 
-	if(d[0] > epsilon || d[1] > epsilon || d[2] > epsilon)
-		return 0;
+  if(d[0] > epsilon || d[1] > epsilon || d[2] > epsilon)
+    return 0;
 
-	return 1;
+  return 1;
 }
 
 // *INDENT-OFF*
@@ -941,31 +941,31 @@ static ID_INLINE vec_t VectorLength(const vec3_t v)
 {
 #if id386_3dnow && defined __GNUC__ && 0
 //#error VectorLength
-	vec_t           out;
+  vec_t           out;
 
-	femms();
-	asm volatile    (			// lo                                   | hi
-						"movq		(%%eax),	%%mm0\n"	// v[0]                                 | v[1]
-						"movd		8(%%eax),	%%mm1\n"	// v[2]                                 | -
-						// mm0[lo] = dot product(this)
-						"pfmul		%%mm0,		%%mm0\n"	// v[0]*v[0]                            | v[1]*v[1]
-						"pfmul		%%mm1,		%%mm1\n"	// v[2]*v[2]                            | -
-						"pfacc		%%mm0,		%%mm0\n"	// v[0]*v[0]+v[1]*v[1]                  | -
-						"pfadd		%%mm1,		%%mm0\n"	// v[0]*v[0]+v[1]*v[1]+v[2]*v[2]        | -
-						// mm0[lo] = sqrt(mm0[lo])
-						"pfrsqrt	%%mm0,		%%mm1\n"	// 1/sqrt(dot)                          | 1/sqrt(dot)       (approx)
-						"movq		%%mm1,		%%mm2\n"	// 1/sqrt(dot)                          | 1/sqrt(dot)       (approx)
-						"pfmul		%%mm1,		%%mm1\n"	// (1/sqrt(dot))?                       | (1/sqrt(dot))?    step 1
-						"pfrsqit1	%%mm0,		%%mm1\n"	// intermediate                                             step 2
-						"pfrcpit2	%%mm2,		%%mm1\n"	// 1/sqrt(dot) (full 24-bit precision)                      step 3
-						"pfmul		%%mm1,		%%mm0\n"	// sqrt(dot)
-						// out = mm0[lo]
-						"movd		%%mm0,		(%%edx)\n"::"a" (v), "d"(&out):"memory");
+  femms();
+  asm volatile    (			// lo                                   | hi
+            "movq		(%%eax),	%%mm0\n"	// v[0]                                 | v[1]
+            "movd		8(%%eax),	%%mm1\n"	// v[2]                                 | -
+            // mm0[lo] = dot product(this)
+            "pfmul		%%mm0,		%%mm0\n"	// v[0]*v[0]                            | v[1]*v[1]
+            "pfmul		%%mm1,		%%mm1\n"	// v[2]*v[2]                            | -
+            "pfacc		%%mm0,		%%mm0\n"	// v[0]*v[0]+v[1]*v[1]                  | -
+            "pfadd		%%mm1,		%%mm0\n"	// v[0]*v[0]+v[1]*v[1]+v[2]*v[2]        | -
+            // mm0[lo] = sqrt(mm0[lo])
+            "pfrsqrt	%%mm0,		%%mm1\n"	// 1/sqrt(dot)                          | 1/sqrt(dot)       (approx)
+            "movq		%%mm1,		%%mm2\n"	// 1/sqrt(dot)                          | 1/sqrt(dot)       (approx)
+            "pfmul		%%mm1,		%%mm1\n"	// (1/sqrt(dot))?                       | (1/sqrt(dot))?    step 1
+            "pfrsqit1	%%mm0,		%%mm1\n"	// intermediate                                             step 2
+            "pfrcpit2	%%mm2,		%%mm1\n"	// 1/sqrt(dot) (full 24-bit precision)                      step 3
+            "pfmul		%%mm1,		%%mm0\n"	// sqrt(dot)
+            // out = mm0[lo]
+            "movd		%%mm0,		(%%edx)\n"::"a" (v), "d"(&out):"memory");
 
-	femms();
-	return out;
+  femms();
+  return out;
 #else
-	return (vec_t) sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+  return (vec_t) sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 #endif
 }
 // *INDENT-ON*
@@ -975,91 +975,91 @@ static ID_INLINE vec_t VectorLengthSquared(const vec3_t v)
 {
 #if id386_3dnow && defined __GNUC__ && 0
 //#error VectorLengthSquared
-	vec_t           out;
+  vec_t           out;
 
-	femms();
-	asm volatile    (			// lo                               | hi
-						"movq		(%%eax),	%%mm0\n"	// v[0]                             | v[1]
-						"movq		(%%eax),	%%mm2\n"	// v[0]                             | v[1]
-						"movd		8(%%eax),	%%mm1\n"	// v[2]                             | -
-						"movd		8(%%eax),	%%mm3\n"	// v[2]                             | -
-						"pfmul		%%mm2,		%%mm0\n"	// v[0]*v[0]                        | v[1]*v[1]
-						"pfmul		%%mm3,		%%mm1\n"	// v[2]*v[2]                        | -
-						"pfacc		%%mm0,		%%mm0\n"	// v[0]*v[0]+v[1]*v[1]              | -
-						"pfadd		%%mm1,		%%mm0\n"	// v[0]*v[0]+v[1]*v[1]+v[2]*v[2]    | -
-						"movd		%%mm0,		(%%edx)\n"	// out = mm2[lo]
-						::"a"           (v), "d"(&out):"memory");
+  femms();
+  asm volatile    (			// lo                               | hi
+            "movq		(%%eax),	%%mm0\n"	// v[0]                             | v[1]
+            "movq		(%%eax),	%%mm2\n"	// v[0]                             | v[1]
+            "movd		8(%%eax),	%%mm1\n"	// v[2]                             | -
+            "movd		8(%%eax),	%%mm3\n"	// v[2]                             | -
+            "pfmul		%%mm2,		%%mm0\n"	// v[0]*v[0]                        | v[1]*v[1]
+            "pfmul		%%mm3,		%%mm1\n"	// v[2]*v[2]                        | -
+            "pfacc		%%mm0,		%%mm0\n"	// v[0]*v[0]+v[1]*v[1]              | -
+            "pfadd		%%mm1,		%%mm0\n"	// v[0]*v[0]+v[1]*v[1]+v[2]*v[2]    | -
+            "movd		%%mm0,		(%%edx)\n"	// out = mm2[lo]
+            ::"a"           (v), "d"(&out):"memory");
 
-	femms();
-	return out;
+  femms();
+  return out;
 #else
-	return (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+  return (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 #endif
 }
 // *INDENT-ON*
 
 static ID_INLINE vec_t Distance(const vec3_t p1, const vec3_t p2)
 {
-	vec3_t          v;
+  vec3_t          v;
 
-	VectorSubtract(p2, p1, v);
-	return VectorLength(v);
+  VectorSubtract(p2, p1, v);
+  return VectorLength(v);
 }
 
 static ID_INLINE vec_t DistanceSquared(const vec3_t p1, const vec3_t p2)
 {
-	vec3_t          v;
+  vec3_t          v;
 
-	VectorSubtract(p2, p1, v);
-	return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+  VectorSubtract(p2, p1, v);
+  return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 }
 
 // fast vector normalize routine that uses rsqrt approximation, nor does it return length
 static ID_INLINE void VectorNormalizeFast(vec3_t v)
 {
-	float           lengthSquared, lengthInversed;
+  float           lengthSquared, lengthInversed;
 
-	lengthSquared = DotProduct(v, v);
+  lengthSquared = DotProduct(v, v);
 
-	if(lengthSquared)
-	{
-		lengthInversed = Q_rsqrt(lengthSquared);
-		v[0] *= lengthInversed;
-		v[1] *= lengthInversed;
-		v[2] *= lengthInversed;
-	}
+  if(lengthSquared)
+  {
+    lengthInversed = Q_rsqrt(lengthSquared);
+    v[0] *= lengthInversed;
+    v[1] *= lengthInversed;
+    v[2] *= lengthInversed;
+  }
 }
 
 static ID_INLINE void VectorInverse(vec3_t v)
 {
-	v[0] = -v[0];
-	v[1] = -v[1];
-	v[2] = -v[2];
+  v[0] = -v[0];
+  v[1] = -v[1];
+  v[2] = -v[2];
 }
 
 static ID_INLINE void CrossProduct(const vec3_t v1, const vec3_t v2, vec3_t cross)
 {
-	cross[0] = v1[1] * v2[2] - v1[2] * v2[1];
-	cross[1] = v1[2] * v2[0] - v1[0] * v2[2];
-	cross[2] = v1[0] * v2[1] - v1[1] * v2[0];
+  cross[0] = v1[1] * v2[2] - v1[2] * v2[1];
+  cross[1] = v1[2] * v2[0] - v1[0] * v2[2];
+  cross[2] = v1[0] * v2[1] - v1[1] * v2[0];
 }
 
 static ID_INLINE void VectorLerp(const vec3_t from, const vec3_t to, float frac, vec3_t out)
 {
-	out[0] = from[0] + ((to[0] - from[0]) * frac);
-	out[1] = from[1] + ((to[1] - from[1]) * frac);
-	out[2] = from[2] + ((to[2] - from[2]) * frac);
+  out[0] = from[0] + ((to[0] - from[0]) * frac);
+  out[1] = from[1] + ((to[1] - from[1]) * frac);
+  out[2] = from[2] + ((to[2] - from[2]) * frac);
 }
 
 static ID_INLINE void VectorReflect(const vec3_t v, const vec3_t normal, vec3_t out)
 {
-	float           d;
+  float           d;
 
-	d = 2.0 * (v[0] * normal[0] + v[1] * normal[1] + v[2] * normal[2]);
+  d = 2.0 * (v[0] * normal[0] + v[1] * normal[1] + v[2] * normal[2]);
 
-	out[0] = v[0] - normal[0] * d;
-	out[1] = v[1] - normal[1] * d;
-	out[2] = v[2] - normal[2] * d;
+  out[0] = v[0] - normal[0] * d;
+  out[1] = v[1] - normal[1] * d;
+  out[2] = v[2] - normal[2] * d;
 }
 
 vec_t           VectorNormalize(vec3_t v);	// returns vector length
@@ -1104,7 +1104,7 @@ void            AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, 
 
 static ID_INLINE void AnglesToVector(const vec3_t angles, vec3_t out)
 {
-	AngleVectors(angles, out, NULL, NULL);
+  AngleVectors(angles, out, NULL, NULL);
 }
 
 void            VectorToAngles(const vec3_t value1, vec3_t angles);
@@ -1139,9 +1139,9 @@ float           VectorMinComponent(vec3_t v);
 float           VectorMaxComponent(vec3_t v);
 
 vec_t           DistanceBetweenLineSegmentsSquared(const vec3_t sP0, const vec3_t sP1,
-												   const vec3_t tP0, const vec3_t tP1, float *s, float *t);
+                           const vec3_t tP0, const vec3_t tP1, float *s, float *t);
 vec_t           DistanceBetweenLineSegments(const vec3_t sP0, const vec3_t sP1,
-											const vec3_t tP0, const vec3_t tP1, float *s, float *t);
+                      const vec3_t tP0, const vec3_t tP1, float *s, float *t);
 
 void            MatrixIdentity(matrix_t m);
 void            MatrixClear(matrix_t m);
@@ -1171,7 +1171,7 @@ void            MatrixFromVectorsFLU(matrix_t m, const vec3_t forward, const vec
 void            MatrixFromVectorsFRU(matrix_t m, const vec3_t forward, const vec3_t right, const vec3_t up);
 void            MatrixFromQuat(matrix_t m, const quat_t q);
 void            MatrixFromPlanes(matrix_t m, const vec4_t left, const vec4_t right, const vec4_t bottom, const vec4_t top,
-								 const vec4_t near, const vec4_t far);
+                 const vec4_t near, const vec4_t far);
 void            MatrixToVectorsFLU(const matrix_t m, vec3_t forward, vec3_t left, vec3_t up);
 void            MatrixToVectorsFRU(const matrix_t m, vec3_t forward, vec3_t right, vec3_t up);
 void            MatrixSetupTransformFromVectorsFLU(matrix_t m, const vec3_t forward, const vec3_t left, const vec3_t up, const vec3_t origin);
@@ -1207,7 +1207,7 @@ void            MatrixCrop(matrix_t m, const vec3_t mins, const vec3_t maxs);
 
 static ID_INLINE void AnglesToMatrix(const vec3_t angles, matrix_t m)
 {
-	MatrixFromAngles(m, angles[PITCH], angles[YAW], angles[ROLL]);
+  MatrixFromAngles(m, angles[PITCH], angles[YAW], angles[ROLL]);
 }
 
 
@@ -1218,55 +1218,55 @@ static ID_INLINE void AnglesToMatrix(const vec3_t angles, matrix_t m)
 
 static ID_INLINE void QuatClear(quat_t q)
 {
-	q[0] = 0;
-	q[1] = 0;
-	q[2] = 0;
-	q[3] = 1;
+  q[0] = 0;
+  q[1] = 0;
+  q[2] = 0;
+  q[3] = 1;
 }
 
 /*
 static ID_INLINE int QuatCompare(const quat_t a, const quat_t b)
 {
-	if(a[0] != b[0] || a[1] != b[1] || a[2] != b[2] || a[3] != b[3])
-	{
-		return 0;
-	}
-	return 1;
+  if(a[0] != b[0] || a[1] != b[1] || a[2] != b[2] || a[3] != b[3])
+  {
+    return 0;
+  }
+  return 1;
 }
 */
 
 static ID_INLINE void QuatCalcW(quat_t q)
 {
 #if 1
-	vec_t           term = 1.0f - (q[0] * q[0] + q[1] * q[1] + q[2] * q[2]);
+  vec_t           term = 1.0f - (q[0] * q[0] + q[1] * q[1] + q[2] * q[2]);
 
-	if(term < 0.0)
-		q[3] = 0.0;
-	else
-		q[3] = -sqrt(term);
+  if(term < 0.0)
+    q[3] = 0.0;
+  else
+    q[3] = -sqrt(term);
 #else
-	q[3] = sqrt(fabs(1.0f - (q[0] * q[0] + q[1] * q[1] + q[2] * q[2])));
+  q[3] = sqrt(fabs(1.0f - (q[0] * q[0] + q[1] * q[1] + q[2] * q[2])));
 #endif
 }
 
 static ID_INLINE void QuatInverse(quat_t q)
 {
-	q[0] = -q[0];
-	q[1] = -q[1];
-	q[2] = -q[2];
+  q[0] = -q[0];
+  q[1] = -q[1];
+  q[2] = -q[2];
 }
 
 static ID_INLINE void QuatAntipodal(quat_t q)
 {
-	q[0] = -q[0];
-	q[1] = -q[1];
-	q[2] = -q[2];
-	q[3] = -q[3];
+  q[0] = -q[0];
+  q[1] = -q[1];
+  q[2] = -q[2];
+  q[3] = -q[3];
 }
 
 static ID_INLINE vec_t QuatLength(const quat_t q)
 {
-	return (vec_t) sqrt(q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]);
+  return (vec_t) sqrt(q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]);
 }
 
 vec_t           QuatNormalize(quat_t q);
@@ -1275,7 +1275,7 @@ void            QuatFromAngles(quat_t q, vec_t pitch, vec_t yaw, vec_t roll);
 
 static ID_INLINE void AnglesToQuat(const vec3_t angles, quat_t q)
 {
-	QuatFromAngles(q, angles[PITCH], angles[YAW], angles[ROLL]);
+  QuatFromAngles(q, angles[PITCH], angles[YAW], angles[ROLL]);
 }
 
 void            QuatFromMatrix(quat_t q, const matrix_t m);
@@ -1309,10 +1309,10 @@ void            QuatTransformVector(const quat_t q, const vec3_t in, vec3_t out)
 
 typedef struct
 {
-	qboolean        frameMemory;
-	int             currentElements;
-	int             maxElements;	// will reallocate and move when exceeded
-	void          **elements;
+  qboolean        frameMemory;
+  int             currentElements;
+  int             maxElements;	// will reallocate and move when exceeded
+  void          **elements;
 } growList_t;
 
 // you don't need to init the growlist if you don't mind it growing and moving
@@ -1328,24 +1328,24 @@ int             Com_IndexForGrowListElement(const growList_t * list, const void 
 
 enum
 {
-	MEMSTREAM_SEEK_SET,
-	MEMSTREAM_SEEK_CUR,
-	MEMSTREAM_SEEK_END
+  MEMSTREAM_SEEK_SET,
+  MEMSTREAM_SEEK_CUR,
+  MEMSTREAM_SEEK_END
 };
 
 enum
 {
-	MEMSTREAM_FLAGS_EOF = BIT(0),
-	MEMSTREAM_FLAGS_ERR = BIT(1),
+  MEMSTREAM_FLAGS_EOF = BIT(0),
+  MEMSTREAM_FLAGS_ERR = BIT(1),
 };
 
 // helper struct for reading binary file formats
 typedef struct memStream_s
 {
-	byte           *buffer;
-	int				bufSize;
-	byte           *curPos;
-	int             flags;
+  byte           *buffer;
+  int				bufSize;
+  byte           *curPos;
+  int             flags;
 }
 memStream_t;
 
@@ -1388,11 +1388,11 @@ void            Com_ParseWarning(char *format, ...);
 
 typedef struct pc_token_s
 {
-	int             type;
-	int             subtype;
-	int             intvalue;
-	float           floatvalue;
-	char            string[MAX_TOKENLENGTH];
+  int             type;
+  int             subtype;
+  int             intvalue;
+  float           floatvalue;
+  char            string[MAX_TOKENLENGTH];
 } pc_token_t;
 
 
@@ -1418,17 +1418,17 @@ qboolean        Com_CheckColorCodes(const char *s);
 // mode parm for FS_FOpenFile
 typedef enum
 {
-	FS_READ,
-	FS_WRITE,
-	FS_APPEND,
-	FS_APPEND_SYNC
+  FS_READ,
+  FS_WRITE,
+  FS_APPEND,
+  FS_APPEND_SYNC
 } fsMode_t;
 
 typedef enum
 {
-	FS_SEEK_CUR,
-	FS_SEEK_END,
-	FS_SEEK_SET
+  FS_SEEK_CUR,
+  FS_SEEK_END,
+  FS_SEEK_SET
 } fsOrigin_t;
 
 //=============================================
@@ -1469,14 +1469,14 @@ int             Q_CountChar(const char *string, char tocount);
 // implemented as a struct for qvm compatibility
 typedef struct
 {
-	byte            b0;
-	byte            b1;
-	byte            b2;
-	byte            b3;
-	byte            b4;
-	byte            b5;
-	byte            b6;
-	byte            b7;
+  byte            b0;
+  byte            b1;
+  byte            b2;
+  byte            b3;
+  byte            b4;
+  byte            b5;
+  byte            b6;
+  byte            b7;
 } qint64;
 
 //=============================================
@@ -1527,50 +1527,55 @@ default values.
 ==========================================================
 */
 
-#define	CVAR_ARCHIVE		1	// set to cause it to be saved to vars.rc
-								// used for system variables, not for player
-								// specific configurations
-#define	CVAR_USERINFO		2	// sent to server on connect or change
-#define	CVAR_SERVERINFO		4	// sent in response to front end requests
-#define	CVAR_SYSTEMINFO		8	// these cvars will be duplicated on all clients
-#define	CVAR_INIT			16	// don't allow change from console at all,
-								// but can be set from the command line
-#define	CVAR_LATCH			32	// will only change when C code next does
-								// a Cvar_Get(), so it can't be changed
-								// without proper initialization.  modified
-								// will be set, even though the value hasn't
-								// changed yet
-#define	CVAR_ROM			64	// display only, cannot be set by user at all
-#define	CVAR_USER_CREATED	128	// created by a set command
-#define	CVAR_TEMP			256	// can be set even when cheats are disabled, but is not archived
-#define CVAR_CHEAT			512	// can not be changed if cheats are disabled
+#define	CVAR_ARCHIVE		  1	    // set to cause it to be saved to vars.rc
+                                // used for system variables, not for player
+                                // specific configurations
+
+#define	CVAR_USERINFO		  2	    // sent to server on connect or change
+#define	CVAR_SERVERINFO		4	    // sent in response to front end requests
+#define	CVAR_SYSTEMINFO		8	    // these cvars will be duplicated on all clients
+
+#define	CVAR_INIT			    16	  // don't allow change from console at all,
+                                // but can be set from the command line
+
+#define	CVAR_LATCH			  32	  // will only change when C code next does
+                                // a Cvar_Get(), so it can't be changed
+                                // without proper initialization.  modified
+                                // will be set, even though the value hasn't
+                                // changed yet
+
+#define	CVAR_ROM			    64	  // display only, cannot be set by user at all
+#define	CVAR_USER_CREATED	128	  // created by a set command
+#define	CVAR_TEMP			    256	  // can be set even when cheats are disabled, but is not archived
+#define CVAR_CHEAT			  512	  // can not be changed if cheats are disabled
 #define CVAR_NORESTART		1024	// do not clear when a cvar_restart is issued
-#define CVAR_SERVER_CREATED 2048	// cvar was created by a server the client connected to
-#define CVAR_VM_CREATED		0x1000	// cvar was created exclusively in one of the VMs.
-#define CVAR_NONEXISTENT	0xFFFFFFFF	// cvar doesn't exist
+
+#define CVAR_SERVER_CREATED 2048	      // cvar was created by a server the client connected to
+#define CVAR_VM_CREATED		  0x1000	    // cvar was created exclusively in one of the VMs.
+#define CVAR_NONEXISTENT	  0xFFFFFFFF	// cvar doesn't exist
 
 // nothing outside the Cvar_*() functions should modify these fields!
 typedef struct cvar_s
 {
-	char           *name;
-	char           *string;
-	char           *resetString;	// cvar_restart will reset to this value
-	char           *latchedString;	// for CVAR_LATCH vars
-	int             flags;
-	qboolean        modified;	// set each time the cvar is changed
-	int             modificationCount;	// incremented each time the cvar is changed
-	float           value;		// atof( string )
-	int             integer;	// atoi( string )
-	qboolean        validate;
-	qboolean        integral;
-	float           min;
-	float           max;
+  char           *name;
+  char           *string;
+  char           *resetString;	// cvar_restart will reset to this value
+  char           *latchedString;	// for CVAR_LATCH vars
+  int             flags;
+  qboolean        modified;	// set each time the cvar is changed
+  int             modificationCount;	// incremented each time the cvar is changed
+  float           value;		// atof( string )
+  int             integer;	// atoi( string )
+  qboolean        validate;
+  qboolean        integral;
+  float           min;
+  float           max;
 
-	struct cvar_s  *next;
-	struct cvar_s  *prev;
-	struct cvar_s  *hashNext;
-	struct cvar_s  *hashPrev;
-	int             hashIndex;
+  struct cvar_s  *next;
+  struct cvar_s  *prev;
+  struct cvar_s  *hashNext;
+  struct cvar_s  *hashPrev;
+  int             hashIndex;
 } cvar_t;
 
 #define	MAX_CVAR_VALUE_STRING	256
@@ -1581,11 +1586,11 @@ typedef int     cvarHandle_t;
 // so they must ask for structured updates
 typedef struct
 {
-	cvarHandle_t    handle;
-	int             modificationCount;
-	float           value;
-	int             integer;
-	char            string[MAX_CVAR_VALUE_STRING];
+  cvarHandle_t    handle;
+  int             modificationCount;
+  float           value;
+  int             integer;
+  char            string[MAX_CVAR_VALUE_STRING];
 } vmCvar_t;
 
 /*
@@ -1602,62 +1607,62 @@ COLLISION DETECTION
 // 0-2 are axial planes
 typedef enum
 {
-	PLANE_X = 0,
-	PLANE_Y = 1,
-	PLANE_Z = 2,
-	PLANE_NON_AXIAL = 3
+  PLANE_X = 0,
+  PLANE_Y = 1,
+  PLANE_Z = 2,
+  PLANE_NON_AXIAL = 3
 } planeType_t;
 
 //#define PlaneTypeForNormal(x) (x[0] == 1.0 ? PLANE_X : (x[1] == 1.0 ? PLANE_Y : (x[2] == 1.0 ? PLANE_Z : PLANE_NON_AXIAL) ) )
 static ID_INLINE int PlaneTypeForNormal(vec3_t normal)
 {
-	if(normal[0] == 1.0)
-		return PLANE_X;
+  if(normal[0] == 1.0)
+    return PLANE_X;
 
-	if(normal[1] == 1.0)
-		return PLANE_Y;
+  if(normal[1] == 1.0)
+    return PLANE_Y;
 
-	if(normal[2] == 1.0)
-		return PLANE_Z;
+  if(normal[2] == 1.0)
+    return PLANE_Z;
 
-	return PLANE_NON_AXIAL;
+  return PLANE_NON_AXIAL;
 }
 
 // plane_t structure
 // !!! if this is changed, it must be changed in asm code too !!!
 typedef struct cplane_s
 {
-	vec3_t          normal;
-	float           dist;
-	byte            type;		// for fast side tests: 0,1,2 = axial, 3 = nonaxial
-	byte            signbits;	// signx + (signy<<1) + (signz<<2), used as lookup during collision
-	byte            pad[2];
+  vec3_t          normal;
+  float           dist;
+  byte            type;		// for fast side tests: 0,1,2 = axial, 3 = nonaxial
+  byte            signbits;	// signx + (signy<<1) + (signz<<2), used as lookup during collision
+  byte            pad[2];
 } cplane_t;
 
 
 typedef enum
 {
-	TT_NONE,
+  TT_NONE,
 
-	TT_AABB,
-	TT_CAPSULE,
-	TT_BISPHERE,
+  TT_AABB,
+  TT_CAPSULE,
+  TT_BISPHERE,
 
-	TT_NUM_TRACE_TYPES
+  TT_NUM_TRACE_TYPES
 } traceType_t;
 
 // a trace is returned when a box is swept through the world
 typedef struct
 {
-	qboolean        allsolid;	// if true, plane is not valid
-	qboolean        startsolid;	// if true, the initial point was in a solid area
-	float           fraction;	// time completed, 1.0 = didn't hit anything
-	vec3_t          endpos;		// final position
-	cplane_t        plane;		// surface normal at impact, transformed to world space
-	int             surfaceFlags;	// surface hit
-	int             contents;	// contents on other side of surface hit
-	int             entityNum;	// entity the contacted sirface is a part of
-	float           lateralFraction;	// fraction of collision tangetially to the trace direction
+  qboolean        allsolid;	// if true, plane is not valid
+  qboolean        startsolid;	// if true, the initial point was in a solid area
+  float           fraction;	// time completed, 1.0 = didn't hit anything
+  vec3_t          endpos;		// final position
+  cplane_t        plane;		// surface normal at impact, transformed to world space
+  int             surfaceFlags;	// surface hit
+  int             contents;	// contents on other side of surface hit
+  int             entityNum;	// entity the contacted sirface is a part of
+  float           lateralFraction;	// fraction of collision tangetially to the trace direction
 } trace_t;
 
 // trace->entityNum can also be 0 to (MAX_GENTITIES-1)
@@ -1667,16 +1672,16 @@ typedef struct
 // markfragments are returned by CM_MarkFragments()
 typedef struct
 {
-	int             firstPoint;
-	int             numPoints;
+  int             firstPoint;
+  int             numPoints;
 } markFragment_t;
 
 
 
 typedef struct
 {
-	vec3_t          origin;
-	vec3_t          axis[3];
+  vec3_t          origin;
+  vec3_t          axis[3];
 } orientation_t;
 
 //=====================================================================
@@ -1695,14 +1700,14 @@ typedef struct
 // other channels will allways override a playing sound on that channel
 typedef enum
 {
-	CHAN_AUTO,
-	CHAN_LOCAL,					// menu sounds, etc
-	CHAN_WEAPON,
-	CHAN_VOICE,
-	CHAN_ITEM,
-	CHAN_BODY,
-	CHAN_LOCAL_SOUND,			// chat messages, etc
-	CHAN_ANNOUNCER				// announcer voices, etc
+  CHAN_AUTO,
+  CHAN_LOCAL,					// menu sounds, etc
+  CHAN_WEAPON,
+  CHAN_VOICE,
+  CHAN_ITEM,
+  CHAN_BODY,
+  CHAN_LOCAL_SOUND,			// chat messages, etc
+  CHAN_ANNOUNCER				// announcer voices, etc
 } soundChannel_t;
 
 
@@ -1762,9 +1767,9 @@ typedef enum
 #define	MAX_GAMESTATE_CHARS	16000
 typedef struct
 {
-	int             stringOffsets[MAX_CONFIGSTRINGS];
-	char            stringData[MAX_GAMESTATE_CHARS];
-	int             dataCount;
+  int             stringOffsets[MAX_CONFIGSTRINGS];
+  char            stringData[MAX_GAMESTATE_CHARS];
+  int             dataCount;
 } gameState_t;
 
 //=========================================================
@@ -1793,74 +1798,74 @@ typedef struct
 // from it.
 typedef struct playerState_s
 {
-	int             commandTime;	// cmd->serverTime of last executed command
-	int             pm_type;
-	int             bobCycle;		// for view bobbing and footstep generation
-	int             pm_flags;		// ducked, jump_held, etc
-	int             pm_time;
+  int             commandTime;	// cmd->serverTime of last executed command
+  int             pm_type;
+  int             bobCycle;		// for view bobbing and footstep generation
+  int             pm_flags;		// ducked, jump_held, etc
+  int             pm_time;
 
-	float			lean_amount;	// The magnitude of the lean direction
+  float			lean_amount;	// The magnitude of the lean direction
 
-	vec3_t          origin;
-	vec3_t          velocity;
-	int             weaponTime;
-	int             gravity;
-	int             speed;
-	int             delta_angles[3];	// add to command angles to get view direction
-	// changed by spawns, rotating objects, and teleporters
+  vec3_t          origin;
+  vec3_t          velocity;
+  int             weaponTime;
+  int             gravity;
+  int             speed;
+  int             delta_angles[3];	// add to command angles to get view direction
+  // changed by spawns, rotating objects, and teleporters
 
-	int             groundEntityNum;	// ENTITYNUM_NONE = in air
+  int             groundEntityNum;	// ENTITYNUM_NONE = in air
 
-	int             legsTimer;	// don't change low priority animations until this runs out
-	int             legsAnim;	// mask off ANIM_TOGGLEBIT
+  int             legsTimer;	// don't change low priority animations until this runs out
+  int             legsAnim;	// mask off ANIM_TOGGLEBIT
 
-	int             torsoTimer;	// don't change low priority animations until this runs out
-	int             torsoAnim;	// mask off ANIM_TOGGLEBIT
+  int             torsoTimer;	// don't change low priority animations until this runs out
+  int             torsoAnim;	// mask off ANIM_TOGGLEBIT
 
-	int             movementDir;	// a number 0 to 7 that represents the relative angle
-	// of movement to the view angle (axial and diagonals)
-	// when at rest, the value will remain unchanged
-	// used to twist the legs during strafing
+  int             movementDir;	// a number 0 to 7 that represents the relative angle
+  // of movement to the view angle (axial and diagonals)
+  // when at rest, the value will remain unchanged
+  // used to twist the legs during strafing
 
-	vec3_t          grapplePoint;	// location of grapple to pull towards if PMF_GRAPPLE_PULL
+  vec3_t          grapplePoint;	// location of grapple to pull towards if PMF_GRAPPLE_PULL
 
-	int             eFlags;		// copied to entityState_t->eFlags
+  int             eFlags;		// copied to entityState_t->eFlags
 
-	int             eventSequence;	// pmove generated events
-	int             events[MAX_PS_EVENTS];
-	int             eventParms[MAX_PS_EVENTS];
+  int             eventSequence;	// pmove generated events
+  int             events[MAX_PS_EVENTS];
+  int             eventParms[MAX_PS_EVENTS];
 
-	int             externalEvent;	// events set on player from another source
-	int             externalEventParm;
-	int             externalEventTime;
+  int             externalEvent;	// events set on player from another source
+  int             externalEventParm;
+  int             externalEventTime;
 
-	int             clientNum;	// ranges from 0 to MAX_CLIENTS-1
-	int             weapon;		// copied to entityState_t->weapon
-	int             weaponstate;
+  int             clientNum;	// ranges from 0 to MAX_CLIENTS-1
+  int             weapon;		// copied to entityState_t->weapon
+  int             weaponstate;
 
-	vec3_t          viewangles;	// for fixed views
-	int             viewheight;
+  vec3_t          viewangles;	// for fixed views
+  int             viewheight;
 
-	// damage feedback
-	int             damageEvent;	// when it changes, latch the other parms
-	int             damageYaw;
-	int             damagePitch;
-	int             damageCount;
+  // damage feedback
+  int             damageEvent;	// when it changes, latch the other parms
+  int             damageYaw;
+  int             damagePitch;
+  int             damageCount;
 
-	int             stats[MAX_STATS];
-	int             persistant[MAX_PERSISTANT];	// stats that aren't cleared on death
-	int             powerups[MAX_POWERUPS];	// level.time that the powerup runs out
-	int             ammo[MAX_WEAPONS];
+  int             stats[MAX_STATS];
+  int             persistant[MAX_PERSISTANT];	// stats that aren't cleared on death
+  int             powerups[MAX_POWERUPS];	// level.time that the powerup runs out
+  int             ammo[MAX_WEAPONS];
 
-	int             generic1;
-	int             loopSound;
-	int             jumppad_ent;	// jumppad entity hit this frame
+  int             generic1;
+  int             loopSound;
+  int             jumppad_ent;	// jumppad entity hit this frame
 
-	// not communicated over the net at all
-	int             ping;		// server to game info for scoreboard
-	int             pmove_framecount;	// FIXME: don't transmit over the network
-	int             jumppad_frame;
-	int             entityEventSequence;
+  // not communicated over the net at all
+  int             ping;		// server to game info for scoreboard
+  int             pmove_framecount;	// FIXME: don't transmit over the network
+  int             jumppad_frame;
+  int             entityEventSequence;
 } playerState_t;
 
 
@@ -1871,30 +1876,30 @@ typedef struct playerState_s
 // button, and 1 << 1 is the second, and so on.
 enum buttonAliases_t
 {
-	BUTTON_ATTACK			= BIT(0),
-	BUTTON_TALK				= BIT(1),
-	BUTTON_USE_HOLDABLE		= BIT(2),
-	BUTTON_GESTURE			= BIT(3),
-	BUTTON_WALKING			= BIT(4),
-	BUTTON_ATTACK2			= BIT(5),
-	BUTTON_ACTIVATE			= BIT(6),
-	BUTTON_GETFLAG			= BIT(7),
-	BUTTON_GUARDBASE		= BIT(8),
-	BUTTON_PATROL			= BIT(9),
-	BUTTON_FOLLOWME			= BIT(10),
-	BUTTON_ANY				= BIT(11),
-	BUTTON_LEAN_LEFT		= BIT(12),
-	BUTTON_LEAN_RIGHT		= BIT(13),
+  BUTTON_ATTACK			= BIT(0),
+  BUTTON_TALK				= BIT(1),
+  BUTTON_USE_HOLDABLE		= BIT(2),
+  BUTTON_GESTURE			= BIT(3),
+  BUTTON_WALKING			= BIT(4),
+  BUTTON_ATTACK2			= BIT(5),
+  BUTTON_ACTIVATE			= BIT(6),
+  BUTTON_GETFLAG			= BIT(7),
+  BUTTON_GUARDBASE		= BIT(8),
+  BUTTON_PATROL			= BIT(9),
+  BUTTON_FOLLOWME			= BIT(10),
+  BUTTON_ANY				= BIT(11),
+  BUTTON_LEAN_LEFT		= BIT(12),
+  BUTTON_LEAN_RIGHT		= BIT(13),
 };
 
 // usercmd_t is sent to the server each client frame
 typedef struct usercmd_s
 {
-	int             serverTime;
-	int             angles[3];
-	int             buttons;
-	byte            weapon;		// weapon
-	signed char     forwardmove, rightmove, upmove;
+  int             serverTime;
+  int             angles[3];
+  int             buttons;
+  byte            weapon;		// weapon
+  signed char     forwardmove, rightmove, upmove;
 } usercmd_t;
 
 //===================================================================
@@ -1904,24 +1909,24 @@ typedef struct usercmd_s
 
 typedef enum
 {
-	TR_STATIONARY,
-	TR_INTERPOLATE,				// non-parametric, but interpolate between snapshots
-	TR_LINEAR,
-	TR_LINEAR_STOP,
-	TR_SINE,					// value = base + sin( time / duration ) * delta
-	TR_GRAVITY,
-	TR_BUOYANCY,
-	TR_ACCELERATION
+  TR_STATIONARY,
+  TR_INTERPOLATE,				// non-parametric, but interpolate between snapshots
+  TR_LINEAR,
+  TR_LINEAR_STOP,
+  TR_SINE,					// value = base + sin( time / duration ) * delta
+  TR_GRAVITY,
+  TR_BUOYANCY,
+  TR_ACCELERATION
 } trType_t;
 
 typedef struct
 {
-	trType_t        trType;
-	int             trTime;
-	int             trDuration;	// if non 0, trTime + trDuration = stop time
-	float           trAcceleration;	// gravity factor, etc
-	vec4_t          trBase;		// Tr3B: changed from vec3_t to vec4_t to support quaternions
-	vec4_t          trDelta;	// velocity, etc - Tr3B: changed from vec3_t to vec4_t to support quaternions
+  trType_t        trType;
+  int             trTime;
+  int             trDuration;	// if non 0, trTime + trDuration = stop time
+  float           trAcceleration;	// gravity factor, etc
+  vec4_t          trBase;		// Tr3B: changed from vec3_t to vec4_t to support quaternions
+  vec4_t          trDelta;	// velocity, etc - Tr3B: changed from vec3_t to vec4_t to support quaternions
 } trajectory_t;
 
 // entityState_t is the information conveyed from the server
@@ -1933,61 +1938,61 @@ typedef struct
 
 typedef struct entityState_s
 {
-	int             number;		// entity index
-	int             eType;		// entityType_t
-	int             eFlags;
+  int             number;		// entity index
+  int             eType;		// entityType_t
+  int             eFlags;
 
-	trajectory_t    pos;		// for calculating position
-	trajectory_t    apos;		// for calculating angles
+  trajectory_t    pos;		// for calculating position
+  trajectory_t    apos;		// for calculating angles
 
-	int             time;
-	int             time2;
+  int             time;
+  int             time2;
 
-	vec3_t          origin;
-	vec3_t          origin2;
+  vec3_t          origin;
+  vec3_t          origin2;
 
-	vec3_t          angles;
-	vec3_t          angles2;
+  vec3_t          angles;
+  vec3_t          angles2;
 
-	int             otherEntityNum;	// shotgun sources, etc
-	int             otherEntityNum2;
+  int             otherEntityNum;	// shotgun sources, etc
+  int             otherEntityNum2;
 
-	int             groundEntityNum;	// -1 = in air
+  int             groundEntityNum;	// -1 = in air
 
-	int             constantLight;	// r + (g<<8) + (b<<16) + (intensity<<24)
-	int             loopSound;	// constantly loop this sound
+  int             constantLight;	// r + (g<<8) + (b<<16) + (intensity<<24)
+  int             loopSound;	// constantly loop this sound
 
-	int             modelindex;
-	int             modelindex2;
-	int             clientNum;	// 0 to (MAX_CLIENTS - 1), for players and corpses
-	int             frame;
+  int             modelindex;
+  int             modelindex2;
+  int             clientNum;	// 0 to (MAX_CLIENTS - 1), for players and corpses
+  int             frame;
 
-	int             solid;		// for client side prediction, trap_linkentity sets this properly
+  int             solid;		// for client side prediction, trap_linkentity sets this properly
 
-	int             event;		// impulse events -- muzzle flashes, footsteps, etc
-	int             eventParm;
+  int             event;		// impulse events -- muzzle flashes, footsteps, etc
+  int             eventParm;
 
-	// for players
-	int             powerups;	// bit flags
-	int             weapon;		// determines weapon and flash model, etc
-	int             legsAnim;	// mask off ANIM_TOGGLEBIT
-	int             torsoAnim;	// mask off ANIM_TOGGLEBIT
+  // for players
+  int             powerups;	// bit flags
+  int             weapon;		// determines weapon and flash model, etc
+  int             legsAnim;	// mask off ANIM_TOGGLEBIT
+  int             torsoAnim;	// mask off ANIM_TOGGLEBIT
 
-	int             generic1;
+  int             generic1;
 } entityState_t;
 
 typedef enum
 {
-	CA_UNINITIALIZED,
-	CA_DISCONNECTED,			// not talking to a server
-	CA_AUTHORIZING,				// not used any more, was checking cd key
-	CA_CONNECTING,				// sending request packets to the server
-	CA_CHALLENGING,				// sending challenge packets to the server
-	CA_CONNECTED,				// netchan_t established, getting gamestate
-	CA_LOADING,					// only during cgame initialization, never during main loop
-	CA_PRIMED,					// got gamestate, waiting for first frame
-	CA_ACTIVE,					// game views should be displayed
-	CA_CINEMATIC				// playing a cinematic or a static pic, not connected to a server
+  CA_UNINITIALIZED,
+  CA_DISCONNECTED,			// not talking to a server
+  CA_AUTHORIZING,				// not used any more, was checking cd key
+  CA_CONNECTING,				// sending request packets to the server
+  CA_CHALLENGING,				// sending challenge packets to the server
+  CA_CONNECTED,				// netchan_t established, getting gamestate
+  CA_LOADING,					// only during cgame initialization, never during main loop
+  CA_PRIMED,					// got gamestate, waiting for first frame
+  CA_ACTIVE,					// game views should be displayed
+  CA_CINEMATIC				// playing a cinematic or a static pic, not connected to a server
 } connstate_t;
 
 // font support
@@ -1999,26 +2004,26 @@ typedef enum
 #define GLYPHS_PER_FONT GLYPH_END - GLYPH_START + 1
 typedef struct
 {
-	int             height;		// number of scan lines
-	int             top;		// top of glyph in buffer
-	int             bottom;		// bottom of glyph in buffer
-	int             pitch;		// width for copying
-	int             xSkip;		// x adjustment
-	int             imageWidth;	// width of actual image
-	int             imageHeight;	// height of actual image
-	float           s;			// x offset in image where glyph starts
-	float           t;			// y offset in image where glyph starts
-	float           s2;
-	float           t2;
-	qhandle_t       glyph;		// handle to the shader with the glyph
-	char            shaderName[32];
+  int             height;		// number of scan lines
+  int             top;		// top of glyph in buffer
+  int             bottom;		// bottom of glyph in buffer
+  int             pitch;		// width for copying
+  int             xSkip;		// x adjustment
+  int             imageWidth;	// width of actual image
+  int             imageHeight;	// height of actual image
+  float           s;			// x offset in image where glyph starts
+  float           t;			// y offset in image where glyph starts
+  float           s2;
+  float           t2;
+  qhandle_t       glyph;		// handle to the shader with the glyph
+  char            shaderName[32];
 } glyphInfo_t;
 
 typedef struct
 {
-	glyphInfo_t     glyphs[GLYPHS_PER_FONT];
-	float           glyphScale;
-	char            name[MAX_QPATH];
+  glyphInfo_t     glyphs[GLYPHS_PER_FONT];
+  float           glyphScale;
+  char            name[MAX_QPATH];
 } fontInfo_t;
 
 #define Square(x) ((x)*(x))
@@ -2029,15 +2034,15 @@ typedef struct
 
 typedef struct qtime_s
 {
-	int             tm_sec;		/* seconds after the minute - [0,59] */
-	int             tm_min;		/* minutes after the hour - [0,59] */
-	int             tm_hour;	/* hours since midnight - [0,23] */
-	int             tm_mday;	/* day of the month - [1,31] */
-	int             tm_mon;		/* months since January - [0,11] */
-	int             tm_year;	/* years since 1900 */
-	int             tm_wday;	/* days since Sunday - [0,6] */
-	int             tm_yday;	/* days since January 1 - [0,365] */
-	int             tm_isdst;	/* daylight savings time flag */
+  int             tm_sec;		/* seconds after the minute - [0,59] */
+  int             tm_min;		/* minutes after the hour - [0,59] */
+  int             tm_hour;	/* hours since midnight - [0,23] */
+  int             tm_mday;	/* day of the month - [1,31] */
+  int             tm_mon;		/* months since January - [0,11] */
+  int             tm_year;	/* years since 1900 */
+  int             tm_wday;	/* days since Sunday - [0,6] */
+  int             tm_yday;	/* days since January 1 - [0,365] */
+  int             tm_isdst;	/* daylight savings time flag */
 } qtime_t;
 
 
@@ -2051,32 +2056,32 @@ typedef struct qtime_s
 // cinematic states
 typedef enum
 {
-	FMV_IDLE,
-	FMV_PLAY,					// play
-	FMV_EOF,					// all other conditions, i.e. stop/EOF/abort
-	FMV_ID_BLT,
-	FMV_ID_IDLE,
-	FMV_LOOPED,
-	FMV_ID_WAIT
+  FMV_IDLE,
+  FMV_PLAY,					// play
+  FMV_EOF,					// all other conditions, i.e. stop/EOF/abort
+  FMV_ID_BLT,
+  FMV_ID_IDLE,
+  FMV_LOOPED,
+  FMV_ID_WAIT
 } e_status;
 
 typedef enum _flag_status
 {
-	FLAG_ATBASE = 0,
-	FLAG_TAKEN,					// CTF
-	FLAG_TAKEN_RED,				// One Flag CTF
-	FLAG_TAKEN_BLUE,			// One Flag CTF
-	FLAG_DROPPED
+  FLAG_ATBASE = 0,
+  FLAG_TAKEN,					// CTF
+  FLAG_TAKEN_RED,				// One Flag CTF
+  FLAG_TAKEN_BLUE,			// One Flag CTF
+  FLAG_DROPPED
 } flagStatus_t;
 
 typedef enum
 {
-	DS_NONE,
+  DS_NONE,
 
-	DS_PLAYBACK,
-	DS_RECORDING,
+  DS_PLAYBACK,
+  DS_RECORDING,
 
-	DS_NUM_DEMO_STATES
+  DS_NUM_DEMO_STATES
 } demoState_t;
 
 

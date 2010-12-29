@@ -952,6 +952,8 @@ extern vmCvar_t pm_fastWeaponSwitches;
 extern vmCvar_t pm_fixedPmove;
 extern vmCvar_t pm_fixedPmoveFPS;
 
+// Rogue Reborn - Server Info
+extern vmCvar_t rr_weaponsAllowed;
 extern vmCvar_t pm_allowLeaning;
 extern vmCvar_t pm_allowLeaningWithMovement;
 
@@ -1026,6 +1028,9 @@ void            trap_BotUserCommand(int client, usercmd_t * ucmd);	// NO BOTLIB
 void            trap_BotClientCommand(int clientNum, char *command);	// NO BOTLIB
 void            trap_GetUsercmd(int clientNum, usercmd_t * cmd);
 qboolean        trap_GetEntityToken(char *buffer, int bufferSize);
+
+// Rogue Reborn
+void            trap_LoadPlayerWeapons(int clientNum, char* weapon);
 
 int             trap_RealTime(qtime_t * qtime);
 

@@ -278,6 +278,8 @@ extern cvar_t  *sv_privatePassword;
 extern cvar_t  *sv_allowDownload;
 extern cvar_t  *sv_maxclients;
 
+// Rogue Reborn
+extern cvar_t  *rr_weaponsAllowed;
 extern cvar_t  *sv_allowLeanWithMovement;
 extern cvar_t  *sv_allowLean;
 
