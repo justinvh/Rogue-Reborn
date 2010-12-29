@@ -24,6 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef _QCOMMON_H_
 #define _QCOMMON_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <hat/engine/q_shared.h>
 #include <hat/engine/cm_public.h>
 
@@ -1285,5 +1289,9 @@ int             Parse_SourceFileAndLine(int handle, char *filename, int *line);
 #define DLF_NO_REDIRECT 2
 #define DLF_NO_UDP 4
 #define DLF_NO_DISCONNECT 8
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif							// _QCOMMON_H_

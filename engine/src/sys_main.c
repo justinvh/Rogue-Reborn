@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <ctype.h>
 #include <errno.h>
 
+#include <hat/engine/engine_tests.h>
+
 #ifndef DEDICATED
 #ifdef USE_LOCAL_HEADERS
 #	include "SDL.h"
@@ -682,6 +684,11 @@ int main(int argc, char **argv)
     signal(SIGTERM, Sys_SigHandler);
     signal(SIGINT, Sys_SigHandler);
 #endif
+
+    if (!hat_tests()) {
+      Com_Error(0, "Hat tests failed. Sorry.\n");
+      return -1;
+    }
 
     while(1)
     {

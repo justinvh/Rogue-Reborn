@@ -109,6 +109,7 @@ set(ENGINE_SRC_HEADER_LIST
 	"${ENGINE_INCLUDE_ENGINE_DIR}/cm_local.h"
 	"${ENGINE_INCLUDE_ENGINE_DIR}/cm_polylib.h"
 	"${ENGINE_INCLUDE_ENGINE_DIR}/cm_public.h"
+	"${ENGINE_INCLUDE_ENGINE_DIR}/engine_tests.h"
 	"${ENGINE_INCLUDE_ENGINE_DIR}/keycodes.h"
 	"${ENGINE_INCLUDE_ENGINE_DIR}/keys.h"
 	"${ENGINE_INCLUDE_ENGINE_DIR}/qal.h"
@@ -276,6 +277,7 @@ set(ENGINE_SRC_LIST
 	"${ENGINE_SRC_DIR}/con_log.c"
 	"${ENGINE_SRC_DIR}/cvar.c"
 	"${ENGINE_SRC_DIR}/files.c"
+	"${ENGINE_SRC_DIR}/engine_tests.cpp"
 	"${ENGINE_SRC_DIR}/huffman.c"
 	"${ENGINE_SRC_DIR}/md4.c"
 	"${ENGINE_SRC_DIR}/md5.c"
@@ -307,9 +309,19 @@ set(ENGINE_SRC_LIST
 	"${ENGINE_SRC_DIR}/sv_snapshot.c"
 	"${ENGINE_SRC_DIR}/sv_world.c"
 	"${ENGINE_SRC_DIR}/sys_main.c"
+	"${ENGINE_SRC_DIR}/v8/type_conversion.cpp"
 	"${ENGINE_SRC_DIR}/unzip.c"
 	"${ENGINE_SRC_DIR}/vm.c"
 	"${ENGINE_SRC_DIR}/vm_java.c"
+)
+
+set(ENGINE_JS_WEAPON
+	"${ENGINE_SRC_DIR}/javascript/weapon/class.cpp"
+	"${ENGINE_SRC_DIR}/javascript/weapon/manager.cpp"
+	"${ENGINE_SRC_DIR}/javascript/weapon/tools.cpp"
+	"${ENGINE_INCLUDE_ENGINE_DIR}/javascript/weapon/class.hpp"
+	"${ENGINE_INCLUDE_ENGINE_DIR}/javascript/weapon/manager.hpp"
+	"${ENGINE_INCLUDE_ENGINE_DIR}/javascript/weapon.hpp"
 )
 
 
@@ -388,7 +400,10 @@ set(ENGINE_SRC_ALL_LIST
 	${WIN32_RESOURCE_LIST}
 	${APPLE_SRC_LIST}
 	${UNIX_SRC_LIST}
+	${ENGINE_JS_WEAPON}
 )
+
+
 
 # Project include
 include_directories(
@@ -405,11 +420,15 @@ include_directories(
 	"${SDL_INCLUDE_DIR}"
 	"${CURL_INCLUDE_DIR}"
 	"${OPENAL_INCLUDE_DIR}"
+	"${V8_INCLUDE_DIR}"
 )
 
 # Group the source code
 source_group("Header Files" FILES ${ENGINE_SRC_HEADER_LIST})
 source_group("Source Files" FILES ${ENGINE_SRC_SERVER_SHARED_LIST} ${ENGINE_SRC_CLIENT_SHARED_LIST} ${ENGINE_SRC_GUI_SHARED_LIST} ${ENGINE_SRC_LIST})
+
+source_group("JavaScript\\Weapon" FILES ${ENGINE_JS_WEAPON})
+
 if(${HAT_EXPAND_DEPENDENCIES})
 	source_group("(library) Java" FILES ${ENGINE_SRC_JAVA_LIST})
 	source_group("(library) Vorbis" FILES ${ENGINE_SRC_VORBIS_LIST})
@@ -429,9 +448,13 @@ else()
 	)
 endif()
 
+if(WIN32)
+	set(OS_SPECIFIC_LIBRARIES "winmm.lib" "ws2_32.lib")
+endif()
+
 # Setup the executable
 add_executable(engine ${ENGINE_SRC_ALL_LIST})
-target_link_libraries(engine ${WIN32_LIB_LIST} ${SDL_LIBRARY} ${OPENAL_LIBRARY} ${CURL_LIBRARY} ${OPENGL_LIBRARY})
+target_link_libraries(engine ${OS_SPECIFIC_LIBRARIES} ${V8_LIBRARY} ${WIN32_LIB_LIST} ${SDL_LIBRARY} ${OPENAL_LIBRARY} ${CURL_LIBRARY} ${OPENGL_LIBRARY})
 add_definitions(
 	-DUSE_CURL
 	-DUSE_OPENAL
@@ -446,9 +469,8 @@ add_definitions(
 	-DFLOATING_POINT
 )
 
-if(WIN32)
-set_target_properties(engine PROPERTIES LINK_FLAGS
-	"/FIXED:NO /DYNAMICBASE:NO"
-)
-endif()
-
+if (WIN32)
+	set_target_properties(engine PROPERTIES LINK_FLAGS
+		"/FIXED:NO /DYNAMICBASE:NO"
+	)
+endif(WIN32)

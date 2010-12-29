@@ -95,6 +95,7 @@ http://code.google.com/p/v8/source/browse/trunk/test/cctest/test-api.cc#1470
 template <class T>
 T* unwrap_global_pointer(int index)
 {
+
     v8::Handle<v8::Object> proxy = v8::Context::GetCurrent()->Global();
     v8::Handle<v8::Object> global = proxy->GetPrototype().As<v8::Object>();
     void* p = global->GetPointerFromInternalField(index);
