@@ -934,8 +934,8 @@ void CG_RegisterWeapon(int weaponNum)
         scit != acit->sounds.end();
         ++scit)
       {
-        //std::pair<int, int> sound_pair(scit->at, trap_S_RegisterSound(scit->play.c_str()));
-        //weaponInfo->animation_sounds[i].push_back(sound_pair);
+        assert(scit->at < 100);
+        weaponInfo->viewModel_animation_sounds[i][scit->at] = trap_S_RegisterSound(scit->play);
       }
     }
   }
@@ -1313,6 +1313,12 @@ static void CG_RunWeaponLerpFrame(weaponInfo_t * wi, lerpFrame_t * lf, int weapo
     {
       lf->oldFrame = lf->frame;
       lf->oldFrameTime = lf->frameTime;
+      if (lf->frame < 100) {
+        qhandle_t sound = wi->viewModel_animation_sounds[weaponAnimation][lf->frame];
+        if (sound != 0) {
+          trap_S_StartSound(cg.snap->ps.origin, cg.snap->ps.clientNum, CHAN_WEAPON, sound);
+        }
+      }
     }
 
     // get the next frame based on the animation

@@ -464,6 +464,12 @@ typedef struct weaponInfo_s
 	qhandle_t       viewModel;
 	animation_t     viewModel_animations[MAX_WEAPON_STATES];
 
+  // TODO(justinvh): Reconsider. KISS for now.
+  // Each bucket corresponds to a frame for a sound. So, 100 possible 
+  // sounds over 100 frames. So, stack allocates: MAX_WEAPON_STATES * 100
+  // Very unnecessary, but KISS for now.
+  qhandle_t       viewModel_animation_sounds[MAX_WEAPON_STATES][100];
+
 	vec3_t          weaponMidpoint;	// so it will rotate centered instead of by tag
 
 	float           flashLight;
