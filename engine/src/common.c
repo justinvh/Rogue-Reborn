@@ -4117,7 +4117,7 @@ void Com_Frame(void)
     // if "viewlog" has been modified, show or hide the log console
     if(com_viewlog->modified)
     {
-        //if(!com_dedicated->value)
+        if(!com_dedicated->value)
         {
             Sys_SetConsoleVisibility(com_viewlog->integer);
         }
@@ -4463,7 +4463,6 @@ static qboolean Field_Complete(void)
     return qfalse;
 }
 
-#ifndef DEDICATED
 /*
 ===============
 Field_CompleteKeyname
@@ -4471,6 +4470,8 @@ Field_CompleteKeyname
 */
 void Field_CompleteKeyname(void)
 {
+
+#ifndef DEDICATED
     matchCount = 0;
     shortestMatch[0] = 0;
 
@@ -4478,8 +4479,8 @@ void Field_CompleteKeyname(void)
 
     if(!Field_Complete())
         Key_KeynameCompletion(PrintMatches);
-}
 #endif
+}
 
 /*
 ===============

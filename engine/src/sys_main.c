@@ -670,7 +670,7 @@ int main(int argc, char **argv)
 
     // hide the early console since we've reached the point where we
     // have a working graphics subsystems
-    //if(!com_dedicated->integer && !com_viewlog->integer)
+    if(!com_dedicated->integer && !com_viewlog->integer)
     {
         CON_SetVisibility(0);
     }
@@ -699,7 +699,9 @@ int main(int argc, char **argv)
         Cvar_SetValue("com_minimized", !(appState & SDL_APPACTIVE));
 #endif
 
+#ifndef DEDICATED
         IN_Frame();
+#endif
         Com_Frame();
     }
 

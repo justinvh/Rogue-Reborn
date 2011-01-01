@@ -23,6 +23,7 @@ CONTENTS OF THIS FILE
  * Dependencies 
  * Building
  * Installation
+   * Dedicated Server
  * Design Decisions
 
 
@@ -106,6 +107,18 @@ There are a few options to the build system:
 		  And so on in your project file filter list. This does
 		  not affect the build in terms of speed or what is built.
 
+The following are generated during the build:
+	+ engine/[Debug|Release]/engine[.exe]
+		- The actual game; run this to play.
+	+ engine/[Debug|Release]/dedicated[.exe] 
+		- The dedicated server
+	+ client/[Debug|Release]/client[.dll|.so]
+		- The client-related game-play
+	+ server/[Debug|Release]/server/server[.dll|.so]
+		- The server-related game-play
+	+ gui/[Debug|Release]/gui[.dll|.so]
+		- Anything GUI related
+
 
 
 INSTALLATION
@@ -119,12 +132,16 @@ The dependency structure should look like this:
 		- renderer.dll
 		- SDL.dll
 		- zlib1.dll
+		- engine.exe
+		- dedicated.exe
 		+ base/
 			- server.dll
 			- client.dll
 			- gui.dll
 
-
+Dedicated Server:
+The dedicated server can be run by doing something like:
+	./dedicated +set com_hunkMegs 16 +set dedicated 2  +map k2s
 
 DESIGN DECISIONS
 ================
