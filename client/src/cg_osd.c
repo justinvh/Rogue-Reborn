@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define OSD_RADIUS 100
 #define OSD_RADIUS_BASE 75
 
+osd_group_t     osdGroups[MAX_OSD_GROUPS];
+int             numOSDGroups;
 
 void CG_OSDUp_f(void)
 {

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // cl_cgame.c  -- client system interaction with client game
 
 #include <hat/engine/client.h>
+#include <hat/engine/javascript/weapon.h>
 
 #if !defined(USE_JAVA)
 
@@ -811,6 +812,12 @@ intptr_t CL_CgameSystemCalls(intptr_t * args)
 			return re.GetEntityToken(VMA(1), args[2]);
 		case CG_R_INPVS:
 			return re.inPVS(VMA(1), VMA(2));
+
+    // Rogue Reborn
+    case CG_LOAD_WEAPON:
+      return JS_LoadWeapon(args[1], VMA(2));
+    case CG_GET_WEAPON_ATTRIBUTES:
+      return JS_GetWeaponAttributes(args[1], args[2], VMA(3));
 
 		default:
 			assert(0);

@@ -191,6 +191,7 @@ static gentity_t *SpawnModelOnVictoryPad(gentity_t * pad, vec3_t offset, gentity
 	body->s.groundEntityNum = ENTITYNUM_WORLD;
 	body->s.legsAnim = LEGS_IDLE;
 	body->s.torsoAnim = TORSO_STAND;
+  /*
 	if(body->s.weapon == WP_NONE)
 	{
 		body->s.weapon = WP_MACHINEGUN;
@@ -199,6 +200,7 @@ static gentity_t *SpawnModelOnVictoryPad(gentity_t * pad, vec3_t offset, gentity
 	{
 		body->s.torsoAnim = TORSO_STAND2;
 	}
+  */
 	body->s.event = 0;
 	body->r.svFlags = ent->r.svFlags;
 	VectorCopy(ent->r.mins, body->r.mins);
@@ -233,15 +235,7 @@ static gentity_t *SpawnModelOnVictoryPad(gentity_t * pad, vec3_t offset, gentity
 static void CelebrateStop(gentity_t * player)
 {
 	int             anim;
-
-	if(player->s.weapon == WP_GAUNTLET)
-	{
-		anim = TORSO_STAND2;
-	}
-	else
-	{
-		anim = TORSO_STAND;
-	}
+  anim = TORSO_STAND;
 	player->s.torsoAnim = ((player->s.torsoAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | anim;
 }
 

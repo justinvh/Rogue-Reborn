@@ -8,7 +8,11 @@ namespace hat { namespace javascript {
 
 class Weapon_manager {
   typedef std::vector<Weapon*> Weapon_list;
-  Weapon_list weapons;
+  Weapon_list primary_weapons;
+  Weapon_list secondary_weapons;
+  Weapon_list items;
+  Weapon_list inventory;
+  Weapon* last_weapon;
   v8::Persistent<v8::ObjectTemplate> global_scope;
   v8::Persistent<v8::FunctionTemplate> manager_tmpl;
   v8::Persistent<v8::Object> manager_obj;
@@ -21,9 +25,17 @@ public:
   Weapon_manager();
   ~Weapon_manager();
   void add_weapon(Weapon* weapon);
-  bool load_weapon(const char* filename, Weapon_attrs const ** attrs);
-  bool get_loaded_weapon(const int weapon_id, Weapon_attrs const ** attrs);
-  size_t size() { return weapons.size(); }
+  bool load_weapon(const char* name_internal, const char* filename, const Weapon_attrs** attrs);
+  bool get_loaded_weapon(const int weapon_id, const Weapon_attrs** attrs);
+  bool find_weapon(const char* weapon_name, const Weapon_attrs** attrs);
+  bool find_weapon(const int unique_id, const Weapon_attrs** attrs);
+  size_t size(Weapon_type type) 
+  { 
+    if (type == PRIMARY_WEAPON) return primary_weapons.size();
+    else if (type == SECONDARY_WEAPON) return secondary_weapons.size();
+    else if (type == ITEM) return items.size();
+    return 0;
+  }
   static Weapon_manager& get_active();
 
 };

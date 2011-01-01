@@ -235,7 +235,8 @@ typedef enum
   BOTLIB_CLIENT_COMMAND,		// ( int client, char *command );
 
   // Rogue Reborn
-  G_LOAD_PLAYER_WEAPON
+  G_LOAD_PLAYER_WEAPON,
+  G_GET_WEAPON_UNIQUE_ID
 } gameImport_t;
 
 

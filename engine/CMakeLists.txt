@@ -320,8 +320,10 @@ set(ENGINE_JS_WEAPON
 	"${ENGINE_SRC_DIR}/javascript/weapon/manager.cpp"
 	"${ENGINE_SRC_DIR}/javascript/weapon/tools.cpp"
 	"${ENGINE_INCLUDE_ENGINE_DIR}/javascript/weapon/class.hpp"
+	"${ENGINE_INCLUDE_ENGINE_DIR}/javascript/weapon/interface.hpp"
 	"${ENGINE_INCLUDE_ENGINE_DIR}/javascript/weapon/manager.hpp"
 	"${ENGINE_INCLUDE_ENGINE_DIR}/javascript/weapon.hpp"
+	"${ENGINE_INCLUDE_ENGINE_DIR}/javascript/weapon.h"
 )
 
 

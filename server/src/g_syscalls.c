@@ -290,9 +290,15 @@ qboolean trap_GetEntityToken(char *buffer, int bufferSize)
 }
 
 // Rogue Reborn
-void trap_LoadPlayerWeapons(int clientNum, char* weapon)
+qboolean trap_LoadPlayerWeapons(int clientNum, const char* weapon)
 {
-  syscall(G_LOAD_PLAYER_WEAPON, clientNum, weapon);
+  return (qboolean)syscall(G_LOAD_PLAYER_WEAPON, clientNum, weapon);
+}
+
+
+int trap_GetWeaponUniqueID(int clientNum, const char* weapon)
+{
+  return syscall(G_GET_WEAPON_UNIQUE_ID, clientNum, weapon);
 }
 
 int trap_RealTime(qtime_t * qtime)

@@ -260,10 +260,12 @@ void Cmd_Give_f(gentity_t * ent)
 	gentity_t      *it_ent;
 	trace_t         trace;
 
+  /*
 	if(!CheatsOk(ent))
 	{
 		return;
 	}
+  */
 
 	name = ConcatArgs(1);
 
@@ -334,6 +336,18 @@ void Cmd_Give_f(gentity_t * ent)
 		ent->client->ps.persistant[PERS_ASSIST_COUNT]++;
 		return;
 	}
+
+  // requesting a weapon
+  if (!give_all) {
+    if (trap_LoadPlayerWeapons(ent->client->ps.clientNum, name)) {
+      int weapon_id = trap_GetWeaponUniqueID(ent->client->ps.clientNum, name);
+      ent->client->ps.stats[STAT_WEAPONS] |= 1 << weapon_id;
+
+      // TODO(justinvh): This needs to be dynamically created somehow
+			ent->client->ps.ammo[weapon_id] = 50;
+      return;
+    }
+  }
 
 	// spawn a specific item right on the player
 	if(!give_all)

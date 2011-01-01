@@ -11,6 +11,3 @@ add_subdirectory(client)
 add_subdirectory(gui)
 add_subdirectory(server)
 add_subdirectory(renderer)
-
-# Unit tests
-add_test(SimpleTest ${EXECUTABLE_OUTPUT_PATH}/SimpleTest Hell)

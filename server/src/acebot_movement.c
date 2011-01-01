@@ -712,10 +712,10 @@ void ACEMV_Attack(gentity_t * self)
 
 		if(c < 0.6 && ACEMV_CanMove(self, MOVE_FORWARD))
 			self->client->pers.cmd.forwardmove += 127;
-		else if(c < 0.8 && ACEMV_CanMove(self, MOVE_FORWARD) && self->client->ps.weapon != WP_GAUNTLET)
+		else if(c < 0.8 && ACEMV_CanMove(self, MOVE_FORWARD))
 			self->client->pers.cmd.forwardmove -= 127;
 
-		if(c < 0.95 && self->client->ps.weapon != WP_GAUNTLET)
+		if(c < 0.95)
 			self->client->pers.cmd.upmove -= 90;
 		else
 			self->client->pers.cmd.upmove += 90;

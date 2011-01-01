@@ -1367,6 +1367,7 @@ void ClientSpawn(gentity_t * ent)
 
   client->ps.clientNum = index;
 
+  /*
   client->ps.stats[STAT_WEAPONS] = (1 << WP_MACHINEGUN);
   if(g_gametype.integer == GT_TEAM)
   {
@@ -1376,9 +1377,12 @@ void ClientSpawn(gentity_t * ent)
   {
     client->ps.ammo[WP_MACHINEGUN] = 100;
   }
+  */
 
+  /*
   client->ps.stats[STAT_WEAPONS] |= (1 << WP_GAUNTLET);
   client->ps.ammo[WP_GAUNTLET] = -1;
+  */
 
   // health will count down towards max_health
   ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH] + 25;
@@ -1403,7 +1407,7 @@ void ClientSpawn(gentity_t * ent)
     trap_LinkEntity(ent);
 
     // force the base weapon up
-    client->ps.weapon = WP_MACHINEGUN;
+    //client->ps.weapon = WP_MACHINEGUN;
     client->ps.weaponstate = WEAPON_READY;
 
   }
@@ -1438,7 +1442,7 @@ void ClientSpawn(gentity_t * ent)
 
     // select the highest weapon number available, after any
     // spawn given items have fired
-    client->ps.weapon = 1;
+    client->ps.weapon = 0;
     for(i = WP_NUM_WEAPONS - 1; i > 0; i--)
     {
       if(client->ps.stats[STAT_WEAPONS] & (1 << i))

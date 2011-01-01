@@ -991,7 +991,6 @@ void FireWeapon(gentity_t * ent)
 #endif
 
 	// track shots taken for accuracy tracking.  Grapple is not a weapon and gauntlet is just not tracked
-	if(ent->s.weapon != WP_GAUNTLET)
 	{
 #ifdef MISSIONPACK
 		if(ent->s.weapon == WP_NAILGUN)
@@ -1019,6 +1018,8 @@ void FireWeapon(gentity_t * ent)
 	}
 
 	// fire the specific weapon
+  Bullet_Fire(ent, MACHINEGUN_SPREAD, MACHINEGUN_DAMAGE);
+  /*
 	switch (ent->s.weapon)
 	{
 		case WP_GAUNTLET:
@@ -1067,6 +1068,7 @@ void FireWeapon(gentity_t * ent)
 // FIXME        G_Error( "Bad ent->s.weapon" );
 			break;
 	}
+  */
 }
 
 

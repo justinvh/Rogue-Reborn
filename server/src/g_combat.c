@@ -101,7 +101,7 @@ void TossClientItems(gentity_t * self)
 	// weapon that isn't the mg or gauntlet.  Without this, a client
 	// can pick up a weapon, be killed, and not drop the weapon because
 	// their weapon change hasn't completed yet and they are still holding the MG.
-	if(weapon == WP_MACHINEGUN || weapon == WP_GAUNTLET)
+	if(weapon == WP_MACHINEGUN)
 	{
 		if(self->client->ps.weaponstate == WEAPON_DROPPING)
 		{

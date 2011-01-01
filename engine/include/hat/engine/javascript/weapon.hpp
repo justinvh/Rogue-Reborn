@@ -25,7 +25,9 @@ struct Weapon_descriptor {
  * Attributes are cached and provided through const access.
  */
 bool load_weapon(Weapon_descriptor* weapon);
+bool find_weapon(Weapon_descriptor* descriptor);
 bool get_loaded_weapon(Weapon_descriptor* descriptor);
+bool destroy_weapon_manager();
 }
 
 #endif // HAT_ENGINE_JAVASCRIPT_WEAPON_HPP

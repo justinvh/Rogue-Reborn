@@ -78,7 +78,7 @@ qboolean ACEIT_ChangeWeapon(gentity_t * self, weapon_t weapon)
 		return qfalse;
 
 	// do we have ammo for it?
-	if(weapon != WP_GAUNTLET && !self->client->ps.ammo[weapon])
+	if(!self->client->ps.ammo[weapon])
 		return qfalse;
 
 	// change to this weapon

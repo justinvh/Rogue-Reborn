@@ -2448,14 +2448,9 @@ static void PM_TorsoAnimation(void)
 {
   if(pm->ps->weaponstate == WEAPON_READY)
   {
-    if(pm->ps->weapon == WP_GAUNTLET)
-    {
-      PM_ContinueTorsoAnim(TORSO_STAND2);
-    }
-    else
-    {
-      PM_ContinueTorsoAnim(TORSO_STAND);
-    }
+    // TODO(justinvh): TORSO_STAND2 is a good animation for
+    // grenades and other tilted movements. Like when you're running?
+    PM_ContinueTorsoAnim(TORSO_STAND);
     return;
   }
 }
@@ -2478,7 +2473,7 @@ static void PM_Weapon(void)
   {
     if(pm->cmd.buttons & BUTTON_ATTACK2)
     {
-      if(pm->ps->weapon != WP_GAUNTLET && pm->ps->ammo[pm->ps->weapon])
+      if(pm->ps->ammo[pm->ps->weapon])
       {
         pm->ps->eFlags |= EF_FIRING2;
       }
@@ -2486,10 +2481,6 @@ static void PM_Weapon(void)
     else if(pm->cmd.buttons & BUTTON_ATTACK)
     {
       if(pm->ps->ammo[pm->ps->weapon])
-      {
-        pm->ps->eFlags |= EF_FIRING;
-      }
-      else if(pm->ps->weapon == WP_GAUNTLET)
       {
         pm->ps->eFlags |= EF_FIRING;
       }
@@ -2572,14 +2563,7 @@ static void PM_Weapon(void)
   if(pm->ps->weaponstate == WEAPON_RAISING)
   {
     pm->ps->weaponstate = WEAPON_READY;
-    if(pm->ps->weapon == WP_GAUNTLET)
-    {
-      PM_StartTorsoAnim(TORSO_STAND2);
-    }
-    else
-    {
-      PM_StartTorsoAnim(TORSO_STAND);
-    }
+    PM_StartTorsoAnim(TORSO_STAND);
     return;
   }
 
@@ -2612,25 +2596,7 @@ static void PM_Weapon(void)
   }
 
   // start the animation even if out of ammo
-  if(pm->ps->weapon == WP_GAUNTLET)
-  {
-    if(!(pm->cmd.buttons & BUTTON_ATTACK2))
-    {
-      // the guantlet only "fires" when it actually hits something
-      if(!pm->gauntletHit)
-      {
-        pm->ps->weaponTime = 0;
-        pm->ps->weaponstate = WEAPON_READY;
-        return;
-      }
-      PM_StartTorsoAnim(TORSO_ATTACK2);
-    }
-  }
-  else
-  {
-    PM_StartTorsoAnim(TORSO_ATTACK);
-  }
-
+  PM_StartTorsoAnim(TORSO_ATTACK);
   pm->ps->weaponstate = WEAPON_FIRING;
 
   // check for out of ammo
@@ -2661,47 +2627,8 @@ static void PM_Weapon(void)
   switch (pm->ps->weapon)
   {
     default:
-    case WP_GAUNTLET:
       addTime = 400;
       break;
-    case WP_LIGHTNING:
-      addTime = 50;
-      break;
-    case WP_SHOTGUN:
-      addTime = 1000;
-      break;
-    case WP_MACHINEGUN:
-      addTime = 100;
-      break;
-    case WP_FLAK_CANNON:
-      if(pm->cmd.buttons & BUTTON_ATTACK2)
-        addTime = 800;
-      else
-        addTime = 1000;
-      break;
-    case WP_ROCKET_LAUNCHER:
-      addTime = 800;
-      break;
-    case WP_PLASMAGUN:
-      addTime = 100;
-      break;
-    case WP_RAILGUN:
-      if(pm->cmd.buttons & BUTTON_ATTACK2)
-        addTime = 800;
-      else
-        addTime = 1500;
-      break;
-    case WP_BFG:
-      addTime = 200;
-      break;
-#ifdef MISSIONPACK
-    case WP_PROX_LAUNCHER:
-      addTime = 800;
-      break;
-    case WP_CHAINGUN:
-      addTime = 30;
-      break;
-#endif
   }
 
 #ifdef MISSIONPACK

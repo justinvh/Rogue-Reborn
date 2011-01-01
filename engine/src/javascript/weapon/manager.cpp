@@ -1,5 +1,6 @@
 #include <hat/engine/javascript/weapon.hpp>
 #include <hat/engine/qcommon.h>
+#include <algorithm>
 
 namespace hat { namespace javascript {
 
@@ -16,19 +17,22 @@ JS_fun_mapping funs[] = {
 };
 }
 
+void delete_weapon(Weapon* weapon)
+{
+  delete weapon;
+}
+
 Weapon_manager::~Weapon_manager()
 {
   manager_tmpl.Dispose();
   manager_tmpl.Dispose();
   manager_obj.Dispose();
   global_context.Dispose();
-  for (
-    Weapon_list::iterator cit = weapons.begin();
-    cit != weapons.end();
-    ++cit)
-    {
-      delete (*cit);
-    }
+
+  // Cleanup our actual weapons and items
+  std::for_each(primary_weapons.begin(), primary_weapons.end(), delete_weapon);
+  std::for_each(secondary_weapons.begin(), secondary_weapons.end(), delete_weapon);
+  std::for_each(items.begin(), items.end(), delete_weapon);
 }
 
 Weapon_manager& Weapon_manager::get_active()
@@ -56,12 +60,33 @@ Weapon_manager::Weapon_manager()
     global->Set(v8::String::New("weapon"), manager_obj);
 }
 
+/**
+ * Some insight to this method
+ * When we add a weapon, we will expect the client and server to have
+ * the same setup. So, basically what happens is that if there are any
+ * weapons that are out-of-order, then the client and server will
+ * have a conflict and the server can settle it however it wants.
+ * The size() is used as an id to the weapon attributes as a means
+ * of the mask. player_weapons |= 1 << weapon_attrs.id basically.
+ */
 void Weapon_manager::add_weapon(Weapon* weapon)
 {
-  weapons.push_back(weapon);
+  int type = weapon->weapon_attrs.type;
+  Weapon_list* wl;
+
+  if (type == PRIMARY_WEAPON) wl = &primary_weapons;
+  else if (type == SECONDARY_WEAPON) wl = &secondary_weapons;
+  else if (type == ITEM) wl = &items;
+  else assert(false);
+
+  last_weapon = weapon;
+  wl->push_back(weapon);
+  inventory.push_back(weapon);
+  weapon->weapon_attrs.type_id = wl->size();
+  weapon->weapon_attrs.unique_id = inventory.size();
 }
 
-bool Weapon_manager::load_weapon(const char* filename, Weapon_attrs const ** attrs)
+bool Weapon_manager::load_weapon(const char* name_internal, const char* filename, const Weapon_attrs** attrs)
 {
   v8::HandleScope handle_scope;
   active = this;
@@ -102,20 +127,47 @@ bool Weapon_manager::load_weapon(const char* filename, Weapon_attrs const ** att
       return false;
   }
 
-  *attrs = &weapons.back()->weapon_attrs;
+  strcpy(last_weapon->weapon_attrs.name_internal, name_internal);
+  *attrs = &last_weapon->weapon_attrs;
 
   Com_Printf("Success...\n");
   return true;
 }
 
-
-bool Weapon_manager::get_loaded_weapon(const int weapon_id, Weapon_attrs const ** attrs)
+bool Weapon_manager::find_weapon(const int unique_id, const Weapon_attrs** attrs)
 {
+  int actual_id = unique_id - 1;
+  if (actual_id >= inventory.size() || actual_id < 0) return false;
+  *attrs = &inventory[actual_id]->weapon_attrs;
+  return true;
+}
+
+bool Weapon_manager::find_weapon(const char* weapon_name, const Weapon_attrs** attrs)
+{
+  for (
+    Weapon_list::const_iterator cit = inventory.begin();
+    cit != inventory.end();
+  ++cit)
+  {
+    Weapon* weapon = *cit;
+    if (strcmp(weapon->weapon_attrs.name_internal, weapon_name) == 0) {
+      *attrs = &weapon->weapon_attrs;
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool Weapon_manager::get_loaded_weapon(const int weapon_id, const Weapon_attrs** attrs)
+{
+  /*
   if (weapons.size() < weapon_id) {
     return false;
   }
 
   *attrs = &weapons[weapon_id]->weapon_attrs;
+  */
   return true;
 }
 

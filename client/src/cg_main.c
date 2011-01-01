@@ -1554,6 +1554,10 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum)
 
 	cg.loading = qtrue;			// force players to load instead of defer
 
+  CG_LoadingString("weapons", qtrue);
+
+  CG_SetupWeapons();
+
 	CG_LoadingString("sounds", qtrue);
 
 	CG_RegisterSounds();

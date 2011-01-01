@@ -21,7 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
+#ifndef CLIENT_CG_LOCAL_H
+#define CLIENT_CG_LOCAL_H
+
 // cg_local.h
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <hat/engine/q_shared.h>
 #include <hat/renderer/tr_types.h>
 #include <hat/server/bg_public.h>
@@ -155,9 +162,9 @@ typedef struct
 
 // debugging values:
 
-int             debug_anim_current;
-int             debug_anim_old;
-float           debug_anim_blend;
+extern int             debug_anim_current;
+extern int             debug_anim_old;
+extern float           debug_anim_blend;
 
 
 // player entities need to track more information
@@ -660,8 +667,8 @@ typedef struct
 } osd_group_t;
 
 
-osd_group_t     osdGroups[MAX_OSD_GROUPS];
-int             numOSDGroups;
+extern osd_group_t     osdGroups[MAX_OSD_GROUPS];
+extern int             numOSDGroups;
 
 
 typedef struct osd_s
@@ -1765,6 +1772,7 @@ void            CG_NextWeapon_f(void);
 void            CG_PrevWeapon_f(void);
 void            CG_Weapon_f(void);
 
+void            CG_SetupWeapons(void);
 void            CG_RegisterWeapon(int weaponNum);
 void            CG_RegisterItemVisuals(int itemNum);
 
@@ -2198,3 +2206,9 @@ qboolean        trap_getCameraInfo(int time, vec3_t * origin, vec3_t * angles);
 qboolean        trap_GetEntityToken(char *buffer, int bufferSize);
 
 int             trap_RealTime(qtime_t * qtime);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // CLIENT_CG_LOCAL_H

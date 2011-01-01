@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // sv_game.c -- interface to the game dll
 #include <hat/engine/server.h>
-//#include <hat/engine/javascript/weapon.hpp>
+#include <hat/engine/javascript/weapon.h>
 
 #if !defined(USE_JAVA)
 
@@ -464,9 +464,14 @@ intptr_t SV_GameSystemCalls(intptr_t * args)
 
     case G_LOAD_PLAYER_WEAPON: 
     {
-      //hat::Weapon_descriptor descriptor(args[1], VMA(2));
-      break;
+      return JS_LoadWeapon(args[1], (const char*)VMA(2));
     }
+
+    case G_GET_WEAPON_UNIQUE_ID:
+    {
+      return JS_GetWeaponUniqueID(args[1], (const char*)VMA(2));
+    }
+
 
     case G_REAL_TIME:
       return Com_RealTime(VMA(1));

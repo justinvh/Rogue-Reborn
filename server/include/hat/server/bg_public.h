@@ -108,6 +108,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define CS_BOTINFO				25
 
 #define	CS_ITEMS				27	// string of 0's and 1's that tell which items are present
+#define CS_KIT          28 // Defines which items are available in the kit
 
 #define	CS_MODELS				32
 #define	CS_SOUNDS				(CS_MODELS+MAX_MODELS)
@@ -171,6 +172,11 @@ typedef enum
     WEAPON_RAISING,
     WEAPON_DROPPING,
     WEAPON_FIRING,
+    
+    // Rogue Reborn
+    WEAPON_FIRELAST,
+    WEAPON_OUT_OF_AMMO,
+    WEAPON_RELOADING,
 
     MAX_WEAPON_STATES
 } weaponstate_t;
@@ -381,6 +387,7 @@ typedef enum
     WP_PROX_LAUNCHER,
     WP_CHAINGUN,
 #endif
+    WP_UNKNOWN,
 
     WP_NUM_WEAPONS
 } weapon_t;

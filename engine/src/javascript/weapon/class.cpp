@@ -4,6 +4,22 @@
 
 using namespace easy;
 
+/* Some easy conversions */
+namespace easy {
+
+bool convert(const v8::Handle<v8::Value>& from, hat::Weapon_type* to)
+{
+  if (from->IsInt32()) {
+    int type = from->Int32Value();
+    if (type < 0 || type >= hat::MAX_WEAPON_TYPE) return false;
+    *to = static_cast<hat::Weapon_type>(type);
+    return true;
+  }
+  return false;
+}
+
+}
+
 namespace hat { namespace javascript {
 
 namespace {
@@ -24,7 +40,6 @@ Weapon::~Weapon()
   weapon_attrs.cleanup();
 }
 
-
 bool Weapon::build_attributes(const v8::Arguments& args, Weapon_attrs* attrs)
 {
   if (args.Length() != 2) {
@@ -32,7 +47,7 @@ bool Weapon::build_attributes(const v8::Arguments& args, Weapon_attrs* attrs)
   }
 
   v8::Handle<v8::String> name = args[0]->ToString();
-  if (!smart_convert(name, &attrs->name)) {
+  if (!smart_convert(name, &attrs->name_pretty)) {
     return false;
   }
 
@@ -41,12 +56,19 @@ bool Weapon::build_attributes(const v8::Arguments& args, Weapon_attrs* attrs)
   v8::Handle<v8::Value> animations_val = obj->Get(v8::String::New("animation"));
 
   // We can't do anything if the accuracy or animation do not exist
-  if (accuracy_val->IsUndefined() || animations_val->IsUndefined()) {
+  if (!smart_get(obj, "model", &attrs->model) ||
+    accuracy_val->IsUndefined() || animations_val->IsUndefined()) 
+  {
     return false;
   }
 
   v8::Handle<v8::Object> accuracy = accuracy_val->ToObject();
   v8::Handle<v8::Object> animations = animations_val->ToObject();
+
+  // Load the type. Super important.
+  if (!smart_get(obj, "type", &attrs->type)) {
+    return false;
+  }
 
   // Load the accuracy information
   bool status = 
@@ -70,7 +92,10 @@ bool Weapon::build_attributes(const v8::Arguments& args, Weapon_attrs* attrs)
     v8::Handle<v8::Object> animation = animations->Get(key)->ToObject();
 
     // Fetch out animation and time information
-    status = smart_get(animation, "animation", &animation_attrs.name);
+    status = 
+      smart_get(animation, "animation", &animation_attrs.animation) &&
+      convert(key, &animation_attrs.type);
+
     smart_get(animation, "time", &animation_attrs.time);
 
     // The only thing required is really the animation itself

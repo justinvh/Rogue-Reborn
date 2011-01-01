@@ -298,9 +298,6 @@ int Pickup_Weapon(gentity_t * ent, gentity_t * other)
 
 	Add_Ammo(other, ent->item->giTag, quantity);
 
-	if(ent->item->giTag == WP_GAUNTLET)
-		other->client->ps.ammo[ent->item->giTag] = -1;	// unlimited ammo
-
 	// team deathmatch has slow weapon respawns
 	if(g_gametype.integer == GT_TEAM)
 	{
@@ -921,8 +918,8 @@ void ClearRegisteredItems(void)
 	memset(itemRegistered, 0, sizeof(itemRegistered));
 
 	// players always start with the base weapon
-	RegisterItem(BG_FindItemForWeapon(WP_MACHINEGUN));
-	RegisterItem(BG_FindItemForWeapon(WP_GAUNTLET));
+	//RegisterItem(BG_FindItemForWeapon(WP_MACHINEGUN));
+	//RegisterItem(BG_FindItemForWeapon(WP_GAUNTLET));
 
 	if(g_gametype.integer == GT_HARVESTER)
 	{
@@ -959,6 +956,7 @@ so the client will know which ones to precache
 void SaveRegisteredItems(void)
 {
 	char            string[MAX_ITEMS + 1];
+  char            weapons[128];
 	int             i;
 	int             count;
 
@@ -979,6 +977,8 @@ void SaveRegisteredItems(void)
 
 	G_Printf("%i items registered\n", count);
 	trap_SetConfigstring(CS_ITEMS, string);
+  trap_Cvar_VariableStringBuffer("rr_weaponsAllowed", weapons, 128);
+  trap_SetConfigstring(CS_KIT, weapons);
 }
 
 /*

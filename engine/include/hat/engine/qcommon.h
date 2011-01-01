@@ -394,7 +394,7 @@ void            VM_Debug(int level);
 void           *VM_ArgPtr(intptr_t intValue);
 void           *VM_ExplicitArgPtr(vm_t * vm, intptr_t intValue);
 
-#define	VMA(x) VM_ArgPtr(args[x])
+#define	VMA(x) (char*)VM_ArgPtr(args[x])
 static ID_INLINE float _vmf(intptr_t x)
 {
 	floatint_t      fi;

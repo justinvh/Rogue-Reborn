@@ -38,6 +38,7 @@ set(CLIENT_SRC_HEADER_LIST
 	# Client shared (needed for MSVC)
 	"${CLIENT_INCLUDE_CLIENT_DIR}/cg_public.h"
 	"${CLIENT_INCLUDE_CLIENT_DIR}/cg_local.h"
+	"${CLIENT_INCLUDE_CLIENT_DIR}/traps.hpp"
 )
 
 set(CLIENT_SRC_ENGINE_SHARED_LIST
@@ -75,9 +76,9 @@ set(CLIENT_SRC_LIST
 	"${CLIENT_SRC_DIR}/cg_scoreboard.c"
 	"${CLIENT_SRC_DIR}/cg_servercmds.c"
 	"${CLIENT_SRC_DIR}/cg_snapshot.c"
-	"${CLIENT_SRC_DIR}/cg_syscalls.c"
+	"${CLIENT_SRC_DIR}/cg_syscalls.cpp"
 	"${CLIENT_SRC_DIR}/cg_view.c"
-	"${CLIENT_SRC_DIR}/cg_weapons.c"
+	"${CLIENT_SRC_DIR}/cg_weapons.cpp"
 )
 
 # Define the final source list
