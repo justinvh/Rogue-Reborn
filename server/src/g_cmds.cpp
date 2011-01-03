@@ -1878,6 +1878,7 @@ int reload_compare(const void* a, const void* b)
 
 void Cmd_Reload_f(gentity_t* ent)
 {
+  bool chambered = false;
   playerState_t* ps = &ent->client->ps;
 
   // Get the weapon attributes
@@ -1896,6 +1897,14 @@ void Cmd_Reload_f(gentity_t* ent)
 
   // Cycle our magazines
   int* ammo = ps->primary_ammo[ps->weapon];
+
+  // If we have positive ammo, then we can assume a round is chambered
+  if (ammo[0] > 0) {
+    Com_Printf("NOTICE: Round was already chambered.\n");
+    ammo[0]--;
+    chambered = true;
+  }
+
   Com_Printf("Before reload: ");
   for (int i = 0; i < MAX_MAGS; i++)
     Com_Printf("%d ", ammo[i]);
@@ -1906,6 +1915,9 @@ void Cmd_Reload_f(gentity_t* ent)
 
   for (int i = 0; i < MAX_MAGS; i++)
     Com_Printf("%d ", ammo[i]);
+
+  // If we had a round chambered, then add it back in.
+  ammo[0] = chambered ? ammo[0] + 1 : ammo[0];
 
   if (ammo[0] == 0)
     Com_Printf("WARNING: Cycled to an empty magazine.\n");
