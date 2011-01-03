@@ -1,4 +1,5 @@
 #include <hat/v8/type_conversion.hpp>
+#include <cstring>
 
 namespace easy {
 bool convert(const v8::Handle<v8::Value>& from, bool* to)

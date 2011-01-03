@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef __Q_SHARED_H
 #define __Q_SHARED_H
 
+#include <hat/engine/q_print.h>
+
 
 #if defined(__cplusplus)
 extern "C" {
@@ -1360,7 +1362,7 @@ float			MemStreamGetFloat(memStream_t * s);
 
 //=============================================
 
-float           Com_Clamp(float min, float max, float value);
+float           Com_Clamp(float min_value, float max_value, float value);
 
 char           *Com_SkipPath(char *pathname);
 const char     *Com_GetExtension(const char *name);
@@ -1510,11 +1512,6 @@ void            Info_SetValueForKey(char *s, const char *key, const char *value)
 void            Info_SetValueForKey_Big(char *s, const char *key, const char *value);
 qboolean        Info_Validate(const char *s);
 void            Info_NextPair(const char **s, char *key, char *value);
-
-// this is only here so the functions in q_shared.c and bg_*.c can link
-void QDECL      Com_Error(int level, const char *error, ...) __attribute__ ((format(printf, 2, 3)));
-void QDECL      Com_Printf(const char *msg, ...) __attribute__ ((format(printf, 1, 2)));
-void QDECL      Com_Warning(const char *msg, ...) __attribute__ ((format(printf, 1, 2)));
 
 
 /*

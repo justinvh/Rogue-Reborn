@@ -17,7 +17,7 @@ class Weapon_manager {
   v8::Persistent<v8::FunctionTemplate> manager_tmpl;
   v8::Persistent<v8::Object> manager_obj;
   v8::Persistent<v8::Context> global_context;
-  v8::Handle<v8::Object> Weapon_manager::wrap_tmpl(
+  v8::Handle<v8::Object> wrap_tmpl(
     v8::Handle<v8::FunctionTemplate>* tmpl, 
     Weapon_manager* e, 
     Object_template_extension extension);

@@ -1,8 +1,8 @@
-#include <hat/engine/javascript/weapon.hpp>
-#include <hat/engine/qcommon.h>
-#include <hat/v8/type_conversion.hpp>
+#include <cstring>
 
-using namespace easy;
+#include <hat/engine/javascript/weapon.hpp>
+#include <hat/v8/type_conversion.hpp>
+#include <hat/engine/q_print.h>
 
 /* Some easy conversions */
 namespace easy {
@@ -19,6 +19,8 @@ bool convert(const v8::Handle<v8::Value>& from, hat::Weapon_type* to)
 }
 
 }
+
+using namespace easy;
 
 namespace hat { namespace javascript {
 

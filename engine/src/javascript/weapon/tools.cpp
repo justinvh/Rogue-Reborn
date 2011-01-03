@@ -1,8 +1,7 @@
+#include <hat/engine/qfiles.h>
 #include <hat/engine/javascript/weapon.hpp>
 #include <hat/v8/easy.hpp>
 #include <hat/v8/type_conversion.hpp>
-#include <hat/engine/qcommon.h>
-#include <hat/engine/qfiles.h>
 #include <sstream>
 #include <memory>
 #include <map>

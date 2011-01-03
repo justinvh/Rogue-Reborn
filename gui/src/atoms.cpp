@@ -30,38 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <hat/v8/easy.hpp>
 #include <string>
 
-namespace {
-std::string indents;
-const char* indents_cached = "";
-int indent = 0;
-const int INDENT_SIZE = 4;
-}
-
-namespace hat {
-Scope_indent::Scope_indent()
-{
-    indent++;
-    for (int i = 0; i < INDENT_SIZE; i++) {
-        indents.push_back(' ');
-    }
-    indents_cached = indents.c_str();
-}
-
-Scope_indent::~Scope_indent()
-{
-    indent--;
-    for (int i = 0; i < INDENT_SIZE; i++) {
-        indents.pop_back();
-    }
-    indents_cached = indents.c_str();
-}
-
-Scope_indent Com_ScopeIndent()
-{
-    return hat::Scope_indent();
-}
-}
-
 uiStatic_t      uis;
 qboolean        m_entersound;	// after a frame, so caching won't disrupt the sound
 
@@ -74,7 +42,7 @@ void QDECL Com_Error(int level, const char *error, ...)
     Q_vsnprintf(text, sizeof(text), error, argptr);
     va_end(argptr);
 
-    trap_Error(level, va("%s%s", indents_cached, text));
+    trap_Error(level, va("%s", text));
 }
 
 void QDECL Com_Printf(const char *msg, ...)
@@ -86,7 +54,7 @@ void QDECL Com_Printf(const char *msg, ...)
     Q_vsnprintf(text, sizeof(text), msg, argptr);
     va_end(argptr);
 
-    trap_Print(va("%s%s", indents_cached, text));
+    trap_Print(va("%s", text));
 }
 
 void QDECL Com_Warning(const char *msg, ...)
@@ -98,6 +66,6 @@ void QDECL Com_Warning(const char *msg, ...)
     Q_vsnprintf(text, sizeof(text), msg, argptr);
     va_end(argptr);
 
-    trap_Warning(va("%s%s", indents_cached, text));
+    trap_Warning(va("%s", text));
 }
 

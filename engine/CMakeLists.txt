@@ -84,6 +84,7 @@ find_package(SDL REQUIRED)
 find_package(CURL REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(V8 REQUIRED)
 
 # Source lists
 set(ENGINE_SRC_SERVER_SHARED_LIST
@@ -404,8 +405,6 @@ set(ENGINE_SRC_ALL_LIST
 	${UNIX_SRC_LIST}
 	${ENGINE_JS_WEAPON}
 )
-
-
 
 # Project include
 include_directories(

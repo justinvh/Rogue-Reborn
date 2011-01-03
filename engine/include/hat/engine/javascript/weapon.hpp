@@ -30,4 +30,10 @@ bool get_loaded_weapon(Weapon_descriptor* descriptor);
 bool destroy_weapon_manager();
 }
 
+
+/* Some easy conversions */
+namespace easy {
+bool convert(const v8::Handle<v8::Value>& from, hat::Weapon_type* to);
+}
+
 #endif // HAT_ENGINE_JAVASCRIPT_WEAPON_HPP

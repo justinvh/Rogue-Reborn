@@ -20,7 +20,7 @@ MARK_AS_ADVANCED(V8_INCLUDE_DIR)
 
 # Look for the library.
 # Does this work on UNIX systems? (LINUX)
-FIND_LIBRARY( V8_LIBRARY NAMES v8
+FIND_LIBRARY( V8_LIBRARY NAMES v8 
               PATHS $ENV{H3D_EXTERNAL_ROOT}/lib
                     $ENV{H3D_ROOT}/../External/lib
 		    ~/lib

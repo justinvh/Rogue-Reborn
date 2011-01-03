@@ -1,6 +1,8 @@
+#include <algorithm>
+#include <memory>
+
 #include <hat/engine/javascript/weapon.hpp>
 #include <hat/engine/qcommon.h>
-#include <algorithm>
 
 namespace hat { namespace javascript {
 
