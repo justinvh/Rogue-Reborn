@@ -88,7 +88,7 @@ bool Weapon::build_attributes(const v8::Arguments& args, Weapon_attrs* attrs)
 
   // Fetch out animations
   v8::Local<v8::Array> names = animations->GetPropertyNames();
-  for (int i = 0; i < names->Length(); i++) {
+  for (uint32_t i = 0; i < names->Length(); i++) {
     Animation_attrs animation_attrs;
     v8::Handle<v8::String> key = names->Get(i)->ToString();
     v8::String::Utf8Value key_utf(key);
@@ -112,15 +112,15 @@ bool Weapon::build_attributes(const v8::Arguments& args, Weapon_attrs* attrs)
     // through various traps.
     if (animation_attrs.time > 0) {
       if (attrs->times.reload == -1 && strcmp(key_str, "reload") == 0) {
-        attrs->times.reload = animation_attrs.time * 1000;
+        attrs->times.reload = (int)(animation_attrs.time * 1000.0);
       } else if (attrs->times.fire == -1 && strcmp(key_str, "fire") == 0) {
-        attrs->times.fire = animation_attrs.time * 1000;
+        attrs->times.fire = (int)(animation_attrs.time * 1000);
       } else if (attrs->times.firelast == -1 && strcmp(key_str, "firelast") == 0) {
-        attrs->times.firelast = animation_attrs.time * 1000;
+        attrs->times.firelast = (int)(animation_attrs.time * 1000);
       } else if (attrs->times.idle == -1 && strcmp(key_str, "idle") == 0) {
-        attrs->times.idle = animation_attrs.time * 1000;
+        attrs->times.idle = (int)(animation_attrs.time * 1000);
       } else if (attrs->times.draw == -1 && strcmp(key_str, "draw") == 0) {
-        attrs->times.draw = animation_attrs.time * 1000;
+        attrs->times.draw = (int)(animation_attrs.time * 1000);
       }
     }
 
@@ -128,7 +128,7 @@ bool Weapon::build_attributes(const v8::Arguments& args, Weapon_attrs* attrs)
     v8::Local<v8::Value> sound_val = animation->Get(v8::String::New("sound"));
     if (!sound_val->IsUndefined()) {
       v8::Handle<v8::Array> sounds = sound_val->ToObject().As<v8::Array>();
-      for (int j = 0; j < sounds->Length(); j++) {
+      for (uint32_t j = 0; j < sounds->Length(); j++) {
         Animation_sound_attrs sound_attrs;
         v8::Handle<v8::Object> sound = sounds->Get(j)->ToObject();
 

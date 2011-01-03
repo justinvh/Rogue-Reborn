@@ -817,7 +817,7 @@ intptr_t CL_CgameSystemCalls(intptr_t * args)
     case CG_LOAD_WEAPON:
       return JS_LoadWeapon(args[1], VMA(2));
     case CG_GET_WEAPON_ATTRIBUTES:
-      return JS_GetWeaponAttributes(args[1], args[2], VMA(3));
+      return JS_GetWeaponAttributes(args[1], args[2], (const void **)(args[3]));
 
 		default:
 			assert(0);
