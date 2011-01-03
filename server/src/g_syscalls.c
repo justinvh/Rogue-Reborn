@@ -295,6 +295,10 @@ qboolean trap_LoadPlayerWeapons(int clientNum, const char* weapon)
   return (qboolean)syscall(G_LOAD_PLAYER_WEAPON, clientNum, weapon);
 }
 
+qboolean trap_GetWeaponAttrs(int clientNum, int weaponID, const void** attrs)
+{
+  return syscall(G_GET_WEAPON_ATTRS, clientNum, weaponID, attrs);
+}
 
 int trap_GetWeaponUniqueID(int clientNum, const char* weapon)
 {

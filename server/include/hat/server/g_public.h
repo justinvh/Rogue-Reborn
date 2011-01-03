@@ -236,7 +236,8 @@ typedef enum
 
   // Rogue Reborn
   G_LOAD_PLAYER_WEAPON,
-  G_GET_WEAPON_UNIQUE_ID
+  G_GET_WEAPON_UNIQUE_ID,
+  G_GET_WEAPON_ATTRS,
 } gameImport_t;
 
 

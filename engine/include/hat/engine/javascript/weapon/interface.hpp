@@ -45,6 +45,19 @@ struct Animation_attrs {
   }
 };
 
+struct Weapon_times {
+  Weapon_times()
+  {
+    idle = reload = draw = fire = firelast = -1;
+  }
+
+  int idle;
+  int reload;
+  int draw;
+  int fire;
+  int firelast;
+};
+
 typedef std::vector<Animation_attrs> Animation_list;
 
 struct Weapon_attrs {
@@ -52,6 +65,7 @@ struct Weapon_attrs {
   char name_internal[24];
   char* model;
   int type_id, unique_id;
+  Weapon_times times;
   Weapon_type type;
   Accuracy_attrs accuracy;
   Animation_list animations;

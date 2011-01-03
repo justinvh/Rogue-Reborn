@@ -88,7 +88,9 @@ bool Weapon::build_attributes(const v8::Arguments& args, Weapon_attrs* attrs)
   v8::Local<v8::Array> names = animations->GetPropertyNames();
   for (int i = 0; i < names->Length(); i++) {
     Animation_attrs animation_attrs;
-    v8::Local<v8::Value> key = names->Get(i);
+    v8::Handle<v8::String> key = names->Get(i)->ToString();
+    v8::String::Utf8Value key_utf(key);
+    const char* key_str = *key_utf;
     v8::Handle<v8::Object> animation = animations->Get(key)->ToObject();
 
     // Fetch out animation and time information
@@ -101,6 +103,23 @@ bool Weapon::build_attributes(const v8::Arguments& args, Weapon_attrs* attrs)
     // The only thing required is really the animation itself
     if (!status) {
        return false;
+    }
+
+    // This allows the other parts of the engine that aren't C++-oriented
+    // to utilize common times rather than sifting through a vector<>
+    // through various traps.
+    if (animation_attrs.time > 0) {
+      if (attrs->times.reload == -1 && strcmp(key_str, "reload") == 0) {
+        attrs->times.reload = animation_attrs.time * 1000;
+      } else if (attrs->times.fire == -1 && strcmp(key_str, "fire") == 0) {
+        attrs->times.fire = animation_attrs.time * 1000;
+      } else if (attrs->times.firelast == -1 && strcmp(key_str, "firelast") == 0) {
+        attrs->times.firelast = animation_attrs.time * 1000;
+      } else if (attrs->times.idle == -1 && strcmp(key_str, "idle") == 0) {
+        attrs->times.idle = animation_attrs.time * 1000;
+      } else if (attrs->times.draw == -1 && strcmp(key_str, "draw") == 0) {
+        attrs->times.draw = animation_attrs.time * 1000;
+      }
     }
 
     // If the sound object exists, then we need to add bindings for it

@@ -79,4 +79,5 @@ int JS_GetWeaponAttributes(const int player, const int weapon_id, const void** a
   }
   return 0;
 }
+
 }

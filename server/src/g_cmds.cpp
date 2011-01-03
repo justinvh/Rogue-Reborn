@@ -21,8 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 //
+#include <hat/engine/javascript/weapon/interface.hpp>
 #include <hat/server/g_local.h>
-
 #include <hat/gui/menudef.h>		// for the voice chats
 
 /*
@@ -1879,24 +1879,36 @@ int reload_compare(const void* a, const void* b)
 void Cmd_Reload_f(gentity_t* ent)
 {
   playerState_t* ps = &ent->client->ps;
-  int* ammo = ps->primary_ammo[ps->weapon];
-  int i, reloading_time;
 
-  if (ps->weaponstate == WEAPON_RELOADING)
-    return;
+  // Get the weapon attributes
+  const hat::Weapon_attrs* attrs;
+  if (!trap_GetWeaponAttrs(ps->clientNum, ps->weapon, (const void**)(&attrs))) {
+    Com_Printf("WARNING: Cmd_Reload_f: Attempting to reload without a \
+               reload time. Bad animation?");
+  }
 
-  ps->weaponTime = ps->weaponTime < 0 ? 2000 : ps->weaponTime + 2000;
+  // Adjust the times for the reload animation
+  ps->weaponTime = ps->weaponTime < 0 ? 
+    attrs->times.reload : ps->weaponTime + attrs->times.reload;
+
+  // Start the reload animation
   ps->weaponstate = WEAPON_RELOADING;
 
+  // Cycle our magazines
+  int* ammo = ps->primary_ammo[ps->weapon];
   Com_Printf("Before reload: ");
-  for (i = 0; i < MAX_MAGS; i++)
+  for (int i = 0; i < MAX_MAGS; i++)
     Com_Printf("%d ", ammo[i]);
   Com_Printf("\nAfter reload: ");
 
+  // We always pull the largest magazine first
   qsort(ammo, MAX_MAGS, sizeof(int), reload_compare);
 
-  for (i = 0; i < MAX_MAGS; i++)
+  for (int i = 0; i < MAX_MAGS; i++)
     Com_Printf("%d ", ammo[i]);
+
+  if (ammo[0] == 0)
+    Com_Printf("WARNING: Cycled to an empty magazine.\n");
 
   Com_Printf("\n");
 }
