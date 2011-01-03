@@ -123,3 +123,5 @@ set_target_properties(server PROPERTIES LINK_FLAGS
 )
 endif()
 
+install(TARGETS server DESTINATION ${CMAKE_INSTALL_PREFIX}/base/)
+

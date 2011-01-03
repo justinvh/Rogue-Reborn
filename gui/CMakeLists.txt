@@ -146,3 +146,4 @@ if(WIN32)
 	)
 endif()
 
+install(TARGETS gui DESTINATION ${CMAKE_INSTALL_PREFIX}/base/)

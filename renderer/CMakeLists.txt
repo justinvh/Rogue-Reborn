@@ -328,3 +328,4 @@ set_target_properties(renderer PROPERTIES LINK_FLAGS
 )
 endif()
 
+install(TARGETS renderer DESTINATION ${CMAKE_INSTALL_PREFIX})

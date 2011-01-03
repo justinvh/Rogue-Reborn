@@ -4,8 +4,6 @@ project(ROGUE_REBORN)
 set(ROGUE_REBORN_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/engine/modules/)
 
-enable_testing()
-
 add_subdirectory(engine)
 add_subdirectory(client)
 add_subdirectory(gui)

@@ -482,3 +482,5 @@ if (WIN32)
 		"/FIXED:NO /DYNAMICBASE:NO"
 	)
 endif(WIN32)
+
+install(TARGETS engine dedicated DESTINATION ${CMAKE_INSTALL_PREFIX})

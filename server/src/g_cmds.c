@@ -340,8 +340,12 @@ void Cmd_Give_f(gentity_t * ent)
   // requesting a weapon
   if (!give_all) {
     if (trap_LoadPlayerWeapons(ent->client->ps.clientNum, name)) {
+      int i = 0;
       int weapon_id = trap_GetWeaponUniqueID(ent->client->ps.clientNum, name);
       ent->client->ps.stats[STAT_WEAPONS] |= 1 << weapon_id;
+
+      for (i = 0; i < MAX_MAGS; i++)
+        ent->client->ps.primary_ammo[weapon_id][i] = 25;
 
       // TODO(justinvh): This needs to be dynamically created somehow
 			ent->client->ps.ammo[weapon_id] = 50;

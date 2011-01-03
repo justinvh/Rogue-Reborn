@@ -113,3 +113,4 @@ set_target_properties(client PROPERTIES LINK_FLAGS
 )
 endif()
 
+install(TARGETS client DESTINATION ${CMAKE_INSTALL_PREFIX}/base/)

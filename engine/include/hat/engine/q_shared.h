@@ -1782,6 +1782,7 @@ typedef struct
 #define	MAX_PERSISTANT			16
 #define	MAX_POWERUPS			16
 #define	MAX_WEAPONS				16
+#define MAX_MAGS          8
 
 #define	MAX_PS_EVENTS			2
 
@@ -1857,6 +1858,12 @@ typedef struct playerState_s
   int             persistant[MAX_PERSISTANT];	// stats that aren't cleared on death
   int             powerups[MAX_POWERUPS];	// level.time that the powerup runs out
   int             ammo[MAX_WEAPONS];
+
+  // Rogue REborn
+  int             primary_mags;
+  int             secondary_mags;
+  int             primary_ammo[MAX_WEAPONS][MAX_MAGS];
+  int             secondary_ammo[MAX_WEAPONS][MAX_MAGS];
 
   int             generic1;
   int             loopSound;

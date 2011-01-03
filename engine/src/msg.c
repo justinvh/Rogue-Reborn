@@ -1030,6 +1030,7 @@ netField_t      entityStateFields[] = {
 	{NETF(angles2[0]), 0},
 	{NETF(angles2[2]), 0},
 	{NETF(constantLight), 32},
+  
 	{NETF(frame), 16}
 };
 
@@ -1350,103 +1351,57 @@ plyer_state_t communication
 #define	PSF(x) #x,(size_t)&((playerState_t*)0)->x
 
 netField_t      playerStateFields[] = {
-	{PSF(commandTime), 32}
-	,
-	{PSF(origin[0]), 0}
-	,
-	{PSF(origin[1]), 0}
-	,
-	{PSF(bobCycle), 8}
-	,
-	{PSF(velocity[0]), 0}
-	,
-	{PSF(velocity[1]), 0}
-	,
-	{PSF(viewangles[1]), 0}
-	,
-	{PSF(viewangles[0]), 0}
-	,
-	{PSF(lean_amount), 0}
-	,
-	{PSF(weaponTime), -16}
-	,
-	{PSF(origin[2]), 0}
-	,
-	{PSF(velocity[2]), 0}
-	,
-	{PSF(legsTimer), 8}
-	,
-	{PSF(pm_time), -16}
-	,
-	{PSF(eventSequence), 16}
-	,
-	{PSF(torsoAnim), 8}
-	,
-	{PSF(movementDir), 4}
-	,
-	{PSF(events[0]), 8}
-	,
-	{PSF(legsAnim), 8}
-	,
-	{PSF(events[1]), 8}
-	,
-	{PSF(pm_flags), 16}
-	,
-	{PSF(groundEntityNum), GENTITYNUM_BITS}
-	,
-	{PSF(weaponstate), 4}
-	,
-	{PSF(eFlags), 25}
-	,
-	{PSF(externalEvent), 10}
-	,
-	{PSF(gravity), 16}
-	,
-	{PSF(speed), 16}
-	,
-	{PSF(delta_angles[1]), 16}
-	,
-	{PSF(externalEventParm), 8}
-	,
-	{PSF(viewheight), -8}
-	,
-	{PSF(damageEvent), 8}
-	,
-	{PSF(damageYaw), 8}
-	,
-	{PSF(damagePitch), 8}
-	,
-	{PSF(damageCount), 8}
-	,
-	{PSF(generic1), 8}
-	,
-	{PSF(pm_type), 8}
-	,
-	{PSF(delta_angles[0]), 16}
-	,
-	{PSF(delta_angles[2]), 16}
-	,
-	{PSF(torsoTimer), 12}
-	,
-	{PSF(eventParms[0]), 8}
-	,
-	{PSF(eventParms[1]), 8}
-	,
-	{PSF(clientNum), 8}
-	,
-	{PSF(weapon), 5}
-	,
-	{PSF(viewangles[2]), 0}
-	,
-	{PSF(grapplePoint[0]), 0}
-	,
-	{PSF(grapplePoint[1]), 0}
-	,
-	{PSF(grapplePoint[2]), 0}
-	,
-	{PSF(jumppad_ent), 10}
-	,
-	{PSF(loopSound), 16}
+	{PSF(commandTime), 32} ,
+	{PSF(origin[0]), 0} ,
+	{PSF(origin[1]), 0} ,
+	{PSF(bobCycle), 8} ,
+	{PSF(velocity[0]), 0} ,
+	{PSF(velocity[1]), 0} ,
+	{PSF(viewangles[1]), 0} ,
+	{PSF(viewangles[0]), 0} ,
+	{PSF(lean_amount), 0} ,
+	{PSF(weaponTime), -16} ,
+	{PSF(origin[2]), 0} ,
+	{PSF(velocity[2]), 0} ,
+	{PSF(legsTimer), 8} ,
+	{PSF(pm_time), -16} ,
+	{PSF(eventSequence), 16} ,
+	{PSF(torsoAnim), 8} ,
+	{PSF(movementDir), 4} ,
+	{PSF(events[0]), 8} ,
+	{PSF(legsAnim), 8} ,
+	{PSF(events[1]), 8} ,
+	{PSF(pm_flags), 16} ,
+	{PSF(groundEntityNum), GENTITYNUM_BITS} ,
+	{PSF(weaponstate), 4} ,
+	{PSF(eFlags), 25} ,
+	{PSF(externalEvent), 10} ,
+	{PSF(gravity), 16} ,
+	{PSF(speed), 16} ,
+	{PSF(delta_angles[1]), 16} ,
+	{PSF(externalEventParm), 8} ,
+	{PSF(viewheight), -8} ,
+	{PSF(damageEvent), 8} ,
+	{PSF(damageYaw), 8} ,
+	{PSF(damagePitch), 8} ,
+	{PSF(damageCount), 8} ,
+	{PSF(generic1), 8} ,
+	{PSF(pm_type), 8} ,
+	{PSF(delta_angles[0]), 16} ,
+	{PSF(delta_angles[2]), 16} ,
+	{PSF(torsoTimer), 12} ,
+	{PSF(eventParms[0]), 8} ,
+	{PSF(eventParms[1]), 8} ,
+	{PSF(clientNum), 8} ,
+	{PSF(weapon), 5} ,
+	{PSF(viewangles[2]), 0} ,
+	{PSF(grapplePoint[0]), 0} ,
+	{PSF(grapplePoint[1]), 0} ,
+	{PSF(grapplePoint[2]), 0} ,
+	{PSF(jumppad_ent), 10} ,
+	{PSF(loopSound), 16},
+  {PSF(primary_mags), 16},
+  {PSF(secondary_mags), 16},
 };
 
 /*
@@ -1457,9 +1412,13 @@ MSG_WriteDeltaPlayerstate
 */
 void MSG_WriteDeltaPlayerstate(msg_t * msg, struct playerState_s *from, struct playerState_s *to)
 {
-	int             i;
+	int             i, j;
 	playerState_t   dummy;
 	int             statsbits;
+  int             primaryweaponbits;
+  int             primaryammobits;
+  int             secondaryweaponbits;
+  int             secondaryammobits;
 	int             persistantbits;
 	int             ammobits;
 	int             powerupbits;
@@ -1537,6 +1496,31 @@ void MSG_WriteDeltaPlayerstate(msg_t * msg, struct playerState_s *from, struct p
 	c = msg->cursize - c;
 
 
+  // Rogue Reborn
+  primaryammobits = 0;
+  primaryweaponbits = 0;
+  secondaryammobits = 0;
+  secondaryweaponbits = 0;
+  for(i = 0; i < MAX_WEAPONS; i++)
+  {
+    // HACK(justinvh): We can't guarantee this.
+    if (!(to->stats[2] & (1 << i)))
+      continue;
+    for(j = 0; j < MAX_MAGS; j++)
+    {
+      if(to->primary_ammo[i][j] != from->primary_ammo[i][j])
+      {
+        primaryweaponbits |= 1 << i;
+        primaryammobits |= 1 << j;
+      }
+      if(to->secondary_ammo[i][j] != from->secondary_ammo[i][j])
+      {
+        secondaryweaponbits |= 1 << i;
+        secondaryammobits |= 1 << j;
+      }
+    }
+  }
+
 	//
 	// send the arrays
 	//
@@ -1573,12 +1557,19 @@ void MSG_WriteDeltaPlayerstate(msg_t * msg, struct playerState_s *from, struct p
 		}
 	}
 
-	if(!statsbits && !persistantbits && !ammobits && !powerupbits)
+	if(!statsbits && 
+    !persistantbits && 
+    !ammobits && 
+    !powerupbits && 
+    !primaryammobits && 
+    !secondaryammobits
+    )
 	{
 		MSG_WriteBits(msg, 0, 1);	// no change
 		oldsize += 4;
 		return;
 	}
+
 	MSG_WriteBits(msg, 1, 1);	// changed
 
 	if(statsbits)
@@ -1603,6 +1594,33 @@ void MSG_WriteDeltaPlayerstate(msg_t * msg, struct playerState_s *from, struct p
 			if(persistantbits & (1 << i))
 				MSG_WriteShort(msg, to->persistant[i]);
 	}
+	else
+	{
+		MSG_WriteBits(msg, 0, 1);	// no change
+	}
+
+  // HACK(justinvh): Not a bad one.
+  // Basically we can merge the message for ammo counters.
+  if(primaryammobits || secondaryammobits)
+  {
+  	MSG_WriteBits(msg, 1, 1);	// changed
+		MSG_WriteBits(msg, primaryweaponbits, MAX_WEAPONS);
+		MSG_WriteBits(msg, primaryammobits, MAX_MAGS);
+		MSG_WriteBits(msg, secondaryammobits, MAX_MAGS);
+    for(i = 0; i < MAX_WEAPONS; i++)
+    {
+      // HACK(justinvh): We can't guarantee this.
+      if (!(to->stats[2] & (1 << i)))
+        continue;
+      for(j = 0; j < MAX_MAGS; j++)
+      {
+        if(primaryammobits & (1 << j) && primaryweaponbits & (1 << i))
+          MSG_WriteShort(msg, to->primary_ammo[i][j]);
+        if(secondaryammobits & (1 << j) && secondaryweaponbits & (1 << i))
+          MSG_WriteShort(msg, to->secondary_ammo[i][j]);
+      }
+    }
+  }
 	else
 	{
 		MSG_WriteBits(msg, 0, 1);	// no change
@@ -1645,7 +1663,7 @@ MSG_ReadDeltaPlayerstate
 */
 void MSG_ReadDeltaPlayerstate(msg_t * msg, playerState_t * from, playerState_t * to)
 {
-	int             i, lc;
+	int             i, j, lc;
 	int             bits;
 	netField_t     *field;
 	int             numFields;
@@ -1773,6 +1791,28 @@ void MSG_ReadDeltaPlayerstate(msg_t * msg, playerState_t * from, playerState_t *
 				}
 			}
 		}
+
+    if (MSG_ReadBits(msg, 1))
+    {
+      int weaponbits, primarybits, secondarybits;
+      LOG("PS_PRIMARY_SECONDARY_AMMO");
+      weaponbits = MSG_ReadBits(msg, MAX_WEAPONS);
+      primarybits = MSG_ReadBits(msg, MAX_MAGS);
+      secondarybits = MSG_ReadBits(msg, MAX_MAGS);
+      for(i = 0; i < MAX_WEAPONS; i++)
+      {
+        // HACK(justinvh): We can't guarantee this.
+        if (!(to->stats[2] & (1 << i)))
+          continue;
+        for(j = 0; j < MAX_MAGS; j++)
+        {
+    			if(weaponbits & (1 << i) && primarybits & (1 << j))
+            to->primary_ammo[i][j] = MSG_ReadShort(msg);
+          if(weaponbits & (1 << i) && secondarybits & (1 << j))
+            to->secondary_ammo[i][j] = MSG_ReadShort(msg);
+        }
+      }
+    }
 
 		// parse ammo
 		if(MSG_ReadBits(msg, 1))
