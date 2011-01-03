@@ -50,7 +50,7 @@ set(CLIENT_SRC_ENGINE_SHARED_LIST
 set(CLIENT_SRC_LIST
 	# Server specific code (shared)
 	"${SERVER_SRC_DIR}/bg_misc.c"
-	"${SERVER_SRC_DIR}/bg_pmove.c"
+	"${SERVER_SRC_DIR}/bg_pmove.cpp"
 	"${SERVER_SRC_DIR}/bg_slidemove.c"
 	# Engine specific code (shared)
 	"${ENGINE_SRC_DIR}/q_math.c"
@@ -104,6 +104,7 @@ source_group("Source Files" FILES ${CLIENT_SRC_LIST})
 
 # Setup the library 
 add_library(client SHARED ${CLIENT_SRC_ALL_LIST})
+add_definitions(-DCLIENT)
 
 set_target_properties(client PROPERTIES PREFIX "")
 

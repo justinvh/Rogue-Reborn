@@ -602,9 +602,17 @@ void trap_Key_SetBinding(int keynum, const char *binding)
   syscall(CG_KEY_SETBINDING, keynum, binding);
 }
 
+
+qboolean trap_GetWeaponAttrs(int clientNum, int weaponID, const void** attrs)
+{
+  return (qboolean)syscall(CG_GET_WEAPON_ATTRIBUTES, cg.clientNum, weaponID, attrs);
+}
+
 #ifdef __cplusplus
 }
 #endif
+
+
 
 bool trap_GetWeaponAttributes(const int weapon_id,
   hat::Weapon_attrs const ** attrs)

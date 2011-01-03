@@ -2056,6 +2056,9 @@ void            trap_SendClientCommand(const char *s);
 // force a screen update, only used during gamestate load
 void            trap_UpdateScreen(void);
 
+// Rogue Reborn
+qboolean        trap_GetWeaponAttrs(int clientNum, int weaponID, const void** attrs);
+
 // model collision
 void            trap_CM_LoadMap(const char *mapname);
 int             trap_CM_NumInlineModels(void);

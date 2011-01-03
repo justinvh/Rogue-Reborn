@@ -51,7 +51,7 @@ set(SERVER_SRC_HEADER_LIST
 set(SERVER_SRC_LIST
 	# Server specific code (shared)
 	"${SERVER_SRC_DIR}/bg_misc.c"
-	"${SERVER_SRC_DIR}/bg_pmove.c"
+	"${SERVER_SRC_DIR}/bg_pmove.cpp"
 	"${SERVER_SRC_DIR}/bg_slidemove.c"
 	# Engine specific code (shared)
 	"${ENGINE_SRC_DIR}/q_math.c"
@@ -64,9 +64,6 @@ set(SERVER_SRC_LIST
 	"${SERVER_SRC_DIR}/acebot_movement.c"
 	"${SERVER_SRC_DIR}/acebot_nodes.c"
 	"${SERVER_SRC_DIR}/acebot_spawn.c"
-	"${SERVER_SRC_DIR}/bg_misc.c"
-	"${SERVER_SRC_DIR}/bg_pmove.c"
-	"${SERVER_SRC_DIR}/bg_slidemove.c"
 	"${SERVER_SRC_DIR}/g_active.c"
 	"${SERVER_SRC_DIR}/g_arenas.c"
 	"${SERVER_SRC_DIR}/g_bot.c"
@@ -113,7 +110,7 @@ source_group("Source Files" FILES ${SERVER_SRC_LIST})
 
 # Setup the library 
 add_library(server SHARED ${SERVER_SRC_ALL_LIST})
-add_definitions(-DGLOBALRANK)
+add_definitions(-DGLOBALRANK -DSERVER)
 
 set_target_properties(server PROPERTIES PREFIX "")
 

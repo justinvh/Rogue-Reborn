@@ -29,6 +29,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <hat/engine/q_shared.h>
 #include <hat/server/bg_public.h>
 #include <hat/server/bg_local.h>
+#include <hat/engine/javascript/weapon/interface.hpp>
+
+#ifdef CLIENT
+#include <hat/client/cg_local.h>
+#else
+#include <hat/server/g_local.h>
+#endif
 
 #if 0
 const vec3_t    playerMins = { -15, -15, -24 };
@@ -396,7 +403,7 @@ static float PM_CmdScale(usercmd_t * cmd)
     return 0;
   }
 
-  total = sqrt(cmd->forwardmove * cmd->forwardmove + cmd->rightmove * cmd->rightmove + cmd->upmove * cmd->upmove);
+  total = sqrt((float)(cmd->forwardmove * cmd->forwardmove + cmd->rightmove * cmd->rightmove + cmd->upmove * cmd->upmove));
   scale = (float)pm->ps->speed * max / (127.0 * total);
 
   if(pm->ps->pm_type == PM_NOCLIP)
@@ -2429,11 +2436,16 @@ static void PM_FinishWeaponChange(void)
     weapon = WP_NONE;
   }
 
+  const hat::Weapon_attrs* attrs;
+  if (!trap_GetWeaponAttrs(pm->ps->clientNum, 
+    weapon, (const void**)(&attrs)))
+  {
+    Com_Error(0, "ERROR: PM_FinishWeaponChange: Client/Server weapon mismatch?");
+  }
+
   pm->ps->weapon = weapon;
   pm->ps->weaponstate = WEAPON_RAISING;
-  if(!pm->fastWeaponSwitches)
-    pm->ps->weaponTime += 250;
-
+  pm->ps->weaponTime += attrs->times.draw;
   PM_StartTorsoAnim(TORSO_RAISE);
 }
 
@@ -2946,7 +2958,9 @@ void PM_UpdateViewAngles(playerState_t * ps, usercmd_t * cmd)
   // convert viewangles -> axis
   AnglesToAxis(tempang, axis);
 
-  if(!(ps->pm_flags & PMF_WALLCLIMBING) || !BG_RotateAxis(ps->grapplePoint, axis, rotaxis, qfalse, ps->pm_flags & PMF_WALLCLIMBINGCEILING))
+  if(!(ps->pm_flags & PMF_WALLCLIMBING) || 
+    !BG_RotateAxis(ps->grapplePoint, axis, rotaxis, 
+      qfalse, (qboolean)(ps->pm_flags & PMF_WALLCLIMBINGCEILING)))
     AxisCopy(axis, rotaxis);
 
   // convert the new axis back to angles

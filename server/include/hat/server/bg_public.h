@@ -26,6 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef HAT_SERVER_BG_PUBLIC_H
 #define HAT_SERVER_BG_PUBLIC_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // because games can change separately from the main system version, we need a
 // second version that must match between game and cgame
 
@@ -904,5 +908,9 @@ typedef enum
     ENTMAT_FIRE,				//many polys on random angles
     ENTMAT_NUMBER
 } entityMaterial_t;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // HAT_SERVER_BG_PUBLIC_H
