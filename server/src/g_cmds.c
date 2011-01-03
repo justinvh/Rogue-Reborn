@@ -345,7 +345,7 @@ void Cmd_Give_f(gentity_t * ent)
       ent->client->ps.stats[STAT_WEAPONS] |= 1 << weapon_id;
 
       for (i = 0; i < MAX_MAGS; i++)
-        ent->client->ps.primary_ammo[weapon_id][i] = 25;
+        ent->client->ps.primary_ammo[weapon_id][i] = 25 + i;
 
       // TODO(justinvh): This needs to be dynamically created somehow
 			ent->client->ps.ammo[weapon_id] = 50;
@@ -1871,6 +1871,30 @@ void Cmd_Stats_f(gentity_t * ent)
 */
 }
 
+int reload_compare(const void* a, const void* b)
+{
+  return *(int*)b - *(int*)a;
+}
+
+void Cmd_Reload_f(gentity_t* ent)
+{
+  playerState_t* ps = &ent->client->ps;
+  int* ammo = ps->primary_ammo[ps->weapon];
+  int i = 0;
+
+  Com_Printf("Before reload: ");
+  for (i = 0; i < MAX_MAGS; i++)
+    Com_Printf("%d ", ammo[i]);
+  Com_Printf("\nAfter reload: ");
+
+  qsort(ammo, MAX_MAGS, sizeof(int), reload_compare);
+
+  for (i = 0; i < MAX_MAGS; i++)
+    Com_Printf("%d ", ammo[i]);
+
+  Com_Printf("\n");
+}
+
 /*
 =================
 ClientCommand
@@ -2009,6 +2033,8 @@ void ClientCommand(int clientNum)
 		Cmd_GameCommand_f(ent);
 	else if(Q_stricmp(cmd, "setviewpos") == 0)
 		Cmd_SetViewpos_f(ent);
+  else if(Q_stricmp(cmd, "reload") == 0)
+    Cmd_Reload_f(ent);
 	else if(Q_stricmp(cmd, "stats") == 0)
 		Cmd_Stats_f(ent);
 	else

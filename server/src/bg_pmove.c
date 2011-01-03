@@ -2469,19 +2469,13 @@ static void PM_Weapon(void)
 
   // set the firing flag for continuous beam weapons
   pm->ps->eFlags &= ~(EF_FIRING | EF_FIRING2);
-  if(!(pm->ps->pm_flags & PMF_RESPAWNED) && pm->ps->pm_type != PM_INTERMISSION)
-  {
-    if(pm->cmd.buttons & BUTTON_ATTACK2)
-    {
-      if(pm->ps->ammo[pm->ps->weapon])
-      {
+  if(!(pm->ps->pm_flags & PMF_RESPAWNED) && pm->ps->pm_type != PM_INTERMISSION) {
+    if(pm->cmd.buttons & BUTTON_ATTACK2) {
+      if (pm->ps->primary_ammo[pm->ps->weapon][0]) {
         pm->ps->eFlags |= EF_FIRING2;
       }
-    }
-    else if(pm->cmd.buttons & BUTTON_ATTACK)
-    {
-      if(pm->ps->ammo[pm->ps->weapon])
-      {
+    } else if(pm->cmd.buttons & BUTTON_ATTACK) {
+      if (pm->ps->primary_ammo[pm->ps->weapon][0]) {
         pm->ps->eFlags |= EF_FIRING;
       }
     }
@@ -2600,7 +2594,7 @@ static void PM_Weapon(void)
   pm->ps->weaponstate = WEAPON_FIRING;
 
   // check for out of ammo
-  if(!pm->ps->ammo[pm->ps->weapon])
+  if(!pm->ps->primary_ammo[pm->ps->weapon][0])
   {
     PM_AddEvent(EV_NOAMMO);
 
@@ -2613,10 +2607,7 @@ static void PM_Weapon(void)
   }
 
   // take an ammo away if not infinite
-  if(pm->ps->ammo[pm->ps->weapon] != -1)
-  {
-    pm->ps->ammo[pm->ps->weapon]--;
-  }
+  !pm->ps->primary_ammo[pm->ps->weapon][0]--;
 
   // fire weapon
   if(pm->cmd.buttons & BUTTON_ATTACK2)

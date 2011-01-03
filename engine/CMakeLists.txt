@@ -461,7 +461,7 @@ add_executable(dedicated ${ENGINE_SRC_ALL_LIST})
 target_link_libraries(engine ${OS_SPECIFIC_LIBRARIES} ${V8_LIBRARY} ${WIN32_LIB_LIST} ${SDL_LIBRARY} ${OPENAL_LIBRARY} ${CURL_LIBRARY} ${OPENGL_LIBRARY})
 target_link_libraries(dedicated ${OS_SPECIFIC_LIBRARIES} ${V8_LIBRARY} ${WIN32_LIB_LIST} ${SDL_LIBRARY} ${OPENAL_LIBRARY} ${CURL_LIBRARY} ${OPENGL_LIBRARY})
 
-set_target_properties(dedicated PROPERTIES COMPILE_DEFINITIONS DEDICATED)
+set_target_properties(dedicated PROPERTIES COMPILE_FLAGS "-DDEDICATED -DPARANOID")
 
 add_definitions(
 	-DUSE_CURL
@@ -479,7 +479,7 @@ add_definitions(
 
 if (WIN32)
 	set_target_properties(engine PROPERTIES LINK_FLAGS
-		"/FIXED:NO /DYNAMICBASE:NO"
+		"/FIXED:NO /DYNAMICBASE:NO /LARGEADDRESSAWARE"
 	)
 endif(WIN32)
 

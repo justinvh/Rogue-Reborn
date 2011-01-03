@@ -751,7 +751,7 @@ static void CG_DrawStatusBarQ3(void)
 	// ammo
 	if(cent->currentState.weapon)
 	{
-		value = ps->ammo[cent->currentState.weapon];
+    value = ps->primary_ammo[cent->currentState.weapon][0];
 		if(value > -1)
 		{
 			if(cg.predictedPlayerState.weaponstate == WEAPON_FIRING && cg.predictedPlayerState.weaponTime > 100)
@@ -1406,7 +1406,7 @@ void CG_DrawStatusBarNew(void)
 
 
 	// ammo - TODO
-	value = ps->ammo[cent->currentState.weapon];
+	value = ps->primary_ammo[cent->currentState.weapon][0];
 
 	s = va("%i", value);
 	fontsize = HUD_STATSIZE;

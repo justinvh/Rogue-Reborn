@@ -2962,14 +2962,6 @@ void CG_FireWeapon(centity_t * cent)
       break;
     }
   }
-  if(c > 0)
-  {
-    c = rand() % c;
-    if(weap->flashSound[c])
-    {
-      trap_S_StartSound(NULL, ent->number, CHAN_WEAPON, weap->flashSound[c]);
-    }
-  }
 
   // do brass ejection
   if(weap->ejectBrassFunc && cg_brassTime.integer > 0)
