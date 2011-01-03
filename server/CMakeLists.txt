@@ -71,7 +71,7 @@ set(SERVER_SRC_LIST
 	"${SERVER_SRC_DIR}/g_arenas.c"
 	"${SERVER_SRC_DIR}/g_bot.c"
 	"${SERVER_SRC_DIR}/g_client.c"
-	"${SERVER_SRC_DIR}/g_cmds.c"
+	"${SERVER_SRC_DIR}/g_cmds.cpp"
 	"${SERVER_SRC_DIR}/g_combat.c"
 	"${SERVER_SRC_DIR}/g_explosive.c"
 	"${SERVER_SRC_DIR}/g_items.c"

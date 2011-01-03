@@ -24,6 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef __G_LOCAL_H
 #define __G_LOCAL_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // g_local.h -- local definitions for game module
 #include <hat/engine/q_shared.h>
 #include "bg_public.h"
@@ -1237,5 +1241,9 @@ int             trap_GeneticParentsAndChildSelection(int numranks, float *ranks,
 #endif
 
 #endif							// defined(BRAINWORKS)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif							// __G_LOCAL_H
