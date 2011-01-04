@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <hat/engine/q_shared.h>
 #include <hat/engine/qcommon.h>
-#include <hat/enhgine/sys_local.h>
+#include <hat/engine/sys_local.h>
 
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
