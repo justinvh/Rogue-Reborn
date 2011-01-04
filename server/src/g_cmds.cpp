@@ -1926,6 +1926,39 @@ void Cmd_Reload_f(gentity_t* ent)
   Com_Printf("\n");
 }
 
+void Cmd_Firemode_f(gentity_t* ent)
+{
+  playerState_t* ps = &ent->client->ps;
+
+  // Get the weapon attributes
+  const hat::Weapon_attrs* attrs;
+  if (!trap_GetWeaponAttrs(ps->clientNum, ps->weapon, (const void**)(&attrs))) {
+    Com_Printf("WARNING: Attempted to switch firemodes without a weapon?!");
+  }
+
+  int current_mode = ps->weapon_fire_mode[ps->weapon];
+  int next_mode = 0;
+
+  for (
+    hat::Fire_mode::const_iterator cit = attrs->fire_modes.begin();
+    cit != attrs->fire_modes.end();
+  ++cit)
+  {
+    next_mode++;
+    if (*cit == current_mode) {
+      break;
+    }
+  }
+
+  if (next_mode >= attrs->fire_modes.size()) {
+    next_mode = 0;
+  }
+
+  Com_Printf("Switching firemodes from %d to %d\n", current_mode, attrs->fire_modes[next_mode]);
+
+  ps->weapon_fire_mode[ps->weapon] = attrs->fire_modes[next_mode];
+}
+
 /*
 =================
 ClientCommand
@@ -2028,7 +2061,11 @@ void ClientCommand(int clientNum)
     return;
   }
 
-  if(Q_stricmp(cmd, "give") == 0)
+  if(Q_stricmp(cmd, "reload") == 0)
+    Cmd_Reload_f(ent);
+  else if(Q_stricmp(cmd, "firemode") == 0)
+    Cmd_Firemode_f(ent);
+  else if(Q_stricmp(cmd, "give") == 0)
     Cmd_Give_f(ent);
   else if(Q_stricmp(cmd, "god") == 0)
     Cmd_God_f(ent);
@@ -2064,8 +2101,6 @@ void ClientCommand(int clientNum)
     Cmd_GameCommand_f(ent);
   else if(Q_stricmp(cmd, "setviewpos") == 0)
     Cmd_SetViewpos_f(ent);
-  else if(Q_stricmp(cmd, "reload") == 0)
-    Cmd_Reload_f(ent);
   else if(Q_stricmp(cmd, "stats") == 0)
     Cmd_Stats_f(ent);
   else

@@ -105,6 +105,4 @@ bool convert(const std::string& from, v8::Handle<v8::Value>* to)
   return true;
 }
 
-
-
 }
