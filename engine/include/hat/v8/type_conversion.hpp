@@ -7,6 +7,15 @@
 #include <iostream>
 
 namespace easy {
+template <class Type>
+bool smart_get(const v8::Handle<v8::Object>& from, const char* key, Type* to);
+
+template <class Type>
+bool smart_convert(const Type& from, v8::Handle<v8::Value>* to);
+
+template <class Type>
+bool smart_get(const v8::Handle<v8::Object>& from, const char* key, Type* to);
+
 bool convert(const v8::Handle<v8::Value>& from, bool* to);
 bool convert(const bool& from, v8::Handle<v8::Value>* to);
 bool convert(const v8::Handle<v8::Value>& from, int32_t* to);
@@ -28,7 +37,7 @@ bool convert(const v8::Handle<v8::Value>& from, Insert_container* to)
     v8::Handle<v8::Array> array_val = from->ToObject().As<v8::Array>();
     std::insert_iterator<Insert_container> insert_iter(*to, to->begin());
     for (uint32_t i = 0; i < array_val->Length(); i++) {
-      Insert_container::value_type local;
+      typename Insert_container::value_type local;
       if (!smart_convert(array_val->Get(i), &local)) {
         return false;
       }
@@ -44,7 +53,7 @@ bool convert(const Iterable_container& from, v8::Handle<v8::Value>* to)
 {
   v8::Handle<v8::Array> array_list = v8::Array::New();
   int ith = 0;
-  for (Iterable_container::const_iterator cit = from.begin();
+  for (typename Iterable_container::const_iterator cit = from.begin();
     cit != from.end();
     ++cit, ith++)
   {

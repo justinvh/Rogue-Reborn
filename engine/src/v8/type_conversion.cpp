@@ -41,12 +41,6 @@ bool convert(const v8::Handle<v8::Value>& from, int64_t* to)
   return false;
 }
 
-bool convert(const int64_t& from, v8::Handle<v8::Value>* to)
-{
-  (*to) = v8::Integer::New(from);
-  return true;
-}
-
 bool convert(const v8::Handle<v8::Value>& from, double* to)
 {
   if (from->IsNumber()) {
