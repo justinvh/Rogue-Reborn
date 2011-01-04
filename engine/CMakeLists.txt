@@ -348,6 +348,10 @@ if(UNIX AND NOT APPLE)
 	message(STATUS "Unix-like operating system.")
 	message(STATUS "Additional includes: ${UNIX_SRC_LIST}")
 elseif(APPLE)
+	find_package(IOKit REQUIRED)
+	if (NOT IOKIT_FOUND)
+	  message(FATAL_ERROR "IOKit was not found!")
+	endif(NOT IOKIT_FOUND)
 	set(APPLE_SRC_LIST
 		"${ENGINE_SRC_DIR}/sys_unix.c"
 		"${ENGINE_SRC_DIR}/con_passive.c"
@@ -466,6 +470,8 @@ endif()
 
 if(WIN32)
 	set(OS_SPECIFIC_LIBRARIES "winmm.lib" "ws2_32.lib")
+elseif(APPLE)
+	set(OS_SPECIFIC_LIBRARIES ${IOKIT_LIBRARY})
 endif(WIN32)
 
 # Setup the executable
