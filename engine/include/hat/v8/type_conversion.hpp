@@ -38,7 +38,8 @@ bool convert(const v8::Handle<v8::Value>& from, Insert_container* to)
     std::insert_iterator<Insert_container> insert_iter(*to, to->begin());
     for (uint32_t i = 0; i < array_val->Length(); i++) {
       typename Insert_container::value_type local;
-      if (!smart_convert(array_val->Get(i), &local)) {
+      v8::Handle<v8::Value> val = array_val->Get(i);
+      if (!smart_convert(val, &local)) {
         return false;
       }
       insert_iter = local;
