@@ -74,6 +74,15 @@ if(WIN32)
 		${CMAKE_INCLUDE_PATH}
 		${ENGINE_DEP_SDL_INCLUDE_DIR}
 	)
+elseif(APPLE)
+	message(STATUS "Looking for Cocoa...")
+	find_package(Cocoa)
+	if (NOT COCOA_FOUND)
+		message(FATAL_ERROR "Cocoa could not be found!")
+	else()
+		message(STATUS "Cocoa was found: ${COCOA_LIBRARY}")
+	endif(NOT COCOA_FOUND)
+	set(OS_SPECIFIC_LIBRARY ${COCOA_LIBRARY})
 endif()
 
 
@@ -314,7 +323,7 @@ endif()
 
 # Setup the library
 add_library(renderer SHARED ${RENDERER_SRC_ALL_LIST})
-target_link_libraries(renderer ${SDL_LIBRARY})
+target_link_libraries(renderer ${SDL_LIBRARY} ${OS_SPECIFIC_LIBRARY})
 add_definitions(
 	-DBUILD_FREETYPE
 	-DFT2_BUILD_LIBRARY
