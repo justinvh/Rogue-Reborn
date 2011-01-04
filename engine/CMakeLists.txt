@@ -330,7 +330,7 @@ set(ENGINE_JS_WEAPON
 
 
 # OS-specific code
-if(UNIX)
+if(UNIX AND NOT APPLE)
 	message(STATUS "(sys_unix.c) Unix-like operating system")
 	set(UNIX_SRC_LIST
 		"${ENGINE_SRC_DIR}/sys_unix.c"
