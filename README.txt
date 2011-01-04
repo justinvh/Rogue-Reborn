@@ -15,6 +15,7 @@
 		#    #  #      #    # #    # #   #  #   ## 
 		#     # ###### #####   ####  #    # #    # 
 ==========================================================================
+  A cross-platorm nostalgic port of the clasic "Rainbow Six: Rogue Spear"
        
 		
 CONTENTS OF THIS FILE
@@ -53,6 +54,17 @@ Windows:
 	     ./engine/dep/v8/lib/v8.7z to ./engine/dep/v8/lib/v8.lib.
 	     "Why .7z? Because 7mb vs 2mb is a big difference in terms of
 	     a repository. Plus, the lzma is nice."
+
+Mac OS X 10.6:
+	OpenAL - It's already natively on your system.
+	V8 - You will need to build it. I recommend `brew install v8`
+	SDL - You will need to build it. I recommend `brew install sdl`
+	CURL - Already on your system
+
+	==== Mac OS X 10.6 Specific ===
+	Cocoa
+	IOKit
+	==== MAC OS X 10.6 Specific ===
 	
 
 Linux:
