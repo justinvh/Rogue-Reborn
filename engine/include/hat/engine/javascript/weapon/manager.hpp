@@ -38,6 +38,15 @@ public:
   }
   static Weapon_manager& get_active();
 
+  JS_INTERNAL_DEF(Weapon_manager) {
+    JS_GETTER(SAFETY);
+    JS_GETTER(BOLT_ACTION);
+    JS_GETTER(SEMI_AUTOMATIC);
+    JS_GETTER(TWO_ROUND_BURST);
+    JS_GETTER(THREE_ROUND_BURST);
+    JS_GETTER(FULL_AUTO);
+  };
+
 };
 
 } }

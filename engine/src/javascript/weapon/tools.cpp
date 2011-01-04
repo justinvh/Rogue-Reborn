@@ -72,7 +72,18 @@ int JS_GetWeaponAttributes(const int player, const int weapon_id, const void** a
 {
   hat::Weapon_descriptor descriptor(player, weapon_id);
   if (hat::find_weapon(&descriptor)) {
-    hat::Weapon_attrs const ** real_attrs = (hat::Weapon_attrs const **)attrs;
+    const hat::Weapon_attrs** real_attrs = (const hat::Weapon_attrs**)attrs;
+    *real_attrs = descriptor.weapon;
+    return 1;
+  }
+  return 0;
+}
+
+int JS_GetAndLoadWeaponAttributes(const int player, const char* weapon, const void** attrs)
+{
+  hat::Weapon_descriptor descriptor(player, weapon);
+  if (hat::load_weapon(&descriptor)) {
+    const hat::Weapon_attrs** real_attrs = (const hat::Weapon_attrs**)attrs;
     *real_attrs = descriptor.weapon;
     return 1;
   }

@@ -149,6 +149,12 @@ bool Weapon::build_attributes(const v8::Arguments& args, Weapon_attrs* attrs)
     // Animation is good.
     attrs->animations.push_back(animation_attrs);
   }
+
+  // Get the firemodes
+  if (!smart_get(obj, "firemodes", &attrs->fire_modes)) {
+    return false;
+  }
+
   return status;
 }
 

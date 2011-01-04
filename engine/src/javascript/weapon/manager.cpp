@@ -9,7 +9,13 @@ namespace hat { namespace javascript {
 namespace {
 Weapon_manager* active;
 JS_mapping accessors[] = {
-    { NULL, NULL, NULL } // Signals the end of the accessor list
+  JS_MAP_GETTER(Weapon_manager, SAFETY),
+  JS_MAP_GETTER(Weapon_manager, BOLT_ACTION),
+  JS_MAP_GETTER(Weapon_manager, SEMI_AUTOMATIC),
+  JS_MAP_GETTER(Weapon_manager, TWO_ROUND_BURST),
+  JS_MAP_GETTER(Weapon_manager, THREE_ROUND_BURST),
+  JS_MAP_GETTER(Weapon_manager, FULL_AUTO),
+  { NULL, NULL, NULL }
 };
 
 
@@ -17,6 +23,36 @@ JS_fun_mapping funs[] = {
     JS_CLASS_INVOCATION_CUSTOM(Weapon, "Weapon"),
     { NULL, NULL, NULL } // Signlas the end of the function list
 };
+}
+
+JS_GETTER_CLASS(Weapon_manager, SAFETY)
+{
+  return v8::Int32::New(1 << Fire_modes::SAFETY);
+}
+
+JS_GETTER_CLASS(Weapon_manager, BOLT_ACTION)
+{
+  return v8::Int32::New(1 << Fire_modes::BOLT_ACTION);
+}
+
+JS_GETTER_CLASS(Weapon_manager, SEMI_AUTOMATIC)
+{
+  return v8::Int32::New(1 << Fire_modes::SEMI_AUTOMATIC);
+}
+
+JS_GETTER_CLASS(Weapon_manager, TWO_ROUND_BURST)
+{
+  return v8::Int32::New(1 << Fire_modes::TWO_ROUND_BURST);
+}
+
+JS_GETTER_CLASS(Weapon_manager, THREE_ROUND_BURST)
+{
+  return v8::Int32::New(1 << Fire_modes::THREE_ROUND_BURST);
+}
+
+JS_GETTER_CLASS(Weapon_manager, FULL_AUTO)
+{
+  return v8::Int32::New(1 << Fire_modes::FULL_AUTO);
 }
 
 void delete_weapon(Weapon* weapon)

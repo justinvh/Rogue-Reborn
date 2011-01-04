@@ -1415,6 +1415,7 @@ void MSG_WriteDeltaPlayerstate(msg_t * msg, struct playerState_s *from, struct p
   int             i, j;
   playerState_t   dummy;
   int             statsbits;
+  int             weaponflagbits;
   int             primaryweaponbits;
   int             primaryammobits;
   int             secondaryweaponbits;
@@ -1497,10 +1498,25 @@ void MSG_WriteDeltaPlayerstate(msg_t * msg, struct playerState_s *from, struct p
 
 
   // Rogue Reborn
+  weaponflagbits = 0;
   primaryammobits = 0;
   primaryweaponbits = 0;
   secondaryammobits = 0;
   secondaryweaponbits = 0;
+
+  // Weapon Flags
+  for(i = 0; i < MAX_WEAPONS; i++)
+  {
+    if(!(to->stats[2] & (1 << i)))
+      continue;
+
+    if(to->weapon_fire_mode[i] != from->weapon_fire_mode[i])
+    {
+      weaponflagbits |= 1 << i;
+    }
+  }
+
+  // Primary/Secondary ammo
   for(i = 0; i < MAX_WEAPONS; i++)
   {
     // HACK(justinvh): We can't guarantee this.
@@ -1562,7 +1578,8 @@ void MSG_WriteDeltaPlayerstate(msg_t * msg, struct playerState_s *from, struct p
     !ammobits && 
     !powerupbits && 
     !primaryammobits && 
-    !secondaryammobits
+    !secondaryammobits &&
+    !weaponflagbits
     )
   {
     MSG_WriteBits(msg, 0, 1);	// no change
@@ -1597,6 +1614,22 @@ void MSG_WriteDeltaPlayerstate(msg_t * msg, struct playerState_s *from, struct p
   else
   {
     MSG_WriteBits(msg, 0, 1);	// no change
+  }
+
+  if(weaponflagbits)
+  {
+    MSG_WriteBits(msg, 1, 1);	// changed
+    MSG_WriteBits(msg, weaponflagbits, MAX_WEAPONS);
+    for(i = 0; i < MAX_WEAPONS; i++)
+    {
+      if (!(to->stats[2] & (1 << i)))
+        continue;
+      MSG_WriteShort(msg, to->weapon_fire_mode[i]);
+    }
+  }
+  else
+  {
+    MSG_WriteBits(msg, 0, 1);
   }
 
   // HACK(justinvh): Not a bad one.
@@ -1791,6 +1824,19 @@ void MSG_ReadDeltaPlayerstate(msg_t * msg, playerState_t * from, playerState_t *
         }
       }
     }
+
+    // Weapon flags
+    if (MSG_ReadBits(msg, 1))
+    {
+      int weaponflagbits = MSG_ReadBits(msg, MAX_WEAPONS);
+      for (i = 0; i < MAX_WEAPONS; i++)
+      {
+        if (!(to->stats[2] & (1 << i)))
+          continue;
+        to->weapon_fire_mode[i] = MSG_ReadShort(msg);
+      }
+    }
+
 
     if (MSG_ReadBits(msg, 1))
     {

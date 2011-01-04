@@ -1037,6 +1037,7 @@ qboolean        trap_GetEntityToken(char *buffer, int bufferSize);
 qboolean        trap_LoadPlayerWeapons(int clientNum, const char* weapon);
 int             trap_GetWeaponUniqueID(int clientNum, const char* weapon); 
 qboolean        trap_GetWeaponAttrs(int clientNum, int weaponID, const void** attrs);
+qboolean        trap_LoadAndGetWeaponAttrs(int clientNum, const char* weapon, const void** attrs);
 
 int             trap_RealTime(qtime_t * qtime);
 

@@ -15,8 +15,6 @@ public:
   ~Weapon();
   Weapon_attrs weapon_attrs;
   Weapon(Weapon_attrs attrs) : weapon_attrs(attrs) { }
-  JS_INTERNAL_DEF(Weapon) {
-  };
 
   static bool build_attributes(const v8::Arguments& args, Weapon_attrs* attrs);
   static v8::Handle<v8::Value> create(const v8::Arguments& args);

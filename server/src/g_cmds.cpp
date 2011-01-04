@@ -339,12 +339,13 @@ void Cmd_Give_f(gentity_t * ent)
 
   // requesting a weapon
   if (!give_all) {
-    if (trap_LoadPlayerWeapons(ent->client->ps.clientNum, name)) {
-      int i = 0;
-      int weapon_id = trap_GetWeaponUniqueID(ent->client->ps.clientNum, name);
+    const hat::Weapon_attrs* attrs;
+    if (trap_LoadAndGetWeaponAttrs(ent->client->ps.clientNum, name, (const void**)(&attrs))) {
+      int weapon_id = attrs->unique_id;
       ent->client->ps.stats[STAT_WEAPONS] |= 1 << weapon_id;
+      ent->client->ps.weapon_fire_mode[weapon_id] = attrs->fire_modes[0];
 
-      for (i = 0; i < MAX_MAGS; i++)
+      for (int i = 0; i < MAX_MAGS; i++)
         ent->client->ps.primary_ammo[weapon_id][i] = 25 + i;
 
       // TODO(justinvh): This needs to be dynamically created somehow

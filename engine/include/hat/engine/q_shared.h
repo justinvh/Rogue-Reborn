@@ -1855,11 +1855,12 @@ typedef struct playerState_s
   int             powerups[MAX_POWERUPS];	// level.time that the powerup runs out
   int             ammo[MAX_WEAPONS];
 
-  // Rogue REborn
+  // Rogue Reborn
   int             primary_mags;
   int             secondary_mags;
   int             primary_ammo[MAX_WEAPONS][MAX_MAGS];
   int             secondary_ammo[MAX_WEAPONS][MAX_MAGS];
+  int             weapon_fire_mode[MAX_WEAPONS];
 
   int             generic1;
   int             loopSound;

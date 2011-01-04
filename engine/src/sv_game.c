@@ -468,7 +468,10 @@ intptr_t SV_GameSystemCalls(intptr_t * args)
     }
     
     case G_GET_WEAPON_ATTRS:
-      return JS_GetWeaponAttributes(args[1], args[2], VMA(3));
+      return JS_GetWeaponAttributes(args[1], args[2], (const void **)VMA(3));
+
+    case G_GET_AND_LOAD_WEAPON_ATTRS:
+      return JS_GetAndLoadWeaponAttributes(args[1], (const char*)VMA(2), (const void**)VMA(3));
 
     case G_GET_WEAPON_UNIQUE_ID:
     {
