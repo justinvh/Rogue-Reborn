@@ -8,12 +8,12 @@ namespace hat {
 namespace Fire_modes
 {
   enum e {
-    SAFETY,
-    BOLT_ACTION,
-    SEMI_AUTOMATIC,
-    TWO_ROUND_BURST,
-    THREE_ROUND_BURST,
-    FULL_AUTO
+    SAFETY              = 1 << 1,
+    BOLT_ACTION         = 1 << 2,
+    SEMI_AUTOMATIC      = 1 << 3,
+    TWO_ROUND_BURST     = 1 << 4,
+    THREE_ROUND_BURST   = 1 << 5,
+    FULL_AUTO           = 1 << 6
   };
 }
 
@@ -75,11 +75,13 @@ typedef std::vector<Animation_attrs> Animation_list;
 typedef std::vector<int> Fire_mode;
 
 struct Weapon_attrs {
+  Weapon_attrs() : fire_modes_mask(0) { }
   char* name_pretty;
   char name_internal[24];
   char* model;
   int type_id, unique_id;
   Fire_mode fire_modes;
+  int fire_modes_mask;
   Weapon_times times;
   Weapon_type type;
   Accuracy_attrs accuracy;

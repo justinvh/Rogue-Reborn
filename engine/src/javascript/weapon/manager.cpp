@@ -27,32 +27,32 @@ JS_fun_mapping funs[] = {
 
 JS_GETTER_CLASS(Weapon_manager, SAFETY)
 {
-  return v8::Int32::New(1 << Fire_modes::SAFETY);
+  return v8::Int32::New(Fire_modes::SAFETY);
 }
 
 JS_GETTER_CLASS(Weapon_manager, BOLT_ACTION)
 {
-  return v8::Int32::New(1 << Fire_modes::BOLT_ACTION);
+  return v8::Int32::New(Fire_modes::BOLT_ACTION);
 }
 
 JS_GETTER_CLASS(Weapon_manager, SEMI_AUTOMATIC)
 {
-  return v8::Int32::New(1 << Fire_modes::SEMI_AUTOMATIC);
+  return v8::Int32::New(Fire_modes::SEMI_AUTOMATIC);
 }
 
 JS_GETTER_CLASS(Weapon_manager, TWO_ROUND_BURST)
 {
-  return v8::Int32::New(1 << Fire_modes::TWO_ROUND_BURST);
+  return v8::Int32::New(Fire_modes::TWO_ROUND_BURST);
 }
 
 JS_GETTER_CLASS(Weapon_manager, THREE_ROUND_BURST)
 {
-  return v8::Int32::New(1 << Fire_modes::THREE_ROUND_BURST);
+  return v8::Int32::New(Fire_modes::THREE_ROUND_BURST);
 }
 
 JS_GETTER_CLASS(Weapon_manager, FULL_AUTO)
 {
-  return v8::Int32::New(1 << Fire_modes::FULL_AUTO);
+  return v8::Int32::New(Fire_modes::FULL_AUTO);
 }
 
 void delete_weapon(Weapon* weapon)

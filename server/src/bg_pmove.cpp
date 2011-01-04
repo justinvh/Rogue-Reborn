@@ -2477,20 +2477,31 @@ Generates weapon events and modifes the weapon counter
 */
 static void PM_Weapon(void)
 {
-  int             addTime;
+  static const hat::Weapon_attrs* attrs = NULL;
+  static int weapon = -1;
 
-  // set the firing flag for continuous beam weapons
-  pm->ps->eFlags &= ~(EF_FIRING | EF_FIRING2);
-  if(!(pm->ps->pm_flags & PMF_RESPAWNED) && pm->ps->pm_type != PM_INTERMISSION) {
-    if(pm->cmd.buttons & BUTTON_ATTACK2) {
-      if (pm->ps->primary_ammo[pm->ps->weapon][0]) {
-        pm->ps->eFlags |= EF_FIRING2;
-      }
-    } else if(pm->cmd.buttons & BUTTON_ATTACK) {
-      if (pm->ps->primary_ammo[pm->ps->weapon][0]) {
-        pm->ps->eFlags |= EF_FIRING;
-      }
+  int addTime, firemode = pm->ps->weapon_fire_mode[pm->ps->weapon];
+  namespace Fire_modes = hat::Fire_modes;
+
+  // Weapon attributes won't change except for weapon changes
+  if (weapon != pm->ps->weapon) {
+    weapon = pm->ps->weapon;
+    if (!trap_GetWeaponAttrs(pm->ps->clientNum, 
+    pm->ps->weapon, (const void **)(&attrs)))
+    {
+      return;
     }
+  }
+
+  // Only when we have ammo, are not in safety, not respawning, and
+  // not in some intermission can we fire our weapon.
+  if (pm->ps->primary_ammo[pm->ps->weapon][0] &&
+    firemode != Fire_modes::SAFETY &&
+    pm->cmd.buttons & BUTTON_ATTACK &&
+    !(pm->ps->pm_flags & PMF_RESPAWNED) &&
+    pm->ps->pm_type != PM_INTERMISSION )
+  {
+    pm->ps->eFlags |= EF_FIRING;
   }
 
   // don't allow attack until all buttons are up
@@ -2559,6 +2570,14 @@ static void PM_Weapon(void)
     return;
   }
 
+  // TODO(justinvh): This should trigger some UI highlight.
+  // If we attempted to fire our weapon while in safety then warn.
+  if (firemode == Fire_modes::SAFETY && pm->cmd.buttons & BUTTON_ATTACK) {
+    Com_Printf("Your weapon is in SAFETY!\n");
+    pm->ps->weaponTime += 150;
+    return;
+  }
+
   // change weapon if time
   if(pm->ps->weaponstate == WEAPON_DROPPING)
   {
@@ -2619,7 +2638,7 @@ static void PM_Weapon(void)
   }
 
   // take an ammo away if not infinite
-  !pm->ps->primary_ammo[pm->ps->weapon][0]--;
+  pm->ps->primary_ammo[pm->ps->weapon][0]--;
 
   // fire weapon
   if(pm->cmd.buttons & BUTTON_ATTACK2)
@@ -2627,30 +2646,7 @@ static void PM_Weapon(void)
   else
     PM_AddEvent(EV_FIRE_WEAPON);
 
-  switch (pm->ps->weapon)
-  {
-    default:
-      addTime = 400;
-      break;
-  }
-
-#ifdef MISSIONPACK
-  if(bg_itemlist[pm->ps->stats[STAT_PERSISTANT_POWERUP]].giTag == PW_SCOUT)
-  {
-    addTime /= 1.5;
-  }
-  else if(bg_itemlist[pm->ps->stats[STAT_PERSISTANT_POWERUP]].giTag == PW_AMMOREGEN)
-  {
-    addTime /= 1.3;
-  }
-  else
-#endif
-  if(pm->ps->powerups[PW_HASTE])
-  {
-    addTime /= 1.3;
-  }
-
-  pm->ps->weaponTime += addTime;
+  pm->ps->weaponTime = attrs->times.fire;
 }
 
 /*

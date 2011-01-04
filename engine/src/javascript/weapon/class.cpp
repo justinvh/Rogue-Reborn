@@ -155,6 +155,14 @@ bool Weapon::build_attributes(const v8::Arguments& args, Weapon_attrs* attrs)
     return false;
   }
 
+  for (
+    Fire_mode::const_iterator cit = attrs->fire_modes.begin();
+    cit != attrs->fire_modes.end();
+  ++cit)
+  {
+    attrs->fire_modes_mask |= *cit;
+  }
+
   return status;
 }
 
