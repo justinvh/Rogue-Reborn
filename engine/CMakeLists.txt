@@ -344,6 +344,7 @@ elseif(APPLE)
 		"${ENGINE_SRC_DIR}/sys_unix.c"
 	)
 	set(ENGINE_SRC_LIST ${ENGINE_SRC_LIST} ${APPLE_SRC_LIST})
+	add_definitions(-D__MACOSX__ -DMACOS_X)
 	message(STATUS "(${APPLE_SRC_LIST}) Apple-like operating system")
 	message(STATUS "Apple-like operating system.")
 	message(STATUS "Additional includes: ${APPLE_SRC_LIST}")
@@ -452,7 +453,7 @@ endif()
 
 if(WIN32)
 	set(OS_SPECIFIC_LIBRARIES "winmm.lib" "ws2_32.lib")
-endif()
+endif(WIN32)
 
 # Setup the executable
 add_executable(engine ${ENGINE_SRC_ALL_LIST})
