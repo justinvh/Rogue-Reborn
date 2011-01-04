@@ -4,6 +4,11 @@ cmake_minimum_required(VERSION 2.8)
 # Options
 option(HAT_EXPAND_DEPENDENCIES "If enabled, Visual Studio will show all the dependencies broken apart into their respective libraries." FALSE)
 option(HAT_EXPAND_PLATFORM "If enabled, Visual Studio will show all the operating-system specific dependencies in their own folders." FALSE)
+option(HAT_USE_OPENAL "If enabled, Rogue Reborn will built with OpenAL" TRUE)
+
+if (${HAT_USE_OPENAL})
+	message("Rogue Reborn will be built with OpenAL enabled. Pass -DHAT_USE_OPENAL=FALSE to cmake disable.")
+endif(${HAT_USE_OPENAL})
 
 # Setup our paths
 # Server
@@ -82,9 +87,12 @@ endif()
 # system. I recommended OpenAL to be openal-soft.
 find_package(SDL REQUIRED)
 find_package(CURL REQUIRED)
-find_package(OpenAL REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(V8 REQUIRED)
+
+if (${HAT_USE_OPENAL})
+	find_package(OpenAL REQUIRED)
+endif(${HAT_USE_OPENAL})
 
 # Source lists
 set(ENGINE_SRC_SERVER_SHARED_LIST
@@ -342,6 +350,7 @@ if(UNIX AND NOT APPLE)
 elseif(APPLE)
 	set(APPLE_SRC_LIST
 		"${ENGINE_SRC_DIR}/sys_unix.c"
+		"${ENGINE_SRC_DIR}/con_passive.c"
 	)
 	set(ENGINE_SRC_LIST ${ENGINE_SRC_LIST} ${APPLE_SRC_LIST})
 	add_definitions(-D__MACOSX__ -DMACOS_X)
@@ -422,9 +431,12 @@ include_directories(
 	"${ENGINE_DEP_OGG_INCLUDE_DIR}"
 	"${SDL_INCLUDE_DIR}"
 	"${CURL_INCLUDE_DIR}"
-	"${OPENAL_INCLUDE_DIR}"
 	"${V8_INCLUDE_DIR}"
 )
+
+if (${HAT_USE_OPENAL})
+include_directories("${OPENAL_INCLUDE_DIR}")
+endif(${HAT_USE_OPENAL})
 
 # Group the source code
 source_group("Header Files" FILES ${ENGINE_SRC_HEADER_LIST})
@@ -459,14 +471,19 @@ endif(WIN32)
 add_executable(engine ${ENGINE_SRC_ALL_LIST})
 add_executable(dedicated ${ENGINE_SRC_ALL_LIST})
 
-target_link_libraries(engine ${OS_SPECIFIC_LIBRARIES} ${V8_LIBRARY} ${WIN32_LIB_LIST} ${SDL_LIBRARY} ${OPENAL_LIBRARY} ${CURL_LIBRARY} ${OPENGL_LIBRARY})
-target_link_libraries(dedicated ${OS_SPECIFIC_LIBRARIES} ${V8_LIBRARY} ${WIN32_LIB_LIST} ${SDL_LIBRARY} ${OPENAL_LIBRARY} ${CURL_LIBRARY} ${OPENGL_LIBRARY})
+target_link_libraries(engine ${OS_SPECIFIC_LIBRARIES} ${V8_LIBRARY} ${WIN32_LIB_LIST} ${SDL_LIBRARY} ${CURL_LIBRARY} ${OPENGL_LIBRARY})
+target_link_libraries(dedicated ${OS_SPECIFIC_LIBRARIES} ${V8_LIBRARY} ${WIN32_LIB_LIST} ${SDL_LIBRARY} ${CURL_LIBRARY} ${OPENGL_LIBRARY})
 
 set_target_properties(dedicated PROPERTIES COMPILE_FLAGS "-DDEDICATED -DPARANOID")
 
+if (${HAT_USE_OPENAL})
+	add_definitions(-DUSE_OPENAL)
+	target_link_libraries(engine ${OPENAL_LIBRARY})
+	target_link_libraries(dedicated ${OPENAL_LIBRARY})
+endif(${HAT_USE_OPENAL})
+
 add_definitions(
 	-DUSE_CURL
-	-DUSE_OPENAL
 	-DBUILD_FREETYPE
 	-DFT2_BUILD_LIBRARY
 	-DSTANDALONE
