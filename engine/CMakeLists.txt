@@ -343,6 +343,7 @@ if(UNIX AND NOT APPLE)
 	set(UNIX_SRC_LIST
 		"${ENGINE_SRC_DIR}/sys_unix.c"
 		"${ENGINE_SRC_DIR}/con_passive.c"
+		"${ENGINE_SRC_DIR}/sys_osx.m"
 	)
 	set(ENGINE_SRC_LIST ${ENGINE_SRC_LIST} ${UNIX_SRC_LIST})
 	message(STATUS "Unix-like operating system.")
