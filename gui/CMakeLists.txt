@@ -1,131 +1,71 @@
-# Rogue Reborn Engine (Hat)
-cmake_minimum_required(VERSION 2.8)
-
-# Options
-option(HAT_EXPAND_DEPENDENCIES "If enabled, Visual Studio will show all the dependencies broken apart into their respective libraries." FALSE)
-option(HAT_EXPAND_PLATFORM "If enabled, Visual Studio will show all the operating-system specific dependencies in their own folders." FALSE)
-
-# Setup our paths
-# Server
-set(SERVER_INCLUDE_TOPLEVEL_DIR "../server/include")
-set(SERVER_INCLUDE_SERVER_DIR "${SERVER_INCLUDE_TOPLEVEL_DIR}/hat/server")
-set(SERVER_SRC_DIR "../server/src")
-
-# Client
-set(CLIENT_INCLUDE_TOPLEVEL_DIR "../client/include")
-set(CLIENT_INCLUDE_CLIENT_DIR "${CLIENT_INCLUDE_TOPLEVEL_DIR}/hat/client")
-set(CLIENT_SRC_DIR "../client/src")
-
-# Gui
-set(GUI_INCLUDE_TOPLEVEL_DIR "include")
-set(GUI_INCLUDE_GUI_DIR "${GUI_INCLUDE_TOPLEVEL_DIR}/hat/gui")
-set(GUI_SRC_DIR "src")
-
-# Renderer
-set(RENDERER_INCLUDE_TOPLEVEL_DIR "../renderer/include")
-
-# Various includes
-set(ENGINE_INCLUDE_TOPLEVEL_DIR "../engine/include")
-set(ENGINE_INCLUDE_ENGINE_DIR "${ENGINE_INCLUDE_TOPLEVEL_DIR}/hat/engine")
-set(ENGINE_SRC_DIR "../engine/src")
-
 find_package(V8 REQUIRED)
 
-# Source lists
+if(V8_FOUND)
+	message(STATUS "- V8 Found............ ${V8_INCLUDE_DIR}")
+	include_directories(${V8_INCLUDE_DIR})
+endif(V8_FOUND)
 
-set(GUI_SRC_ENGINE_SHARED_LIST
-	# Engine shared
-	"${ENGINE_INCLUDE_ENGINE_DIR}/q_shared.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/keycodes.h"
-	"${ENGINE_INCLUDE_TOPLEVEL_DIR}/hat/v8/easy.hpp"
+
+# Miscellaneous project includes
+set(MISC_INCLUDES
+	${ENGINE_INCLUDE_DIR}/hat/v8/easy.hpp
 )
 
-set(GUI_SRC_HEADER_LIST
-	"${GUI_INCLUDE_GUI_DIR}/menudef.h"
-	"${GUI_INCLUDE_GUI_DIR}/ui_local.h"
-	"${GUI_INCLUDE_GUI_DIR}/ui_public.h"
-	"${GUI_INCLUDE_GUI_DIR}/element.hpp"
-	"${GUI_INCLUDE_GUI_DIR}/eventful.hpp"
-	"${GUI_INCLUDE_GUI_DIR}/gui.hpp"
-	"${GUI_INCLUDE_GUI_DIR}/image.hpp"
+# engine/include/hat/engine/
+set(ENGINE_INCLUDES 
+	q_shared.h
+	keycodes.h
 )
 
-set(GUI_SRC_LIST
-	# Server specific code (shared)
-	"${SERVER_SRC_DIR}/bg_misc.c"
-	# Engine specific code (shared)
-	"${ENGINE_SRC_DIR}/q_math.c"
-	"${ENGINE_SRC_DIR}/q_shared.c"
-	# Gui definitions
-	"${GUI_INCLUDE_GUI_DIR}/gui.def"
-	# Gui specific code
-	"${GUI_SRC_DIR}/ui_main.cpp"
-	"${GUI_SRC_DIR}/ui_syscalls.c"
-	# New gui
-	"${GUI_SRC_DIR}/element.cpp"
-	"${GUI_SRC_DIR}/eventful.cpp"
-	"${GUI_SRC_DIR}/gui.cpp"
-	"${GUI_SRC_DIR}/image.cpp"
-	"${GUI_SRC_DIR}/atoms.cpp"
+# gui/include/hat/gui/
+set(GUI_INCLUDES
+	menudef.h
+	ui_local.h
+	ui_public.h
+	element.hpp
+	eventful.hpp
+	gui.hpp
+	image.hpp
 )
 
-set(GUI_SRC_EXT_LIST
-	"${GUI_SRC_DIR}/ui_addbots.c"
-	"${GUI_SRC_DIR}/ui_cinematics.c"
-	"${GUI_SRC_DIR}/ui_confirm.c"
-	"${GUI_SRC_DIR}/ui_connect.c"
-	"${GUI_SRC_DIR}/ui_controls2.c"
-	"${GUI_SRC_DIR}/ui_credits.c"
-	"${GUI_SRC_DIR}/ui_demo2.c"
-	"${GUI_SRC_DIR}/ui_display.c"
-	"${GUI_SRC_DIR}/ui_gameinfo.c"
-	"${GUI_SRC_DIR}/ui_ingame.c"
-	"${GUI_SRC_DIR}/ui_loadconfig.c"
-	"${GUI_SRC_DIR}/ui_menu.c"
-	"${GUI_SRC_DIR}/ui_mfield.c"
-	"${GUI_SRC_DIR}/ui_mods.c"
-	"${GUI_SRC_DIR}/ui_network.c"
-	"${GUI_SRC_DIR}/ui_options.c"
-	"${GUI_SRC_DIR}/ui_playermodel.c"
-	"${GUI_SRC_DIR}/ui_players.c"
-	"${GUI_SRC_DIR}/ui_playersettings.c"
-	"${GUI_SRC_DIR}/ui_preferences.c"
-	"${GUI_SRC_DIR}/ui_qmenu.c"
-	"${GUI_SRC_DIR}/ui_removebots.c"
-	"${GUI_SRC_DIR}/ui_saveconfig.c"
-	"${GUI_SRC_DIR}/ui_serverinfo.c"
-	"${GUI_SRC_DIR}/ui_servers2.c"
-	"${GUI_SRC_DIR}/ui_setup.c"
-	"${GUI_SRC_DIR}/ui_sound.c"
-	"${GUI_SRC_DIR}/ui_sparena.c"
-	"${GUI_SRC_DIR}/ui_specifyserver.c"
-	"${GUI_SRC_DIR}/ui_splevel.c"
-	"${GUI_SRC_DIR}/ui_sppostgame.c"
-	"${GUI_SRC_DIR}/ui_spreset.c"
-	"${GUI_SRC_DIR}/ui_spskill.c"
-	"${GUI_SRC_DIR}/ui_startserver.c"
-	"${GUI_SRC_DIR}/ui_team.c"
-	"${GUI_SRC_DIR}/ui_teamorders.c"
-	"${GUI_SRC_DIR}/ui_video.c"
-	"${GUI_SRC_DIR}/ui_xppm.c"
+# server/src
+set(SERVER_SRC
+	bg_misc.c
 )
 
-# Define the final source list
-set(GUI_SRC_ALL_LIST
-	${GUI_SRC_HEADER_LIST}
-	${GUI_SRC_ENGINE_SHARED_LIST}
-	${GUI_SRC_LIST}
+# engine/src
+set(ENGINE_SRC
+	q_math.c
+	q_shared.c
 )
 
-# Project include
-include_directories(
-	"${ENGINE_INCLUDE_TOPLEVEL_DIR}"
-	"${SERVER_INCLUDE_TOPLEVEL_DIR}"
-	"${CLIENT_INCLUDE_TOPLEVEL_DIR}"
-	"${GUI_INCLUDE_TOPLEVEL_DIR}"
-	"${RENDERER_INCLUDE_TOPLEVEL_DIR}"
-	"${V8_INCLUDE_DIR}"
+# gui/src
+set(GUI_SRC
+	gui.def
+	ui_main.cpp
+	ui_syscalls.c
+	element.cpp
+	eventful.cpp
+	gui.cpp
+	image.cpp
+	atoms.cpp
 )
+
+# Parse file sources
+set(GROUPS ENGINE GUI SERVER CLIENT PHYSICS)
+set(SRC_ALL ${MISC_INCLUDES} ${MISC_SRC})
+foreach(GROUP ${GROUPS})
+	foreach(FILE_SRC ${${GROUP}_INCLUDES})
+		set(SRC_ALL ${SRC_ALL} ${${GROUP}_HAT_DIR}/${FILE_SRC})
+	endforeach(FILE_SRC)
+	foreach(FILE_SRC ${${GROUP}_SRC})
+		set(SRC_ALL ${SRC_ALL} ${${GROUP}_SRC_DIR}/${FILE_SRC})
+	endforeach(FILE_SRC)
+	include_directories(${${GROUP}_INCLUDE_DIR})
+endforeach(GROUP)
+
+# Additional includes
+
 
 if(WIN32)
 	set(OS_SPECIFIC_LIBRARIES "winmm.lib" "ws2_32.lib")
