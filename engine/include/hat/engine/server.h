@@ -266,6 +266,7 @@ extern serverStatic_t svs;		// persistant server info across maps
 extern server_t sv;				// cleared each map
 #if !defined(USE_JAVA)
 extern vm_t    *gvm;			// game virtual machine
+extern vm_t    *pvm;
 #endif
 
 #define	MAX_MASTER_SERVERS	5

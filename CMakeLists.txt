@@ -6,7 +6,18 @@ project(ROGUE_REBORN)
 # --image-base is needed specifically for establishing base addresses
 # for the Q3VM. If you really don't want this, then you can enable this
 # flag. I am not going to tell you what happens if you enable it.
-option(RR_DISABLE_IMAGE_BASE "If enabled --image-base will not be passed to the linker. ** Enable only if you really, really know what you're doing. **")
+option(RR_DISABLE_IMAGE_BASE "If enabled --image-base will not be passed to the linker. ** Enable only if you really, really know what you're doing. **" FALSE)
+option(RR_USE_OPENAL "If disabled, OpenAL will not be used." TRUE)
+
+if(WIN32)
+	option(RR_VISUAL_STUDIO_MP 
+		"Disable if you do not want multi-processor compilation (/MP)" 
+		TRUE)
+endif(WIN32)
+
+if(RR_VISUAL_STUDIO_MP)
+	message(STATUS "** Using /MP support in Visual Studio **")
+endif(RR_VISUAL_STUDIO_MP)
 
 if(RR_DISABLE_IMAGE_BASE)
 	message("** --image-base will not be used **")
@@ -109,3 +120,5 @@ foreach(VAR ${AVAILABLE_PROJECTS})
 	message(STATUS "- src directory....... ${${SRC_VAR}}")
 	add_subdirectory(${LVAR})
 endforeach(VAR)
+
+

@@ -33,7 +33,7 @@ and one exported function: VM_Main
 vm_t           *currentVM = NULL;	// bk001212
 vm_t           *lastVM = NULL;	// bk001212
 
-#define	MAX_VM		3
+#define	MAX_VM		4
 vm_t            vmTable[MAX_VM];
 
 

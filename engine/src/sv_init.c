@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include <hat/engine/server.h>
+#include <hat/engine/physics.h>
 
 /*
 ===============
@@ -567,6 +568,9 @@ void SV_SpawnServer(char *server, qboolean killBots)
 
 	// load and spawn all other entities
 	SV_InitGameProgs();
+
+  // initialize physics
+  PHYS_InitGameProgs();
 
 	// don't allow a map_restart if game is modified
 	sv_gametype->modified = qfalse;

@@ -1,4 +1,4 @@
-if (HAT_USE_OPENAL)
+if (RR_USE_OPENAL)
 	message(STATUS "- openal.............. ENABLED")
 	find_package(OpenAL REQUIRED)
 	if(OPENAL_FOUND)
@@ -97,6 +97,7 @@ set(ENGINE_INCLUDES
 	engine_tests.h
 	keycodes.h
 	keys.h
+	physics.h
 	qal.h
 	qcommon.h
 	qfiles.h
@@ -274,6 +275,7 @@ set(ENGINE_SRC
 	sv_init.c
 	sv_main.c
 	sv_net_chan.c
+	sv_physics.c
 	sv_snapshot.c
 	sv_world.c
 	sys_main.c
@@ -359,6 +361,13 @@ if(DEFINED SPECIFIC_LINKER_FLAGS)
 	set_target_properties(dedicated PROPERTIES 
 		LINK_FLAGS ${SPECIFIC_LINKER_FLAGS})
 endif(DEFINED SPECIFIC_LINKER_FLAGS)
+
+if(RR_VISUAL_STUDIO_MP)
+	set_target_properties(engine
+		PROPERTIES COMPILE_FLAGS "/MP")
+	set_target_properties(dedicated
+		PROPERTIES COMPILE_FLAGS "/MP")
+endif(RR_VISUAL_STUDIO_MP)
 
 add_definitions(
 	-DUSE_CURL

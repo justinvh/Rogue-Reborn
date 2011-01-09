@@ -210,5 +210,10 @@ target_link_libraries(renderer ${SDL_LIBRARY} ${SPECIFIC_LIBRARIES})
 set_target_properties(renderer PROPERTIES PREFIX "")
 add_definitions(-DBUILD_FREETYPE -DFT2_BUILD_LIBRARY)
 
+if(RR_VISUAL_STUDIO_MP)
+	set_target_properties(renderer
+		PROPERTIES COMPILE_FLAGS "/MP")
+endif(RR_VISUAL_STUDIO_MP)
+
 # Installation
 install(TARGETS renderer DESTINATION ${CMAKE_INSTALL_PREFIX})
