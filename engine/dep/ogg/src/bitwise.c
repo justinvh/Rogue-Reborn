@@ -20,7 +20,9 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <ogg/ogg.h>
+
+// Yes, this is horrible, but so are exact dependencies
+#include "../include/ogg/ogg.h"
 
 #define BUFFER_INCREMENT 256
 
