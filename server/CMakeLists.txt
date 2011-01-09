@@ -22,6 +22,9 @@ set(SERVER_INCLUDES
 )
 
 set(SERVER_SRC
+	bg_misc.c
+	bg_pmove.cpp
+	bg_slidemove.c
 	acebot_ai.c
 	acebot_cmds.c
 	acebot_items.c

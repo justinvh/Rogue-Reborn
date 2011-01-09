@@ -306,7 +306,6 @@ if(APPLE)
 	set(APPLE_SRC sys_unix.c con_passive.c sys_osx.m)
 	set(ENGINE_SRC ${ENGINE_SRC} ${APPLE_SRC})
 	add_definitions(-D__MACOSX__ -DMACOS_X)
-	message(STATUS "- needs iokit......... FAILED")
 	message(STATUS "- additional files.... ${APPLE_SRC}")
 elseif(UNIX)
 	message(STATUS "- system type......... UNIX")
@@ -337,8 +336,14 @@ target_link_libraries(engine ${SPECIFIC_LIBRARIES} ${DEPENDENCIES})
 target_link_libraries(dedicated ${SPECIFIC_LIBRARIES} ${DEPENDENCIES})
 
 set_target_properties(dedicated PROPERTIES COMPILE_FLAGS "-DDEDICATED -DPARANOID")
-set_target_properties(engine PROPERTIES LINK_FLAGS ${SPECIFIC_LINKER_FLAGS})
-set_target_properties(dedicated PROPERTIES LINK_FLAGS ${SPECIFIC_LINKER_FLAGS})
+
+# Strangely enough, I need this because of Mac OS X.
+if(DEFINED SPECIFIC_LINKER_FLAGS)
+	set_target_properties(engine PROPERTIES 
+		LINK_FLAGS ${SPECIFIC_LINKER_FLAGS})
+	set_target_properties(dedicated PROPERTIES 
+		LINK_FLAGS ${SPECIFIC_LINKER_FLAGS})
+endif(DEFINED SPECIFIC_LINKER_FLAGS)
 
 add_definitions(
 	-DUSE_CURL
