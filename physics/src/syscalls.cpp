@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 #include <hat/engine/q_platform.h>
-#include <cstdint>
+#include <stdint.h>
 
 typedef intptr_t(QDECL* System_call)(intptr_t arg, ...);
 
