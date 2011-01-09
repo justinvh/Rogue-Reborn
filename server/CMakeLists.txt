@@ -1,3 +1,4 @@
+if(NOT RR_DISABLE_IMAGE_BASE)
 if(WIN32)
 	set(SPECIFIC_LINKER_FLAGS "/BASE:0x20000000 /DYNAMICBASE:NO")
 	message(STATUS "- win32 linker flags.. ${SPECIFIC_LINKER_FLAGS}")
@@ -5,6 +6,7 @@ elseif(UNIX)
 	set(SPECIFIC_LINKER_FLAGS "--image-base=0x20000000")
 	message(STATUS "- unix linker flags... ${SPECIFIC_LINKER_FLAGS}")
 endif(WIN32)
+endif(NOT RR_DISABLE_IMAGE_BASE)
 
 set(ENGINE_INCLUDES q_shared.h q_platform.h surfaceflags.h)
 set(ENGINE_SRC q_math.c q_shared.c)
@@ -61,7 +63,12 @@ generate_hat_sources()
 add_library(server SHARED ${SRC_ALL})
 add_definitions(-DGLOBALRANK -DSERVER)
 set_target_properties(server PROPERTIES PREFIX "")
-set_target_properties(server PROPERTIES LINK_FLAGS ${SPECIFIC_LINKER_FLAGS})
+
+if(DEFINED SPECIFIC_LINKER_FLAGS)
+	set_target_properties(server PROPERTIES 
+		LINK_FLAGS ${SPECIFIC_LINKER_FLAGS})
+endif(DEFINED SPECIFIC_LINKER_FLAGS)
+
 
 # Installation
 install(TARGETS server DESTINATION ${CMAKE_INSTALL_PREFIX}/base/)

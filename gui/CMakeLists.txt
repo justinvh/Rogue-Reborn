@@ -11,10 +11,12 @@ endif(V8_FOUND)
 # Operating specific libraries and flags
 if(WIN32)
 	set(SPECIFIC_LIBRARIES "winmm.lib" "ws2_32.lib")
-	set(SPECIFIC_LINKER_FLAGS "/BASE:0x40000000 /DYNAMICBASE:NO")
 	message(STATUS "- win32 libraries..... ${SPECIFIC_LIBRARIES}")
-	message(STATUS "- win32 linker flags.. ${SPECIFIC_LINKER_FLAGS}")
-elseif(UNIX)
+	if(NOT RR_DISABLE_IMAGE_BASE)
+		set(SPECIFIC_LINKER_FLAGS "/BASE:0x40000000 /DYNAMICBASE:NO")
+		message(STATUS "- win32 linker flags.. ${SPECIFIC_LINKER_FLAGS}")
+	endif(NOT RR_DISABLE_IMAGE_BASE)
+elseif(UNIX AND NOT RR_DISABLE_IMAGE_BASE)
 	set(SPECIFIC_LINKER_FLAGS "--image-base=0x40000000")
 	message(STATUS "- unix linker flags... ${SPECIFIC_LINKER_FLAGS}")
 endif(WIN32)
@@ -59,7 +61,11 @@ generate_hat_sources()
 add_library(gui SHARED ${SRC_ALL})
 target_link_libraries(gui ${LIBRARIES})
 set_target_properties(gui PROPERTIES PREFIX "")
-set_target_properties(gui PROPERTIES LINK_FLAGS ${SPECIFIC_LINKER_FLAGS})
+
+if(DEFINED SPECIFIC_LINKER_FLAGS)
+	set_target_properties(gui PROPERTIES 
+		LINK_FLAGS ${SPECIFIC_LINKER_FLAGS})
+endif(DEFINED SPECIFIC_LINKER_FLAGS)
 
 # Installation
 install(TARGETS gui DESTINATION ${CMAKE_INSTALL_PREFIX}/base/)

@@ -3,6 +3,15 @@
 cmake_minimum_required(VERSION 2.8)
 project(ROGUE_REBORN)
 
+# --image-base is needed specifically for establishing base addresses
+# for the Q3VM. If you really don't want this, then you can enable this
+# flag. I am not going to tell you what happens if you enable it.
+option(RR_DISABLE_IMAGE_BASE "If enabled --image-base will not be passed to the linker. ** Enable only if you really, really know what you're doing. **")
+
+if(RR_DISABLE_IMAGE_BASE)
+	message("** --image-base will not be used **")
+endif(RR_DISABLE_IMAGE_BASE)
+
 # Establish some basic paths
 set(ROGUE_REBORN_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/engine/modules)
