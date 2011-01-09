@@ -41,6 +41,7 @@ macro(_FIND_BULLET_LIBRARY _var)
         ${BULLET_ROOT}/out/debug8/libs
 	/usr/local/Cellar/bullet/2.77/lib
      PATH_SUFFIXES lib
+     PATH_PREFIXES lib
   )
   mark_as_advanced(${_var})
 endmacro()
@@ -59,6 +60,7 @@ find_path(BULLET_INCLUDE_DIR NAMES btBulletCollisionCommon.h
     ${ROGUE_REBORN_DIR}/physics/dep/bullet-2.77/include
     ${ROGUE_REBORN_DIR}/physics/dep/bullet-2.77/src
     /usr/local/Cellar/bullet/2.77/include/bullet
+    /usr/include/bullet
     ${BULLET_ROOT}/include
     ${BULLET_ROOT}/src
 )
