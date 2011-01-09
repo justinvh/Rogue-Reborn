@@ -1,493 +1,344 @@
-# Rogue Reborn Engine (Hat)
-cmake_minimum_required(VERSION 2.8)
-
-# Options
-option(HAT_EXPAND_DEPENDENCIES "If enabled, Visual Studio will show all the dependencies broken apart into their respective libraries." FALSE)
-option(HAT_EXPAND_PLATFORM "If enabled, Visual Studio will show all the operating-system specific dependencies in their own folders." FALSE)
-option(HAT_USE_OPENAL "If enabled, Rogue Reborn will built with OpenAL" TRUE)
-
-if (${HAT_USE_OPENAL})
-	message("Rogue Reborn will be built with OpenAL enabled. Pass -DHAT_USE_OPENAL=FALSE to cmake disable.")
-endif(${HAT_USE_OPENAL})
-
-# Setup our paths
-# Server
-set(SERVER_INCLUDE_TOPLEVEL_DIR "../server/include")
-set(SERVER_INCLUDE_SERVER_DIR "${SERVER_INCLUDE_TOPLEVEL_DIR}/hat/server")
-
-# Client
-set(CLIENT_INCLUDE_TOPLEVEL_DIR "../client/include")
-set(CLIENT_INCLUDE_CLIENT_DIR "${CLIENT_INCLUDE_TOPLEVEL_DIR}/hat/client")
-
-# Gui
-set(GUI_INCLUDE_TOPLEVEL_DIR "../gui/include")
-set(GUI_INCLUDE_GUI_DIR "${GUI_INCLUDE_TOPLEVEL_DIR}/hat/gui")
-
-# Renderer
-set(RENDERER_INCLUDE_TOPLEVEL_DIR "../renderer/include")
-
-# Dependency top-level
-set(ENGINE_DEP_TOPLEVEL_DIR "dep")
-set(ENGINE_DEP_ZLIB_DIR "${ENGINE_DEP_TOPLEVEL_DIR}/zlib")
-
-# Vorbis
-set(ENGINE_DEP_VORBIS_DIR "${ENGINE_DEP_TOPLEVEL_DIR}/vorbis")
-set(ENGINE_DEP_VORBIS_INCLUDE_DIR "${ENGINE_DEP_VORBIS_DIR}/include")
-set(ENGINE_DEP_VORBIS_LIB_DIR "${ENGINE_DEP_VORBIS_DIR}/lib")
-
-# Theora
-set(ENGINE_DEP_THEORA_DIR "${ENGINE_DEP_TOPLEVEL_DIR}/theora")
-set(ENGINE_DEP_THEORA_INCLUDE_DIR "${ENGINE_DEP_THEORA_DIR}/include")
-set(ENGINE_DEP_THEORA_DEC_DIR "${ENGINE_DEP_THEORA_DIR}/lib/dec")
-set(ENGINE_DEP_THEORA_X86_DIR "${ENGINE_DEP_THEORA_DEC_DIR}/x86")
-
-# Speex
-set(ENGINE_DEP_SPEEX_DIR "${ENGINE_DEP_TOPLEVEL_DIR}/speex")
-set(ENGINE_DEP_SPEEX_INCLUDE_DIR "${ENGINE_DEP_SPEEX_DIR}/include")
-
-# Ogg
-set(ENGINE_DEP_OGG_DIR "${ENGINE_DEP_TOPLEVEL_DIR}/ogg")
-set(ENGINE_DEP_OGG_INCLUDE_DIR "${ENGINE_DEP_OGG_DIR}/include")
-set(ENGINE_DEP_OGG_SRC_DIR "${ENGINE_DEP_OGG_DIR}/src")
-
-# Various includes
-set(ENGINE_INCLUDE_TOPLEVEL_DIR "include")
-set(ENGINE_INCLUDE_ENGINE_DIR "${ENGINE_INCLUDE_TOPLEVEL_DIR}/hat/engine")
-set(ENGINE_INCLUDE_JAVA_DIR "${ENGINE_INCLUDE_TOPLEVEL_DIR}/hat/java")
-set(ENGINE_INCLUDE_RESOURCE_DIR "${ENGINE_INCLUDE_TOPLEVEL_DIR}/hat/resource")
-set(ENGINE_SRC_DIR "src")
-
-# SDL is configuration-specific and Curl is a pain in the ass
-# So, we have prebuilt binaries/libraries for Windows
-if(WIN32)
-	set(ENGINE_DEP_SDL_DIR "${ENGINE_DEP_TOPLEVEL_DIR}/sdl")
-	set(ENGINE_DEP_SDL_INCLUDE_DIR "${ENGINE_DEP_SDL_DIR}/include")
-	set(ENGINE_DEP_SDL_LIB_DIR "${ENGINE_DEP_SDL_DIR}/lib")
-
-	set(ENGINE_DEP_CURL_DIR "${ENGINE_DEP_TOPLEVEL_DIR}/curl")
-	set(ENGINE_DEP_CURL_INCLUDE_DIR "${ENGINE_DEP_CURL_DIR}/include")
-	set(ENGINE_DEP_CURL_LIB_DIR "${ENGINE_DEP_CURL_DIR}/lib")
-
-	set(CMAKE_LIBRARY_PATH 
-		${CMAKE_LIBRARY_PATH} 
-		${ENGINE_DEP_SDL_LIB_DIR}
-		${ENGINE_DEP_CURL_LIB_DIR}
-	)
-
-	# External includes
-	set(CMAKE_INCLUDE_PATH
-		${CMAKE_INCLUDE_PATH}
-		${ENGINE_DEP_SDL_INCLUDE_DIR}
-		${ENGINE_DEP_CURL_INCLUDE_DIR}
-	)
+if (HAT_USE_OPENAL)
+	message(STATUS "- openal.............. ENABLED")
+	find_package(OpenAL REQUIRED)
+	if(OPENAL_FOUND)
+		message(STATUS "- openal include...... ${OPENAL_INCLUDE_DIR}")
+		message(STATUS "- openal library...... ${OPENAL_LIBRARY}")
+		include_directories(${OPENAL_INCLUDE_DIR})
+		set(DEPENDENCIES ${DEPENDENCIES} ${OPENAL_LIBRARY})
+	endif(OPENAL_FOUND)
+else()
+	message(STATUS "- openal.............. DISABLED")
 endif()
 
+# Vorbis
+set(VORBIS_INCLUDE_DIR ${ENGINE_DEP_DIR}/vorbis/include)
+set(VORBIS_SRC_DIR ${ENGINE_DEP_DIR}/vorbis/lib)
 
-# These packages are actually needed and I rather not put them into the build
-# system. I recommended OpenAL to be openal-soft.
+# Theora
+set(THEORA_INCLUDE_DIR ${ENGINE_DEP_DIR}/theora/include)
+set(THEORA_SRC_DIR ${ENGINE_DEP_DIR}/theora/lib/dec)
+
+# Speex
+set(SPEEX_INCLUDE_DIR ${ENGINE_DEP_DIR}/speex/include)
+set(SPEEX_SRC_DIR ${ENGINE_DEP_DIR}/speex)
+
+# Ogg
+set(OGG_INCLUDE_DIR ${ENGINE_DEP_DIR}/ogg/include)
+set(OGG_SRC_DIR ${ENGINE_DEP_DIR}/ogg/src)
+
+# ZLIB
+set(ZLIB_INCLUDE_DIR ${ENGINE_DEP_DIR}/zlib)
+set(ZLIB_SRC_DIR ${ENGINE_DEP_DIR}/zlib)
+
+if(WIN32)
+	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} 
+		${ENGINE_DEP_DIR}/sdl/lib
+		${ENGINE_DEP_DIR}/curl/lib)
+	set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH}
+		${ENGINE_DEP_DIR}/sdl/include
+		${ENGINE_DEP_DIR}/curl/include)
+endif(WIN32)
+
 find_package(SDL REQUIRED)
 find_package(CURL REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(V8 REQUIRED)
 
-if (${HAT_USE_OPENAL})
-	find_package(OpenAL REQUIRED)
-endif(${HAT_USE_OPENAL})
+if(SDL_FOUND)
+	if(WIN32)
+		message(STATUS "- using local sdl..... TRUE")
+	else()
+		message(STATUS "- using local sdl..... FALSE")
+	endif(WIN32)
+	message(STATUS "- sdl include......... ${SDL_INCLUDE_DIR}")
+	message(STATUS "- sdl library......... ${SDL_LIBRARY}")
+	set(DEPENDENCIES ${DEPENDENCIES} ${SDL_LIBRARY})
+	include_directories(${SDL_INCLUDE_DIR})
+endif(SDL_FOUND)
+
+if(CURL_FOUND)
+	if(WIN32)
+		message(STATUS "- using local curl.... TRUE")
+	else()
+		message(STATUS "- using local curl.... FALSE")
+	endif(WIN32)
+	message(STATUS "- curl include........ ${CURL_INCLUDE_DIR}")
+	message(STATUS "- curl library........ ${CURL_LIBRARY}")
+	set(DEPENDENCIES ${DEPENDENCIES} ${CURL_LIBRARY})
+	include_directories(${CURL_INCLUDE_DIR})
+endif(CURL_FOUND)
+
+if(OPENGL_FOUND)
+	message(STATUS "- opengl include...... ${OPENGL_INCLUDE_DIR}")
+	message(STATUS "- opengl library...... ${OPENGL_LIBRARY}")
+	set(DEPENDENCIES ${DEPENDENCIES} ${OPENGL_LIBRARY})
+	include_directories(${OPENGL_INCLUDE_DIR})
+endif(OPENGL_FOUND)
+
+if(V8_FOUND)
+	message(STATUS "- v8 include.......... ${V8_INCLUDE_DIR}")
+	message(STATUS "- v8 library.......... ${V8_LIBRARY}")
+	set(DEPENDENCIES ${DEPENDENCIES} ${V8_LIBRARY})
+	include_directories(${V8_INCLUDE_DIR})
+endif(V8_FOUND)
 
 # Source lists
-set(ENGINE_SRC_SERVER_SHARED_LIST
-	# Server shared (needed for MSVC)
-	"${SERVER_INCLUDE_SERVER_DIR}/bg_public.h"
-	"${SERVER_INCLUDE_SERVER_DIR}/g_public.h"
+set(SERVER_INCLUDES bg_public.h g_public.h)
+set(CLIENT_INCLUDES cg_public.h)
+set(GUI_INCLUDES ui_public.h)
+
+set(ENGINE_INCLUDES
+	client.h
+	cl_curl.h
+	cm_local.h
+	cm_polylib.h
+	cm_public.h
+	engine_tests.h
+	keycodes.h
+	keys.h
+	qal.h
+	qcommon.h
+	qfiles.h
+	q_platform.h
+	q_print.h
+	q_shared.h
+	server.h
+	snd_codec.h
+	snd_local.h
+	snd_public.h
+	surfaceflags.h
+	sys_loadlib.h
+	sys_local.h
+	unzip.h
+	javascript/weapon/class.hpp
+	javascript/weapon/interface.hpp
+	javascript/weapon/manager.hpp
+	javascript/weapon.hpp
+	javascript/weapon.h
 )
 
-set(ENGINE_SRC_CLIENT_SHARED_LIST
-	# Client shared (needed for MSVC)
-	"${CLIENT_INCLUDE_CLIENT_DIR}/cg_public.h"
+set(ZLIB_SRC
+	adler32.c
+	compress.c
+	crc32.c
+	deflate.c
+	gzio.c
+	infback.c
+	inffast.c
+	inflate.c
+	inftrees.c
+	ioapi.c
+	trees.c
+	uncompr.c
+	zutil.c
 )
 
-set(ENGINE_SRC_GUI_SHARED_LIST
-	# Gui shared (needed for MSVC)
-	"${GUI_INCLUDE_GUI_DIR}/ui_public.h"
+set(VORBIS_SRC
+	analysis.c
+	bitrate.c
+	block.c
+	codebook.c
+	envelope.c
+	floor0.c
+	floor1.c
+	info.c
+	lookup.c
+	lpc.c
+	lsp.c
+	mapping0.c
+	mdct.c
+	psy.c
+	registry.c
+	res0.c
+	sharedbook.c
+	smallft.c
+	synthesis.c
+	vorbisfile.c
+	window.c
 )
 
-set(ENGINE_SRC_HEADER_LIST
-	# Engine (needed for MSVC)
-	"${ENGINE_INCLUDE_ENGINE_DIR}/client.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/cl_curl.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/cm_local.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/cm_polylib.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/cm_public.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/engine_tests.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/keycodes.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/keys.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/qal.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/qcommon.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/qfiles.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/q_platform.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/q_print.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/q_shared.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/server.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/snd_codec.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/snd_local.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/snd_public.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/surfaceflags.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/sys_loadlib.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/sys_local.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/unzip.h"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/vm_java.h"
+set(THEORA_SRC
+	apiwrapper.c
+	bitpack.c
+	decapiwrapper.c
+	decinfo.c
+	decode.c
+	dequant.c
+	fragment.c
+	huffdec.c
+	idct.c
+	internal.c
+	quant.c
+	state.c
+	thinfo.c
+	x86/mmxfrag.c
+	x86/mmxidct.c
+	x86/mmxstate.c
+	x86/x86state.c
 )
 
-set(ENGINE_SRC_JAVA_LIST
-	# Java
-	"${ENGINE_INCLUDE_JAVA_DIR}/xreal_client_Client.h"
-	"${ENGINE_INCLUDE_JAVA_DIR}/xreal_client_renderer_Renderer.h"
-	"${ENGINE_INCLUDE_JAVA_DIR}/xreal_server_game_GameEntity.h"
-	"${ENGINE_INCLUDE_JAVA_DIR}/xreal_server_game_Player.h"
-	"${ENGINE_INCLUDE_JAVA_DIR}/xreal_server_Server.h"
-	"${ENGINE_INCLUDE_JAVA_DIR}/xreal_CVar.h"
-	"${ENGINE_INCLUDE_JAVA_DIR}/xreal_Engine.h"
+set(SPEEX_SRC
+	bits.c
+	buffer.c
+	cb_search.c
+	exc_10_16_table.c
+	exc_10_32_table.c
+	exc_20_32_table.c
+	exc_5_256_table.c
+	exc_5_64_table.c
+	exc_8_128_table.c
+	fftwrap.c
+	filterbank.c
+	filters.c
+	gain_table.c
+	gain_table_lbr.c
+	hexc_10_32_table.c
+	hexc_table.c
+	high_lsp_tables.c
+	jitter.c
+	kiss_fft.c
+	kiss_fftr.c
+	lsp_tables_nb.c
+	ltp.c
+	mdf.c
+	modes.c
+	modes_wb.c
+	nb_celp.c
+	preprocess.c
+	quant_lsp.c
+	resample.c
+	sb_celp.c
+	smallft.c
+	speex.c
+	speex_callbacks.c
+	speex_header.c
+	speex_lpc.c
+	speex_lsp.c
+	speex_window.c
+	stereo.c
+	vbr.c
+	vq.c
 )
 
-set(ENGINE_SRC_ZLIB_LIST
-	# Zlib source files
-	"${ENGINE_DEP_ZLIB_DIR}/adler32.c"
-	"${ENGINE_DEP_ZLIB_DIR}/compress.c"
-	"${ENGINE_DEP_ZLIB_DIR}/crc32.c"
-	"${ENGINE_DEP_ZLIB_DIR}/deflate.c"
-	"${ENGINE_DEP_ZLIB_DIR}/gzio.c"
-	"${ENGINE_DEP_ZLIB_DIR}/infback.c"
-	"${ENGINE_DEP_ZLIB_DIR}/inffast.c"
-	"${ENGINE_DEP_ZLIB_DIR}/inflate.c"
-	"${ENGINE_DEP_ZLIB_DIR}/inftrees.c"
-	"${ENGINE_DEP_ZLIB_DIR}/ioapi.c"
-	"${ENGINE_DEP_ZLIB_DIR}/trees.c"
-	"${ENGINE_DEP_ZLIB_DIR}/uncompr.c"
-	"${ENGINE_DEP_ZLIB_DIR}/zutil.c"
+set(OGG_SRC bitwise.c framing.c)
+
+set(ENGINE_SRC
+	cin_ogm.c
+	cl_avi.c
+	cl_cgame.c
+	cl_cgame_java.c
+	cl_cin.c
+	cl_console.c
+	cl_curl.c
+	cl_input.c
+	cl_keys.c
+	cl_main.c
+	cl_net_chan.c
+	cl_parse.c
+	cl_scrn.c
+	cl_ui.c
+	cl_ui_java.c
+	cmd.c
+	cm_load.c
+	cm_patch.c
+	cm_polylib.c
+	cm_test.c
+	cm_trace.c
+	cm_trisoup.c
+	common.c
+	con_log.c
+	cvar.c
+	files.c
+	engine_tests.cpp
+	huffman.c
+	md4.c
+	md5.c
+	msg.c
+	net_chan.c
+	net_ip.c
+	parse.c
+	qal.c
+	q_math.c
+	q_shared.c
+	sdl_input.c
+	sdl_snd.c
+	snd_codec.c
+	snd_codec_ogg.c
+	snd_codec_wav.c
+	snd_dma.c
+	snd_main.c
+	snd_mem.c
+	snd_mix.c
+	snd_openal.c
+	sv_bot.c
+	sv_ccmds.c
+	sv_client.c
+	sv_game.c
+	sv_game_java.c
+	sv_init.c
+	sv_main.c
+	sv_net_chan.c
+	sv_snapshot.c
+	sv_world.c
+	sys_main.c
+	v8/type_conversion.cpp
+	unzip.c
+	vm.c
+	vm_java.c
+	javascript/weapon/class.cpp
+	javascript/weapon/manager.cpp
+	javascript/weapon/tools.cpp
 )
 
-set(ENGINE_SRC_VORBIS_LIST
-	# Vorbis source files
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/analysis.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/bitrate.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/block.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/codebook.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/envelope.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/floor0.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/floor1.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/info.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/lookup.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/lpc.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/lsp.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/mapping0.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/mdct.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/psy.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/registry.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/res0.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/sharedbook.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/smallft.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/synthesis.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/vorbisfile.c"
-	"${ENGINE_DEP_VORBIS_LIB_DIR}/window.c"
-)
+if(APPLE)
+	message(STATUS "- system type......... APPLE")
+	message(STATUS "- needs iokit......... TRUE")
 
-set(ENGINE_SRC_THEORA_LIST
-	"${ENGINE_DEP_THEORA_DEC_DIR}/apiwrapper.c"
-	"${ENGINE_DEP_THEORA_DEC_DIR}/bitpack.c"
-	"${ENGINE_DEP_THEORA_DEC_DIR}/decapiwrapper.c"
-	"${ENGINE_DEP_THEORA_DEC_DIR}/decinfo.c"
-	"${ENGINE_DEP_THEORA_DEC_DIR}/decode.c"
-	"${ENGINE_DEP_THEORA_DEC_DIR}/dequant.c"
-	"${ENGINE_DEP_THEORA_DEC_DIR}/fragment.c"
-	"${ENGINE_DEP_THEORA_DEC_DIR}/huffdec.c"
-	"${ENGINE_DEP_THEORA_DEC_DIR}/idct.c"
-	"${ENGINE_DEP_THEORA_DEC_DIR}/internal.c"
-	"${ENGINE_DEP_THEORA_DEC_DIR}/quant.c"
-	"${ENGINE_DEP_THEORA_DEC_DIR}/state.c"
-	"${ENGINE_DEP_THEORA_DEC_DIR}/thinfo.c"
-	"${ENGINE_DEP_THEORA_X86_DIR}/mmxfrag.c"
-	"${ENGINE_DEP_THEORA_X86_DIR}/mmxidct.c"
-	"${ENGINE_DEP_THEORA_X86_DIR}/mmxstate.c"
-	"${ENGINE_DEP_THEORA_X86_DIR}/x86state.c"
-)
-
-set(ENGINE_SRC_SPEEX_LIST
-	"${ENGINE_DEP_SPEEX_DIR}/bits.c"
-	"${ENGINE_DEP_SPEEX_DIR}/buffer.c"
-	"${ENGINE_DEP_SPEEX_DIR}/cb_search.c"
-	"${ENGINE_DEP_SPEEX_DIR}/exc_10_16_table.c"
-	"${ENGINE_DEP_SPEEX_DIR}/exc_10_32_table.c"
-	"${ENGINE_DEP_SPEEX_DIR}/exc_20_32_table.c"
-	"${ENGINE_DEP_SPEEX_DIR}/exc_5_256_table.c"
-	"${ENGINE_DEP_SPEEX_DIR}/exc_5_64_table.c"
-	"${ENGINE_DEP_SPEEX_DIR}/exc_8_128_table.c"
-	"${ENGINE_DEP_SPEEX_DIR}/fftwrap.c"
-	"${ENGINE_DEP_SPEEX_DIR}/filterbank.c"
-	"${ENGINE_DEP_SPEEX_DIR}/filters.c"
-	"${ENGINE_DEP_SPEEX_DIR}/gain_table.c"
-	"${ENGINE_DEP_SPEEX_DIR}/gain_table_lbr.c"
-	"${ENGINE_DEP_SPEEX_DIR}/hexc_10_32_table.c"
-	"${ENGINE_DEP_SPEEX_DIR}/hexc_table.c"
-	"${ENGINE_DEP_SPEEX_DIR}/high_lsp_tables.c"
-	"${ENGINE_DEP_SPEEX_DIR}/jitter.c"
-	"${ENGINE_DEP_SPEEX_DIR}/kiss_fft.c"
-	"${ENGINE_DEP_SPEEX_DIR}/kiss_fftr.c"
-	"${ENGINE_DEP_SPEEX_DIR}/lsp_tables_nb.c"
-	"${ENGINE_DEP_SPEEX_DIR}/ltp.c"
-	"${ENGINE_DEP_SPEEX_DIR}/mdf.c"
-	"${ENGINE_DEP_SPEEX_DIR}/modes.c"
-	"${ENGINE_DEP_SPEEX_DIR}/modes_wb.c"
-	"${ENGINE_DEP_SPEEX_DIR}/nb_celp.c"
-	"${ENGINE_DEP_SPEEX_DIR}/preprocess.c"
-	"${ENGINE_DEP_SPEEX_DIR}/quant_lsp.c"
-	"${ENGINE_DEP_SPEEX_DIR}/resample.c"
-	"${ENGINE_DEP_SPEEX_DIR}/sb_celp.c"
-	"${ENGINE_DEP_SPEEX_DIR}/smallft.c"
-	"${ENGINE_DEP_SPEEX_DIR}/speex.c"
-	"${ENGINE_DEP_SPEEX_DIR}/speex_callbacks.c"
-	"${ENGINE_DEP_SPEEX_DIR}/speex_header.c"
-	"${ENGINE_DEP_SPEEX_DIR}/speex_lpc.c"
-	"${ENGINE_DEP_SPEEX_DIR}/speex_lsp.c"
-	"${ENGINE_DEP_SPEEX_DIR}/speex_window.c"
-	"${ENGINE_DEP_SPEEX_DIR}/stereo.c"
-	"${ENGINE_DEP_SPEEX_DIR}/vbr.c"
-	"${ENGINE_DEP_SPEEX_DIR}/vq.c"
-)
-
-set(ENGINE_SRC_OGG_LIST
-	"${ENGINE_DEP_OGG_SRC_DIR}/bitwise.c"
-	"${ENGINE_DEP_OGG_SRC_DIR}/framing.c"
-)
-
-set(ENGINE_SRC_LIST
-	# Hat source files
-	"${ENGINE_SRC_DIR}/cin_ogm.c"
-	"${ENGINE_SRC_DIR}/cl_avi.c"
-	"${ENGINE_SRC_DIR}/cl_cgame.c"
-	"${ENGINE_SRC_DIR}/cl_cgame_java.c"
-	"${ENGINE_SRC_DIR}/cl_cin.c"
-	"${ENGINE_SRC_DIR}/cl_console.c"
-	"${ENGINE_SRC_DIR}/cl_curl.c"
-	"${ENGINE_SRC_DIR}/cl_input.c"
-	"${ENGINE_SRC_DIR}/cl_keys.c"
-	"${ENGINE_SRC_DIR}/cl_main.c"
-	"${ENGINE_SRC_DIR}/cl_net_chan.c"
-	"${ENGINE_SRC_DIR}/cl_parse.c"
-	"${ENGINE_SRC_DIR}/cl_scrn.c"
-	"${ENGINE_SRC_DIR}/cl_ui.c"
-	"${ENGINE_SRC_DIR}/cl_ui_java.c"
-	"${ENGINE_SRC_DIR}/cmd.c"
-	"${ENGINE_SRC_DIR}/cm_load.c"
-	"${ENGINE_SRC_DIR}/cm_patch.c"
-	"${ENGINE_SRC_DIR}/cm_polylib.c"
-	"${ENGINE_SRC_DIR}/cm_test.c"
-	"${ENGINE_SRC_DIR}/cm_trace.c"
-	"${ENGINE_SRC_DIR}/cm_trisoup.c"
-	"${ENGINE_SRC_DIR}/common.c"
-	"${ENGINE_SRC_DIR}/con_log.c"
-	"${ENGINE_SRC_DIR}/cvar.c"
-	"${ENGINE_SRC_DIR}/files.c"
-	"${ENGINE_SRC_DIR}/engine_tests.cpp"
-	"${ENGINE_SRC_DIR}/huffman.c"
-	"${ENGINE_SRC_DIR}/md4.c"
-	"${ENGINE_SRC_DIR}/md5.c"
-	"${ENGINE_SRC_DIR}/msg.c"
-	"${ENGINE_SRC_DIR}/net_chan.c"
-	"${ENGINE_SRC_DIR}/net_ip.c"
-	"${ENGINE_SRC_DIR}/parse.c"
-	"${ENGINE_SRC_DIR}/qal.c"
-	"${ENGINE_SRC_DIR}/q_math.c"
-	"${ENGINE_SRC_DIR}/q_shared.c"
-	"${ENGINE_SRC_DIR}/sdl_input.c"
-	"${ENGINE_SRC_DIR}/sdl_snd.c"
-	"${ENGINE_SRC_DIR}/snd_codec.c"
-	"${ENGINE_SRC_DIR}/snd_codec_ogg.c"
-	"${ENGINE_SRC_DIR}/snd_codec_wav.c"
-	"${ENGINE_SRC_DIR}/snd_dma.c"
-	"${ENGINE_SRC_DIR}/snd_main.c"
-	"${ENGINE_SRC_DIR}/snd_mem.c"
-	"${ENGINE_SRC_DIR}/snd_mix.c"
-	"${ENGINE_SRC_DIR}/snd_openal.c"
-	"${ENGINE_SRC_DIR}/sv_bot.c"
-	"${ENGINE_SRC_DIR}/sv_ccmds.c"
-	"${ENGINE_SRC_DIR}/sv_client.c"
-	"${ENGINE_SRC_DIR}/sv_game.c"
-	"${ENGINE_SRC_DIR}/sv_game_java.c"
-	"${ENGINE_SRC_DIR}/sv_init.c"
-	"${ENGINE_SRC_DIR}/sv_main.c"
-	"${ENGINE_SRC_DIR}/sv_net_chan.c"
-	"${ENGINE_SRC_DIR}/sv_snapshot.c"
-	"${ENGINE_SRC_DIR}/sv_world.c"
-	"${ENGINE_SRC_DIR}/sys_main.c"
-	"${ENGINE_SRC_DIR}/v8/type_conversion.cpp"
-	"${ENGINE_SRC_DIR}/unzip.c"
-	"${ENGINE_SRC_DIR}/vm.c"
-	"${ENGINE_SRC_DIR}/vm_java.c"
-)
-
-set(ENGINE_JS_WEAPON
-	"${ENGINE_SRC_DIR}/javascript/weapon/class.cpp"
-	"${ENGINE_SRC_DIR}/javascript/weapon/manager.cpp"
-	"${ENGINE_SRC_DIR}/javascript/weapon/tools.cpp"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/javascript/weapon/class.hpp"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/javascript/weapon/interface.hpp"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/javascript/weapon/manager.hpp"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/javascript/weapon.hpp"
-	"${ENGINE_INCLUDE_ENGINE_DIR}/javascript/weapon.h"
-)
-
-
-# OS-specific code
-if(UNIX AND NOT APPLE)
-	message(STATUS "(sys_unix.c) Unix-like operating system")
-	set(UNIX_SRC_LIST
-		"${ENGINE_SRC_DIR}/sys_unix.c"
-		"${ENGINE_SRC_DIR}/con_passive.c"
-	)
-	set(ENGINE_SRC_LIST ${ENGINE_SRC_LIST} ${UNIX_SRC_LIST})
-	message(STATUS "Unix-like operating system.")
-	message(STATUS "Additional includes: ${UNIX_SRC_LIST}")
-elseif(APPLE)
 	find_package(IOKit REQUIRED)
-	if (NOT IOKIT_FOUND)
-	  message(FATAL_ERROR "IOKit was not found!")
-	endif(NOT IOKIT_FOUND)
-	set(APPLE_SRC_LIST
-		"${ENGINE_SRC_DIR}/sys_unix.c"
-		"${ENGINE_SRC_DIR}/con_passive.c"
-		"${ENGINE_SRC_DIR}/sys_osx.m"
-	)
-	set(ENGINE_SRC_LIST ${ENGINE_SRC_LIST} ${APPLE_SRC_LIST})
-	add_definitions(-D__MACOSX__ -DMACOS_X)
-	message(STATUS "(${APPLE_SRC_LIST}) Apple-like operating system")
-	message(STATUS "Apple-like operating system.")
-	message(STATUS "Additional includes: ${APPLE_SRC_LIST}")
-elseif(WIN32)
-	set(WIN32_LIB_LIST
-		"winmm.lib"
-		"ws2_32.lib"
-		"PSAPI.lib"
-		"user32.lib"
-	)
-
-	set(WIN32_RESOURCE_LIST
-		"${ENGINE_INCLUDE_RESOURCE_DIR}/win_resource.h"
-		"${ENGINE_INCLUDE_RESOURCE_DIR}/win_resource.rc"
-		"${ENGINE_INCLUDE_RESOURCE_DIR}/rr.ico"	
-	)
-
-	set(WIN32_SRC_LIST
-		"${ENGINE_SRC_DIR}/con_win32.c"
-		"${ENGINE_SRC_DIR}/sys_win32.c"
-	)
-
-	include_directories(
-		"${ENGINE_DEP_SDL_INCLUDE_DIR}"
-		"${ENGINE_DEP_CURL_INCLUDE_DIR}"
-	)
-
-
-	if(${HAT_EXPAND_PLATFORM})
-		source_group("(win32-specific) Sources" FILES ${WIN32_SRC_LIST})
-		source_group("(win32-specific) Resources" FILES ${WIN32_RESOURCE_LIST})
+	if (IOKIT_FOUND)
+		message(STATUS "- needs iokit......... ${IOKIT_LIBRARY}")
 	else()
-		source_group("Resource Files" FILES ${WIN32_RESOURCE_LIST})
-	endif()
+		message(STATUS "- needs iokit......... FAILED")
+	endif(IOKIT_FOUND)
 
-	message(STATUS "Windows-like operating system.")
-	message(STATUS "Additional includes: ${WIN32_SRC_LIST} ${WIN32_RESOURCE_LIST}")
-	message(STATUS "Additional libraries: ${WIN32_LIB_LIST}")
+	set(SPECIFIC_LIBRARIES ${IOKIT_LIBRARY})
+	set(APPLE_SRC sys_unix.c con_passive.c sys_osx.m)
+	set(ENGINE_SRC ${ENGINE_SRC} ${APPLE_SRC})
+	add_definitions(-D__MACOSX__ -DMACOS_X)
+	message(STATUS "- needs iokit......... FAILED")
+	message(STATUS "- additional files.... ${APPLE_SRC}")
+elseif(UNIX)
+	message(STATUS "- system type......... UNIX")
+	set(UNIX_SRC sys_unix.c con_passive.c)
+	set(ENGINE_SRC ${ENGINE_SRC} ${UNIX_SRC})
+	message(STATUS "- additional files.... ${UNIX_SRC}")
+elseif(WIN32)
+	message(STATUS "- system type......... WIN32")
+	set(SPECIFIC_LINKER_FLAGS "/FIXED:NO /DYNAMICBASE:NO /LARGEADDRESSAWARE")
+	set(WIN32_SRC con_win32.c sys_win32.c)
+	set(ENGINE_SRC ${ENGINE_SRC} ${WIN32_SRC})
+	set(SPECIFIC_LIBRARIES winmm.lib ws2_32.lib PSAPI.lib user32.lib)
+	set(RESOURCE_SRC win_resource.h win_resource.rc rr.ico)
+	message(STATUS "- additional files.... ${SPECIFIC_SRC} ${RESOURCE_SRC}")
+	message(STATUS "- additional libraries ${SPECIFIC_LIBRARIES}")
 else()
 	message(FATAL_ERROR "Unsupported operating system.")
 endif()
 
-
-# Define the final source list
-set(ENGINE_SRC_ALL_LIST
-	${ENGINE_SRC_SERVER_SHARED_LIST}
-	${ENGINE_SRC_CLIENT_SHARED_LIST}
-	${ENGINE_SRC_GUI_SHARED_LIST}
-	${ENGINE_SRC_HEADER_LIST}
-	${ENGINE_SRC_ZLIB_LIST}
-	${ENGINE_SRC_JAVA_LIST}
-	${ENGINE_SRC_VORBIS_LIST}
-	${ENGINE_SRC_THEORA_LIST}
-	${ENGINE_SRC_SPEEX_LIST}
-	${ENGINE_SRC_OGG_LIST}
-	${ENGINE_SRC_LIST}
-	${WIN32_SRC_LIST}
-	${WIN32_RESOURCE_LIST}
-	${APPLE_SRC_LIST}
-	${UNIX_SRC_LIST}
-	${ENGINE_JS_WEAPON}
-)
-
-# Project include
-include_directories(
-	"${ENGINE_INCLUDE_TOPLEVEL_DIR}"
-	"${SERVER_INCLUDE_TOPLEVEL_DIR}"
-	"${CLIENT_INCLUDE_TOPLEVEL_DIR}"
-	"${GUI_INCLUDE_TOPLEVEL_DIR}"
-	"${RENDERER_INCLUDE_TOPLEVEL_DIR}"
-	"${ENGINE_DEP_ZLIB_DIR}"
-	"${ENGINE_DEP_VORBIS_INCLUDE_DIR}"
-	"${ENGINE_DEP_THEORA_INCLUDE_DIR}"
-	"${ENGINE_DEP_SPEEX_INCLUDE_DIR}"
-	"${ENGINE_DEP_OGG_INCLUDE_DIR}"
-	"${SDL_INCLUDE_DIR}"
-	"${CURL_INCLUDE_DIR}"
-	"${V8_INCLUDE_DIR}"
-)
-
-if (${HAT_USE_OPENAL})
-include_directories("${OPENAL_INCLUDE_DIR}")
-endif(${HAT_USE_OPENAL})
-
-# Group the source code
-source_group("Header Files" FILES ${ENGINE_SRC_HEADER_LIST})
-source_group("Source Files" FILES ${ENGINE_SRC_SERVER_SHARED_LIST} ${ENGINE_SRC_CLIENT_SHARED_LIST} ${ENGINE_SRC_GUI_SHARED_LIST} ${ENGINE_SRC_LIST})
-
-source_group("JavaScript\\Weapon" FILES ${ENGINE_JS_WEAPON})
-
-if(${HAT_EXPAND_DEPENDENCIES})
-	source_group("(library) Java" FILES ${ENGINE_SRC_JAVA_LIST})
-	source_group("(library) Vorbis" FILES ${ENGINE_SRC_VORBIS_LIST})
-	source_group("(library) Theora" FILES ${ENGINE_SRC_THEORA_LIST})
-	source_group("(library) Speex" FILES ${ENGINE_SRC_SPEEX_LIST})
-	source_group("(library) Ogg" FILES ${ENGINE_SRC_OGG_LIST})
-	source_group("(library) Zlib" FILES ${ENGINE_SRC_ZLIB_LIST})
-else()
-	source_group("External Libraries"
-		FILES
-		${ENGINE_SRC_JAVA_LIST}
-		${ENGINE_SRC_OGG_LIST}
-		${ENGINE_SRC_VORBIS_LIST}
-		${ENGINE_SRC_THEORA_LIST}
-		${ENGINE_SRC_SPEEX_LIST}
-		${ENGINE_SRC_ZLIB_LIST}
-	)
-endif()
-
-if(WIN32)
-	set(OS_SPECIFIC_LIBRARIES "winmm.lib" "ws2_32.lib")
-elseif(APPLE)
-	set(OS_SPECIFIC_LIBRARIES ${IOKIT_LIBRARY})
-endif(WIN32)
+generate_hat_sources()
+generate_external_sources(THEORA OGG VORBIS SPEEX ZLIB)
 
 # Setup the executable
-add_executable(engine ${ENGINE_SRC_ALL_LIST})
-add_executable(dedicated ${ENGINE_SRC_ALL_LIST})
+add_executable(engine ${SRC_ALL})
+add_executable(dedicated ${SRC_ALL})
 
-target_link_libraries(engine ${OS_SPECIFIC_LIBRARIES} ${V8_LIBRARY} ${WIN32_LIB_LIST} ${SDL_LIBRARY} ${CURL_LIBRARY} ${OPENGL_LIBRARY})
-target_link_libraries(dedicated ${OS_SPECIFIC_LIBRARIES} ${V8_LIBRARY} ${WIN32_LIB_LIST} ${SDL_LIBRARY} ${CURL_LIBRARY} ${OPENGL_LIBRARY})
+target_link_libraries(engine ${SPECIFIC_LIBRARIES} ${DEPENDENCIES})
+target_link_libraries(dedicated ${SPECIFIC_LIBRARIES} ${DEPENDENCIES})
 
 set_target_properties(dedicated PROPERTIES COMPILE_FLAGS "-DDEDICATED -DPARANOID")
-
-if (${HAT_USE_OPENAL})
-	add_definitions(-DUSE_OPENAL)
-	target_link_libraries(engine ${OPENAL_LIBRARY})
-	target_link_libraries(dedicated ${OPENAL_LIBRARY})
-endif(${HAT_USE_OPENAL})
+set_target_properties(engine PROPERTIES LINK_FLAGS ${SPECIFIC_LINKER_FLAGS})
+set_target_properties(dedicated PROPERTIES LINK_FLAGS ${SPECIFIC_LINKER_FLAGS})
 
 add_definitions(
 	-DUSE_CURL
@@ -501,11 +352,5 @@ add_definitions(
 	-DUSE_ALLOCA
 	-DFLOATING_POINT
 )
-
-if (WIN32)
-	set_target_properties(engine PROPERTIES LINK_FLAGS
-		"/FIXED:NO /DYNAMICBASE:NO /LARGEADDRESSAWARE"
-	)
-endif(WIN32)
 
 install(TARGETS engine dedicated DESTINATION ${CMAKE_INSTALL_PREFIX})

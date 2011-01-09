@@ -1,23 +1,37 @@
+# Rogue Reborn GUI
 find_package(V8 REQUIRED)
 
 if(V8_FOUND)
-	message(STATUS "- V8 Found............ ${V8_INCLUDE_DIR}")
+	message(STATUS "- v8 include.......... ${V8_INCLUDE_DIR}")
+	message(STATUS "- v8 library.......... ${V8_LIBRARY}")
 	include_directories(${V8_INCLUDE_DIR})
 endif(V8_FOUND)
 
 
+# Operating specific libraries and flags
+if(WIN32)
+	set(SPECIFIC_LIBRARIES "winmm.lib" "ws2_32.lib")
+	set(SPECIFIC_LINKER_FLAGS "/BASE:0x40000000 /DYNAMICBASE:NO")
+	message(STATUS "- win32 libraries..... ${SPECIFIC_LIBRARIES}")
+	message(STATUS "- win32 linker flags.. ${SPECIFIC_LINKER_FLAGS}")
+elseif(UNIX)
+	set(SPECIFIC_LINKER_FLAGS "--image-base=0x40000000")
+	message(STATUS "- unix linker flags... ${SPECIFIC_LINKER_FLAGS}")
+endif(WIN32)
+
+set(LIBRARIES ${SPECIFIC_LIBRARIES} ${V8_LIBRARY})
+
 # Miscellaneous project includes
-set(MISC_INCLUDES
-	${ENGINE_INCLUDE_DIR}/hat/v8/easy.hpp
-)
+set(ENGINE_INCLUDES v8/easy.hpp)
 
-# engine/include/hat/engine/
-set(ENGINE_INCLUDES 
-	q_shared.h
-	keycodes.h
-)
+# Engine includes and sources
+set(ENGINE_INCLUDES q_shared.h keycodes.h)
+set(ENGINE_SRC q_math.c q_shared.c)
 
-# gui/include/hat/gui/
+# Server sources
+set(SERVER_SRC bg_misc.c)
+
+# Gui includes and sources
 set(GUI_INCLUDES
 	menudef.h
 	ui_local.h
@@ -26,22 +40,10 @@ set(GUI_INCLUDES
 	eventful.hpp
 	gui.hpp
 	image.hpp
-)
-
-# server/src
-set(SERVER_SRC
-	bg_misc.c
-)
-
-# engine/src
-set(ENGINE_SRC
-	q_math.c
-	q_shared.c
-)
-
-# gui/src
-set(GUI_SRC
 	gui.def
+)
+
+set(GUI_SRC
 	ui_main.cpp
 	ui_syscalls.c
 	element.cpp
@@ -51,39 +53,13 @@ set(GUI_SRC
 	atoms.cpp
 )
 
-# Parse file sources
-set(GROUPS ENGINE GUI SERVER CLIENT PHYSICS)
-set(SRC_ALL ${MISC_INCLUDES} ${MISC_SRC})
-foreach(GROUP ${GROUPS})
-	foreach(FILE_SRC ${${GROUP}_INCLUDES})
-		set(SRC_ALL ${SRC_ALL} ${${GROUP}_HAT_DIR}/${FILE_SRC})
-	endforeach(FILE_SRC)
-	foreach(FILE_SRC ${${GROUP}_SRC})
-		set(SRC_ALL ${SRC_ALL} ${${GROUP}_SRC_DIR}/${FILE_SRC})
-	endforeach(FILE_SRC)
-	include_directories(${${GROUP}_INCLUDE_DIR})
-endforeach(GROUP)
-
-# Additional includes
-
-
-if(WIN32)
-	set(OS_SPECIFIC_LIBRARIES "winmm.lib" "ws2_32.lib")
-endif()
-
-# Group the source code
-source_group("Header Files" FILES ${GUI_SRC_HEADER_LIST} ${GUI_SRC_ENGINE_SHARED_LIST})
-source_group("Source Files" FILES ${GUI_SRC_LIST})
+generate_hat_sources()
 
 # Setup the library 
-add_library(gui SHARED ${GUI_SRC_ALL_LIST})
-target_link_libraries(gui ${V8_LIBRARY} ${OS_SPECIFIC_LIBRARIES})
+add_library(gui SHARED ${SRC_ALL})
+target_link_libraries(gui ${LIBRARIES})
 set_target_properties(gui PROPERTIES PREFIX "")
+set_target_properties(gui PROPERTIES LINK_FLAGS ${SPECIFIC_LINKER_FLAGS})
 
-if(WIN32)
-	set_target_properties(gui PROPERTIES LINK_FLAGS
-		"/BASE:0x40000000 /DYNAMICBASE:NO"
-	)
-endif()
-
+# Installation
 install(TARGETS gui DESTINATION ${CMAKE_INSTALL_PREFIX}/base/)
