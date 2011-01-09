@@ -111,11 +111,6 @@ set(ENGINE_INCLUDES
 	sys_loadlib.h
 	sys_local.h
 	unzip.h
-	javascript/weapon/class.hpp
-	javascript/weapon/interface.hpp
-	javascript/weapon/manager.hpp
-	javascript/weapon.hpp
-	javascript/weapon.h
 )
 
 set(ZLIB_SRC
@@ -286,9 +281,22 @@ set(ENGINE_SRC
 	unzip.c
 	vm.c
 	vm_java.c
-	javascript/weapon/class.cpp
-	javascript/weapon/manager.cpp
-	javascript/weapon/tools.cpp
+)
+
+# These are separated because it is easier to manage in MSVC
+
+set(JAVASCRIPT_WEAPON_INCLUDES
+	${ENGINE_HAT_DIR}/javascript/weapon/class.hpp
+	${ENGINE_HAT_DIR}/javascript/weapon/interface.hpp
+	${ENGINE_HAT_DIR}/javascript/weapon/manager.hpp
+	${ENGINE_HAT_DIR}/javascript/weapon.hpp
+	${ENGINE_HAT_DIR}/javascript/weapon.h
+)
+
+set(JAVASCRIPT_WEAPON_SRC
+	${ENGINE_SRC_DIR}/javascript/weapon/class.cpp
+	${ENGINE_SRC_DIR}/javascript/weapon/manager.cpp
+	${ENGINE_SRC_DIR}/javascript/weapon/tools.cpp
 )
 
 if(APPLE)
@@ -327,6 +335,13 @@ endif()
 
 generate_hat_sources()
 generate_external_sources(THEORA OGG VORBIS SPEEX ZLIB)
+
+# Manually specify structure for these
+set(SRC_ALL ${SRC_ALL} ${JAVASCRIPT_WEAPON_SRC} ${JAVASCRIPT_WEAPON_INCLUDES})
+source_group("JavaScript\\Weapon\\Header Files" 
+	FILES ${JAVASCRIPT_WEAPON_INCLUDES})
+source_group("JavaScript\\Weapon\\Source Files"
+	FILES ${JAVASCRIPT_WEAPON_SRC})
 
 # Setup the executable
 add_executable(engine ${SRC_ALL})
