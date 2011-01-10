@@ -36,8 +36,6 @@
 #  EXECINFO_INCLUDE_DIRS   include path for execinfo
 #  EXECINFO_LIBRARIES      libraries to link against (if required)
 
-include( FFDetectChangedValue )
-
 # take extra care on APPLE, the result depends on the sysroot and the deployment target
 if( APPLE )
   ff_detect_changed_value( __find_execinfo_CMAKE_OSX_SYSROOT_CHANGED CMAKE_OSX_SYSROOT
