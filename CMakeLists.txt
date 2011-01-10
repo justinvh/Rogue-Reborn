@@ -8,6 +8,11 @@ project(ROGUE_REBORN)
 # flag. I am not going to tell you what happens if you enable it.
 option(RR_DISABLE_IMAGE_BASE "If enabled --image-base will not be passed to the linker. ** Enable only if you really, really know what you're doing. **" FALSE)
 option(RR_USE_OPENAL "If disabled, OpenAL will not be used." TRUE)
+option(RR_I_DONT_NEED_EXECINFO "If you really don't need it, then enable this flag." FALSE)
+
+if(RR_I_DONT_NEED_EXECINFO)
+	message(STATUS "** You said you don't need execinfo **")
+endif(RR_I_DONT_NEED_EXECINFO)
 
 if(WIN32)
 	option(RR_VISUAL_STUDIO_MP 
@@ -74,7 +79,7 @@ foreach(GROUP ${PROJECTS})
 				FILES ${FILE_SRC})
 		endif()
 	endforeach(FILE_SRC)
-	include_directories(${${GROUP}_INCLUDE_DIR})
+	include_directories(BEFORE ${${GROUP}_INCLUDE_DIR})
 endforeach(GROUP)
 endmacro(generate_hat_sources)
 
@@ -93,7 +98,7 @@ foreach(GROUP ${ARGV})
 		source_group("External Files\\${GROUP}\\Source Files" 
 				FILES ${${GROUP}_SRC_DIR}/${FILE_SRC})
 	endforeach(FILE_SRC)
-	include_directories(${${GROUP}_INCLUDE_DIR})
+	include_directories(BEFORE ${${GROUP}_INCLUDE_DIR})
 endforeach(GROUP)
 endmacro(generate_external_sources)
 
